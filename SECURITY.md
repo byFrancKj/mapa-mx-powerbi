@@ -15,7 +15,7 @@ Cada versión se compila en GitHub Actions a partir del código de la etiqueta c
 - Una atestación de origen que prueba qué commit generó el archivo:
 
   ```bash
-  gh attestation verify archivo.pbiviz --repo <usuario>/mapa-mx-powerbi
+  gh attestation verify archivo.pbiviz --repo byFrancKj/mapa-mx-powerbi
   ```
 
 En una organización, lo recomendable es que un administrador suba ese archivo como **visual de la organización** (Portal de administración › Objetos visuales de la organización) para que todos usen la versión revisada.
