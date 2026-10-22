@@ -1,0 +1,60 @@
+// Estilos del visual "Mapa México (INEGI)".
+@texto: #252423;
+@texto-secundario: #605e5c;
+
+.mapa-mx {
+    display: block;
+    font-family: "Segoe UI", wf_segoe-ui_normal, helvetica, arial, sans-serif;
+
+    .area {
+        transition: opacity 120ms ease-out;
+
+        &.con-dato {
+            cursor: pointer;
+        }
+
+        &.activa,
+        &:focus-visible {
+            stroke: @texto;
+            stroke-width: 1.6px;
+            outline: none;
+        }
+    }
+
+    .leyenda {
+        pointer-events: none;
+
+        .fondo {
+            fill: #ffffff;
+            fill-opacity: 0.85;
+        }
+
+        .titulo {
+            fill: @texto;
+            font-weight: 600;
+        }
+
+        .etiqueta {
+            fill: @texto-secundario;
+        }
+    }
+
+    .aviso {
+        fill: #a4262c;
+        font-size: 11px;
+        cursor: help;
+    }
+}
+
+.mensaje {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    text-align: center;
+    font: 13px "Segoe UI", wf_segoe-ui_normal, helvetica, arial, sans-serif;
+    color: @texto-secundario;
+    pointer-events: none;
+}

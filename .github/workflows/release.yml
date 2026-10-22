@@ -1,0 +1,46 @@
+# Publica una versión del visual al subir una etiqueta vX.Y.Z (debe coincidir
+# con "version" en visual/pbiviz.json). El .pbiviz se compila aquí, desde el
+# código de la etiqueta, con su huella SHA-256 y una atestación de origen.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: visual
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: visual/package-lock.json
+      - name: La etiqueta coincide con la versión del visual
+        run: |
+          version=$(node -p "require('./pbiviz.json').visual.version.split('.').slice(0, 3).join('.')")
+          test "v$version" = "$GITHUB_REF_NAME" || { echo "Etiqueta $GITHUB_REF_NAME, pbiviz.json $version"; exit 1; }
+      - run: npm ci
+      - run: npm test
+      - run: node scripts/sin_red.mjs
+      - run: npx pbiviz package
+      - name: Huella SHA-256
+        run: cd dist && sha256sum *.pbiviz > SHA256SUMS.txt && cat SHA256SUMS.txt
+      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: visual/dist/*.pbiviz
+      - name: Publicar el release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/*.pbiviz dist/SHA256SUMS.txt --title "$GITHUB_REF_NAME" --generate-notes

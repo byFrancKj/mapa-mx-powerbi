@@ -1,10 +1,14 @@
 * text=auto eol=lf
 
 *.png binary
+*.pbiviz binary
 
 # Archivos generados: GitHub los colapsa en los diffs y no cuentan en las estadísticas de lenguaje
 geo/** linguist-generated=true
-catalogos/** linguist-generated=true
-deneb/**/*.json linguist-generated=true
-docs/valores_esperados_ejemplo.csv linguist-generated=true
-ejemplo/** linguist-generated=true
+puente-inegi/catalogos/** linguist-generated=true
+visual/src/geo/** linguist-generated=true
+visual/package-lock.json linguist-generated=true
+package-lock.json linguist-generated=true
+ejemplo/cadenas/** linguist-generated=true
+ejemplo/nielsen/** linguist-generated=true
+ejemplo/valores_esperados.csv linguist-generated=true

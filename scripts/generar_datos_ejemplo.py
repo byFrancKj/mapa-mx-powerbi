@@ -6,7 +6,7 @@ Genera los datos de ejemplo (100 % ficticios) de la carpeta ejemplo/.
 Simula:
   * Tres cadenas con formatos de origen distintos, para mostrar cómo se adaptan
     al modelo estándar:
-      - Cadena A: venta por tienda (ID de tienda -> se mapea en config/mapeo_ubicaciones.csv)
+      - Cadena A: venta por tienda (ID de tienda -> se mapea en ejemplo/config/mapeo_ubicaciones.csv)
       - Cadena B: venta por nombre de estado escrito "como venga" (se resuelve con alias)
       - Cadena C: venta por clave municipal INEGI
   * Nielsen: venta mensual por región Nielsen (fuente independiente de las cadenas).
@@ -26,8 +26,11 @@ RAIZ = Path(__file__).resolve().parents[1]
 SALIDA = RAIZ / "ejemplo"
 rng = np.random.default_rng(20261022)
 
-geo = pd.read_csv(RAIZ / "catalogos" / "dim_geo.csv", dtype={"CVE_ENT": str})
-mun = pd.read_csv(RAIZ / "catalogos" / "dim_municipio.csv", dtype={"CVEGEO": str, "CVE_ENT": str, "CVE_MUN": str})
+CATALOGOS = RAIZ / "puente-inegi" / "catalogos"
+geo = pd.read_csv(CATALOGOS / "dim_geo.csv", dtype={"CVE_ENT": str})
+# Las regiones son parte del ejemplo, no del catálogo INEGI.
+geo = geo.merge(pd.read_csv(SALIDA / "config" / "regiones_estado.csv", dtype=str), on="CVE_ENT", how="left")
+mun = pd.read_csv(CATALOGOS / "dim_municipio.csv", dtype={"CVEGEO": str, "CVE_ENT": str, "CVE_MUN": str})
 mun = mun[mun["CVE_MUN"] != "000"]
 
 # ----------------------------------------------------------------- productos
@@ -218,4 +221,4 @@ guardar(nielsen, SALIDA / "nielsen" / "nielsen_regiones.csv")
 
 # Mapeo de ubicaciones de ejemplo: tiendas de la Cadena A -> claves INEGI.
 mapeo = tiendas.assign(CADENA="Cadena A", UBICACION=tiendas["ID_TIENDA"])[["CADENA", "UBICACION", "CVE_ENT", "CVEGEO"]]
-guardar(mapeo, RAIZ / "config" / "mapeo_ubicaciones.csv")
+guardar(mapeo, SALIDA / "config" / "mapeo_ubicaciones.csv")

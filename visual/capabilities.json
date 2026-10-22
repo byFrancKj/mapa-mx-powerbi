@@ -1,0 +1,80 @@
+{
+    "dataRoles": [
+        {
+            "name": "ubicacion",
+            "kind": "Grouping",
+            "displayName": "Ubicación (clave INEGI)",
+            "description": "Columna con la clave del estado (CVE_ENT, 2 dígitos). Puede ser texto o número."
+        },
+        {
+            "name": "valor",
+            "kind": "Measure",
+            "displayName": "Valor",
+            "description": "La medida que colorea el mapa. Puede ser cualquiera de tu modelo."
+        },
+        {
+            "name": "tooltips",
+            "kind": "Measure",
+            "displayName": "Información sobre herramientas",
+            "description": "Medidas adicionales que se muestran al pasar el cursor."
+        }
+    ],
+    "dataViewMappings": [
+        {
+            "conditions": [
+                { "ubicacion": { "max": 1 }, "valor": { "max": 1 } }
+            ],
+            "categorical": {
+                "categories": {
+                    "for": { "in": "ubicacion" },
+                    "dataReductionAlgorithm": { "top": { "count": 30000 } }
+                },
+                "values": {
+                    "select": [
+                        { "bind": { "to": "valor" } },
+                        { "for": { "in": "tooltips" } }
+                    ]
+                }
+            }
+        }
+    ],
+    "objects": {
+        "colores": {
+            "properties": {
+                "metodo": { "type": { "enumeration": [] } },
+                "clases": { "type": { "integer": true } },
+                "paleta": { "type": { "enumeration": [] } },
+                "paletaDivergente": { "type": { "enumeration": [] } },
+                "centro": { "type": { "numeric": true } },
+                "umbral1": { "type": { "numeric": true } },
+                "umbral2": { "type": { "numeric": true } },
+                "invertir": { "type": { "bool": true } },
+                "sinDato": { "type": { "fill": { "solid": { "color": true } } } }
+            }
+        },
+        "mapa": {
+            "properties": {
+                "proyeccion": { "type": { "enumeration": [] } },
+                "borde": { "type": { "fill": { "solid": { "color": true } } } },
+                "grosor": { "type": { "numeric": true } }
+            }
+        },
+        "leyenda": {
+            "properties": {
+                "mostrar": { "type": { "bool": true } },
+                "posicion": { "type": { "enumeration": [] } },
+                "titulo": { "type": { "text": true } },
+                "tamano": { "type": { "numeric": true } }
+            }
+        }
+    },
+    "tooltips": {
+        "supportedTypes": { "default": true, "canvas": true },
+        "roles": ["tooltips"]
+    },
+    "supportsLandingPage": true,
+    "supportsEmptyDataView": true,
+    "supportsKeyboardFocus": true,
+    "supportsMultiVisualSelection": true,
+    "privileges": []
+}

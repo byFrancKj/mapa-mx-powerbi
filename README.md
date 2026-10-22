@@ -1,98 +1,74 @@
-# Mapa de ventas de México para Power BI
+# Mapa México (INEGI) para Power BI
 
-Mapas de México por **estado**, **región Nielsen** y **municipio** para Power BI Desktop, hechos con el visual [Deneb](https://deneb-viz.github.io/) (Vega-Lite) y geometría oficial de INEGI. Sirve para ver la venta de una o varias cadenas comerciales y compararla contra el mercado de Nielsen: dónde vende cada quien, dónde hay más intensidad por habitante, dónde crece y dónde hay huecos.
+Objeto visual de Power BI que dibuja México por estado a partir de la **clave INEGI**. Tú pones el modelo, las relaciones y las medidas; el visual solo trae la geometría de INEGI y colorea cada estado con la medida que elijas.
 
-Es un kit general: cada usuario conecta sus propias cadenas relacionando sus tiendas o estados con la clave INEGI, y define sus propias regiones Nielsen.
+![Índice por estado con escala divergente](docs/img/mapa_indice.png)
 
-![Índice de distribución Cadenas vs Nielsen por estado](docs/img/mapa_indice.png)
-
-![Cadenas vs Nielsen por región, misma escala](docs/img/comparativo_regiones.png)
-
-> Las imágenes usan los **datos ficticios** de la carpeta `ejemplo/`. No representan ninguna cadena ni a Nielsen.
-
-## Qué incluye
-
-| | |
-|---|---|
-| **Cuatro mapas de Deneb** | Estados con escala automática (quintiles o divergente), bivariado 3×3, comparativo lado a lado Cadenas vs Nielsen por región y municipios (nacional o por estado). |
-| **Modelo listo para pegar** | Consultas de Power Query, medidas DAX y un selector de 14 métricas: ventas, % de la venta nacional, intensidad per cápita, índice contra Nielsen, brechas, crecimiento y precio. |
-| **Geometría INEGI** | 32 estados, 2,475 municipios y regiones, simplificados para que el mapa cargue rápido (estados: 75 KB). |
-| **Catálogos** | Claves INEGI, abreviaturas, códigos ISO, población del Censo 2020 y más de 100 formas de escribir los estados ("Edo. de México", "CDMX", "Nuevo Leon"…). |
-| **Datos de ejemplo** | Tres cadenas ficticias con formatos distintos (por tienda, por nombre de estado y por clave municipal) y una extracción ficticia de Nielsen. |
-| **Scripts** | Regenerar geometría y regiones, validar la configuración y volver a dibujar las vistas previas. |
-
-![Mapa bivariado: intensidad per cápita contra crecimiento](docs/img/mapa_bivariado.png)
+> Las imágenes usan los **datos ficticios** de la carpeta `ejemplo/`.
 
 ## Cómo funciona
 
 ```
-Archivos de cada cadena ──► Power Query ──► Fact_Cadenas (CVEGEO, UPC, fecha, venta)
-   tienda / estado / clave      │  mapeo de ubicaciones + alias de estados
-                                ▼
-Extracción Nielsen ─────────► Fact_Nielsen (región, UPC, periodo, venta)
+TU POWER BI                                   EL VISUAL (.pbiviz)
+Tus tablas y relaciones                       Solo trae la geometría de INEGI,
+  Fact_Ventas ─► Dim_Estado[CVE_ENT]          cada estado con su clave ("01"…"32")
+Tus medidas: [Ventas], [Índice]…
 
-Dim_Region ◄── Dim_Geo ◄── Dim_Municipio ◄── Fact_Cadenas
-    ▲
-    └──────── Fact_Nielsen
-
-Selector de métrica ──► [Valor Mapa] + [Config Mapa] ──► Deneb (TopoJSON incrustado)
+En el visual arrastras:
+  Ubicación = Dim_Estado[CVE_ENT]   ──►   Power BI calcula tu medida por clave
+  Valor     = [Tu medida]                 (con todos tus filtros) y le pasa
+                                          una tabla chica:  "14" → 1,234,567
+                                                   ▼
+                                          El visual busca "14" en su geometría
+                                          y pinta Jalisco.
 ```
 
-- **Cadenas y Nielsen son fuentes independientes.** La comparación se hace por *distribución geográfica*: qué parte de la venta nacional cae en cada estado o región en cada fuente.
-- Nielsen llega por región. A nivel estado se puede ver la región completa o una **estimación por población** que, sumada por región, devuelve el dato original.
-- Deneb recibe solo una fila por estado (o municipio), aunque el modelo tenga millones de filas. Clases, colores y leyenda se calculan dentro del visual.
+- **Cualquier medida**, con su propio formato. Los parámetros de campo funcionan para cambiar de métrica.
+- **Clasificación** por cuantiles, intervalos iguales o escala divergente alrededor de un centro (100 en índices, 0 en crecimientos).
+- **Interacción nativa**: filtro cruzado, tooltips (incluidos los de página), menú contextual, teclado y alto contraste.
+- **Seguro**: no se conecta a internet ni guarda nada. Detalle en [SECURITY.md](SECURITY.md).
+
+![Ventas por estado en cuantiles](docs/img/mapa_ventas.png)
 
 ## Inicio rápido
 
-1. Descarga o clona el repositorio en tu PC.
-2. En Power BI Desktop instala **Deneb** desde AppSource (Insertar › Más objetos visuales › Desde AppSource).
-3. Sigue **[docs/01-armado-paso-a-paso.md](docs/01-armado-paso-a-paso.md)**: pegar las consultas de `powerquery/`, crear relaciones, cargar `dax/medidas.dax` y poner el visual con `deneb/mapa_estados.json`.
-4. Comprueba tus números contra [docs/valores_esperados_ejemplo.csv](docs/valores_esperados_ejemplo.csv).
-5. Cambia los datos de ejemplo por los tuyos con **[docs/03-adaptar-a-tu-proyecto.md](docs/03-adaptar-a-tu-proyecto.md)**.
+1. Descarga el `.pbiviz` del último *release* (o compílalo: [docs/04](docs/04-desarrollo.md)).
+2. En Power BI: panel *Visualizaciones* › *…* › **Importar un objeto visual desde un archivo**.
+3. Arrastra a **Ubicación** una columna con la clave del estado (`CVE_ENT`, texto o número) y a **Valor** tu medida.
+4. Ajusta método, paleta y leyenda en *Formato*.
 
-No hace falta Node ni Python para usar el kit; solo para regenerar geometría, regiones o vistas previas.
+¿Tus datos no traen la clave INEGI (vienen por tienda o con el nombre del estado)? Usa el [puente INEGI](docs/02-puente-inegi.md).
 
 ## Documentación
 
 | Guía | Contenido |
 |---|---|
-| [01 · Armado paso a paso](docs/01-armado-paso-a-paso.md) | Power Query, relaciones, medidas y primer mapa. |
-| [02 · Mapas con Deneb](docs/02-mapas-deneb.md) | Los cuatro mapas, campos que espera cada uno, colores y escalas. |
-| [03 · Adaptar a tu proyecto](docs/03-adaptar-a-tu-proyecto.md) | Agregar cadenas, mapear tiendas, definir regiones Nielsen, productos, periodos y métricas nuevas. |
-| [04 · Municipios y rendimiento](docs/04-municipios-y-rendimiento.md) | Nivel municipal y recomendaciones para millones de filas. |
+| [01 · Usar el visual](docs/01-usar-el-visual.md) | Campos, claves, panel de formato, interacción y problemas comunes. |
+| [02 · Puente INEGI](docs/02-puente-inegi.md) | Catálogos y Power Query para obtener las claves, mapeo de tiendas y regiones propias. |
+| [03 · Ejemplo](docs/03-ejemplo.md) | Modelo de demostración con datos ficticios: cadenas contra una fuente de mercado. |
+| [04 · Desarrollo](docs/04-desarrollo.md) | Compilar y probar el visual (también desde Mac), publicar versiones y buenas prácticas. |
 
 ## Estructura
 
 ```
-config/        Lo que editas: estados, regiones Nielsen, alias, mapeo de ubicaciones
-catalogos/     Generado: dim_geo, dim_municipio, dim_region
-geo/           Generado: TopoJSON y GeoJSON de estados, regiones y municipios
-deneb/         Generado: especificaciones Vega-Lite listas para pegar en Deneb
-powerquery/    Consultas M (una por bloque)
-dax/           Medidas y tabla calendario
-ejemplo/       Datos ficticios de tres cadenas y Nielsen
-scripts/       Construcción de geometría, especificaciones, validación y vistas previas
-docs/          Guías, imágenes y valores esperados
-powerbi/       Aquí puedes guardar tu reporte como proyecto .pbip
+visual/        El objeto visual (TypeScript): código, pruebas y empaquetado
+puente-inegi/  Catálogos INEGI y Power Query para obtener las claves (opcional)
+ejemplo/       Datos ficticios, consultas, medidas y valores esperados de la demo
+geo/           Geometría INEGI de estados y municipios (TopoJSON / GeoJSON)
+scripts/       Geometría, validaciones y revisión de datos privados
+docs/          Guías e imágenes
+privado/       Tus archivos reales: git lo ignora
 ```
 
-## Regenerar geometría y regiones
+## Hoja de ruta
 
-Necesitas Node 20 o superior.
+- [x] **0.1** Estados: cuantiles, intervalos y divergente; leyenda, tooltips, selección y avisos de claves.
+- [ ] **0.2** Campo *Grupo* con regiones dinámicas (sin regenerar geometría) y municipios con drill-down.
+- [ ] **0.3** Mapa bivariado, etiquetas, localización y certificación opcional en AppSource.
 
-```bash
-npm install
-npm run geo                                  # tras editar config/regiones_*.csv
-npm run geo -- --fuente "C:/INEGI/00mun.shp" # desde la capa original de INEGI
-python scripts/validar.py                    # revisa que todo coincida
-```
+## Fuentes, licencia y seguridad
 
-`npm run geo` reconstruye estados, regiones, municipios, catálogos y las especificaciones de Deneb (que llevan la geometría dentro). Para vistas previas: `pip install -r requirements.txt`, `python scripts/modelo_referencia.py` y `npm run vistas`.
-
-## Fuentes y licencia
-
-- Límites municipales y estatales: Marco Geoestadístico, **INEGI**. Población: Censo de Población y Vivienda 2020, **INEGI**. Detalle en [ATRIBUCION.md](ATRIBUCION.md).
+- Límites estatales y municipales: Marco Geoestadístico, **INEGI**. Población: Censo de Población y Vivienda 2020, **INEGI**. Detalle en [ATRIBUCION.md](ATRIBUCION.md).
 - Código y documentación: [MIT](LICENSE).
-- Nielsen es marca de NielsenIQ. Este proyecto no está afiliado a NielsenIQ ni a ninguna cadena comercial.
-
-¿Mejoras o dudas? Abre un *issue* o revisa [CONTRIBUTING.md](CONTRIBUTING.md).
+- Nielsen es marca de NielsenIQ y Power BI de Microsoft. Este proyecto no está afiliado a ellas ni a ninguna cadena comercial.
+- Nunca subas datos reales: ver [SECURITY.md](SECURITY.md) y [CONTRIBUTING.md](CONTRIBUTING.md).

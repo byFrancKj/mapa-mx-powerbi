@@ -1,18 +1,37 @@
-# Dependencias y cachés
+# ---------------------------------------------------------------------------
+# Datos privados: NUNCA al repositorio
+# Pon tus datos reales, tu mapeo de tiendas y tus reportes internos en privado/
+# (o en cualquier carpeta fuera del repo). scripts/revisar_datos.py lo vigila
+# en cada commit (.githooks/pre-commit) y en el CI.
+# ---------------------------------------------------------------------------
+privado/*
+!privado/LEEME.md
+
+# Reportes binarios (llevan datos dentro)
+*.pbix
+*.pbit
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+
+# Credenciales y certificados
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+*.p12
+
+# Dependencias, cachés y salidas de compilación
 node_modules/
 .cache/
 __pycache__/
 *.pyc
+visual/dist/
+visual/.tmp/
+visual/webpack.statistics.*.html
 
 # Capas de origen de INEGI (pesadas; se descargan aparte)
 fuentes/
-
-# Power BI: caché local de proyectos .pbip
-**/.pbi/localSettings.json
-**/.pbi/cache.abf
-
-# Reportes binarios: preferimos .pbip; quita estas líneas si quieres subir .pbix/.pbit
-*.pbix
 
 # Sistema
 .DS_Store
