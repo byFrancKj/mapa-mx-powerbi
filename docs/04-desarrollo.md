@@ -88,12 +88,26 @@ python scripts/validar.py
 2. Crea y sube la etiqueta: `git tag v0.2.0 && git push origin v0.2.0`.
 3. GitHub Actions compila el `.pbiviz` desde ese código, calcula su SHA-256, firma una atestación de origen y publica el *release*. Si la etiqueta no coincide con la versión de `pbiviz.json`, se detiene.
 
-## Antes de publicar el repositorio en GitHub
+## Publicar en GitHub
 
-- [ ] En `visual/pbiviz.json`: autor, correo de contacto y `supportUrl`/`gitHubUrl` reales. El correo queda dentro de cada `.pbiviz` que publiques.
-- [ ] Identidad de git: para no publicar tu correo personal en el historial, usa la dirección privada que da GitHub (*Settings › Emails › Keep my email addresses private*) y reescribe la autoría de los commits locales antes del primer push.
-- [ ] En GitHub: activa *Secret scanning* con *Push protection*, *Dependabot alerts*, *Private vulnerability reporting* y protege `main` (pull request y CI obligatorios).
-- [ ] Revisa `git status` y `python scripts/revisar_datos.py`: nada de `privado/` ni datos reales.
+Una sola vez, con el CLI de GitHub (el inicio de sesión es interactivo):
+
+```bash
+brew install gh
+gh auth login
+bash scripts/publicar.sh             # público; --privado para un repositorio privado
+```
+
+El script se detiene ante cualquier problema y pregunta antes de cada paso que no se puede deshacer (`--si` para no preguntar):
+
+1. Revisa que no haya datos privados ni cambios sin commit y corre `validar.py`.
+2. Reemplaza el correo de los commits locales por tu dirección privada de GitHub (`ID+usuario@users.noreply.github.com`), en todo el historial y en las etiquetas, para no publicar tu correo personal. Solo si el historial todavía no se ha subido.
+3. Completa autor y URLs en `visual/pbiviz.json` y los enlaces de `SECURITY.md`.
+4. Crea el repositorio y sube `main` y las etiquetas. Usa tu sesión de `gh` solo para ese comando: no cambia tu configuración global de git.
+5. Activa escaneo de secretos con bloqueo al subir, alertas y actualizaciones de Dependabot, reporte privado de vulnerabilidades y una regla que protege `main` (cambios por pull request con el CI en verde; los administradores pueden saltarla).
+6. Espera al CI y publica el *release* de la versión actual del visual, compilado en GitHub.
+
+Si se interrumpe, vuelve a correrlo: retoma donde se quedó.
 
 ## Seguridad del código
 
