@@ -1,0 +1,2508 @@
+CVEGEO,CVE_ENT,CVE_MUN,MUNICIPIO,REGION_NIELSEN,LON,LAT
+01000,01,000,Aguascalientes (sin municipio),Bajío,-102.36153,22.00674
+01001,01,001,Aguascalientes,Bajío,-102.2947,21.80905
+01002,01,002,Asientos,Bajío,-102.07615,22.10959
+01003,01,003,Calvillo,Bajío,-102.7061,21.90153
+01004,01,004,Cosío,Bajío,-102.29665,22.36484
+01005,01,005,Jesús María,Bajío,-102.49152,21.89965
+01006,01,006,Pabellón de Arteaga,Bajío,-102.26523,22.12324
+01007,01,007,Rincón de Romos,Bajío,-102.34056,22.26725
+01008,01,008,San José de Gracia,Bajío,-102.52584,22.1468
+01009,01,009,Tepezalá,Bajío,-102.19586,22.23811
+01010,01,010,El Llano,Bajío,-102.02297,21.92728
+01011,01,011,San Francisco de los Romo,Bajío,-102.24917,22.04668
+02000,02,000,Baja California (sin municipio),Noroeste,-115.61516,31.39844
+02001,02,001,Ensenada,Noroeste,-116.08184,31.6026
+02002,02,002,Mexicali,Noroeste,-115.40832,32.16339
+02003,02,003,Tecate,Noroeste,-116.291,32.43476
+02004,02,004,Tijuana,Noroeste,-116.84094,32.42363
+02005,02,005,Playas de Rosarito,Noroeste,-116.84353,32.22234
+02006,02,006,San Quintín,Noroeste,-115.21724,29.94299
+02007,02,007,San Felipe,Noroeste,-114.94319,30.74475
+03000,03,000,Baja California Sur (sin municipio),Noroeste,-111.56818,25.26558
+03001,03,001,Comondú,Noroeste,-111.68143,25.19927
+03002,03,002,Mulegé,Noroeste,-113.29495,27.461
+03003,03,003,La Paz,Noroeste,-111.041,24.46976
+03008,03,008,Los Cabos,Noroeste,-109.70953,23.27858
+03009,03,009,Loreto,Noroeste,-111.50898,25.95642
+04000,04,000,Campeche (sin municipio),Sureste,-90.21311,18.69639
+04001,04,001,Calkiní,Sureste,-90.3148,20.37721
+04002,04,002,Campeche,Sureste,-90.25503,19.62416
+04003,04,003,Carmen,Sureste,-91.48013,18.49073
+04004,04,004,Champotón,Sureste,-90.51401,19.09937
+04005,04,005,Hecelchakán,Sureste,-90.12568,20.13733
+04006,04,006,Hopelchén,Sureste,-89.60968,19.47406
+04007,04,007,Palizada,Sureste,-92.02377,18.23984
+04008,04,008,Tenabo,Sureste,-90.14991,19.92033
+04009,04,009,Escárcega,Sureste,-90.29201,18.40636
+04010,04,010,Calakmul,Sureste,-89.65213,18.4028
+04011,04,011,Candelaria,Sureste,-90.69335,18.05677
+04012,04,012,Seybaplaya,Sureste,-90.63616,19.59865
+04013,04,013,Dzitbalché,Sureste,-90.00826,20.26369
+05000,05,000,Coahuila (sin municipio),Norte,-102.20387,27.34687
+05001,05,001,Abasolo,Norte,-101.26403,27.10432
+05002,05,002,Acuña,Norte,-102.13178,29.44414
+05003,05,003,Allende,Norte,-100.9461,28.25812
+05004,05,004,Arteaga,Norte,-100.66685,25.37238
+05005,05,005,Candela,Norte,-100.77415,26.87653
+05006,05,006,Castaños,Norte,-101.38008,26.59624
+05007,05,007,Cuatro Ciénegas,Norte,-102.17601,26.79091
+05008,05,008,Escobedo,Norte,-101.35367,27.35176
+05009,05,009,Francisco I. Madero,Norte,-103.13401,26.35473
+05010,05,010,Frontera,Norte,-101.56202,26.91308
+05011,05,011,General Cepeda,Norte,-101.55113,25.52152
+05012,05,012,Guerrero,Norte,-100.37443,28.09729
+05013,05,013,Hidalgo,Norte,-100.05055,27.83928
+05014,05,014,Jiménez,Norte,-100.94327,28.9986
+05015,05,015,Juárez,Norte,-100.69335,27.65655
+05016,05,016,Lamadrid,Norte,-101.91472,27.15308
+05017,05,017,Matamoros,Norte,-103.17932,25.54198
+05018,05,018,Monclova,Norte,-101.14466,26.9042
+05019,05,019,Morelos,Norte,-101.0836,28.32026
+05020,05,020,Múzquiz,Norte,-101.85638,28.3496
+05021,05,021,Nadadores,Norte,-101.82259,27.31856
+05022,05,022,Nava,Norte,-100.62037,28.49648
+05023,05,023,Ocampo,Norte,-102.89957,27.95971
+05024,05,024,Parras,Norte,-102.16722,25.48631
+05025,05,025,Piedras Negras,Norte,-100.63194,28.8073
+05026,05,026,Progreso,Norte,-101.04761,27.40552
+05027,05,027,Ramos Arizpe,Norte,-101.25227,25.95298
+05028,05,028,Sabinas,Norte,-101.12536,27.79624
+05029,05,029,Sacramento,Norte,-101.75629,26.94021
+05030,05,030,Saltillo,Norte,-101.12511,25.02917
+05031,05,031,San Buenaventura,Norte,-101.96017,27.71959
+05032,05,032,San Juan de Sabinas,Norte,-101.39091,28.06011
+05033,05,033,San Pedro,Norte,-102.69546,26.07581
+05034,05,034,Sierra Mojada,Norte,-103.67558,27.53169
+05035,05,035,Torreón,Norte,-103.19139,25.05148
+05036,05,036,Viesca,Norte,-102.91496,25.22616
+05037,05,037,Villa Unión,Norte,-100.78069,28.07067
+05038,05,038,Zaragoza,Norte,-101.44877,28.7993
+06000,06,000,Colima (sin municipio),Occidente,-103.9129,19.1408
+06001,06,001,Armería,Occidente,-103.97775,19.00369
+06002,06,002,Colima,Occidente,-103.6232,19.12451
+06003,06,003,Comala,Occidente,-103.7659,19.3814
+06004,06,004,Coquimatlán,Occidente,-103.9207,19.18835
+06005,06,005,Cuauhtémoc,Occidente,-103.59225,19.32711
+06006,06,006,Ixtlahuacán,Occidente,-103.68186,18.968
+06007,06,007,Manzanillo,Occidente,-104.25058,19.18079
+06008,06,008,Minatitlán,Occidente,-104.03449,19.39189
+06009,06,009,Tecomán,Occidente,-103.84054,18.87153
+06010,06,010,Villa de Álvarez,Occidente,-103.87034,19.29989
+07000,07,000,Chiapas (sin municipio),Sureste,-92.52337,16.48321
+07001,07,001,Acacoyagua,Sureste,-92.68656,15.41478
+07002,07,002,Acala,Sureste,-92.80683,16.59176
+07003,07,003,Acapetahua,Sureste,-92.7744,15.23106
+07004,07,004,Altamirano,Sureste,-91.86264,16.66181
+07005,07,005,Amatán,Sureste,-92.86731,17.36513
+07006,07,006,Amatenango de la Frontera,Sureste,-92.08592,15.56858
+07007,07,007,Amatenango del Valle,Sureste,-92.39476,16.51894
+07008,07,008,Ángel Albino Corzo,Sureste,-92.69557,15.79245
+07009,07,009,Arriaga,Sureste,-93.93763,16.24871
+07010,07,010,Bejucal de Ocampo,Sureste,-92.16131,15.49174
+07011,07,011,Bella Vista,Sureste,-92.24204,15.61826
+07012,07,012,Berriozábal,Sureste,-93.3259,16.85786
+07013,07,013,Bochil,Sureste,-92.91936,16.98641
+07014,07,014,El Bosque,Sureste,-92.74097,17.03172
+07015,07,015,Cacahoatán,Sureste,-92.16272,15.09983
+07016,07,016,Catazajá,Sureste,-92.01374,17.78337
+07017,07,017,Cintalapa de Figueroa,Sureste,-93.86729,16.71299
+07018,07,018,Coapilla,Sureste,-93.11754,17.09505
+07019,07,019,Comitán de Domínguez,Sureste,-92.17574,16.31341
+07020,07,020,La Concordia,Sureste,-92.80011,16.00701
+07021,07,021,Copainalá,Sureste,-93.25303,17.09385
+07022,07,022,Chalchihuitán,Sureste,-92.61204,17.02078
+07023,07,023,Chamula,Sureste,-92.68013,16.81934
+07024,07,024,Chanal,Sureste,-92.21701,16.61157
+07025,07,025,Chapultenango,Sureste,-93.13144,17.32246
+07026,07,026,Chenalhó,Sureste,-92.53825,16.93283
+07027,07,027,Chiapa de Corzo,Sureste,-92.97542,16.66722
+07028,07,028,Chiapilla,Sureste,-92.72602,16.55381
+07029,07,029,Chicoasén,Sureste,-93.11167,16.99521
+07030,07,030,Chicomuselo,Sureste,-92.35608,15.76095
+07031,07,031,Chilón,Sureste,-92.03528,17.1094
+07032,07,032,Escuintla,Sureste,-92.54628,15.39542
+07033,07,033,Francisco León,Sureste,-93.26794,17.30719
+07034,07,034,Frontera Comalapa,Sureste,-92.08964,15.75849
+07035,07,035,Frontera Hidalgo,Sureste,-92.20996,14.74736
+07036,07,036,La Grandeza,Sureste,-92.21621,15.52104
+07037,07,037,Huehuetán,Sureste,-92.40656,15.0098
+07038,07,038,Huixtán,Sureste,-92.37983,16.69609
+07039,07,039,Huitiupán,Sureste,-92.69542,17.24347
+07040,07,040,Huixtla,Sureste,-92.54649,15.0707
+07041,07,041,La Independencia,Sureste,-91.70331,16.19793
+07042,07,042,Ixhuatán,Sureste,-92.94255,17.29774
+07043,07,043,Ixtacomitán,Sureste,-93.10501,17.41647
+07044,07,044,Ixtapa,Sureste,-92.89679,16.81819
+07045,07,045,Ixtapangajoya,Sureste,-92.98157,17.47652
+07046,07,046,Jiquipilas,Sureste,-93.65426,16.50119
+07047,07,047,Jitotol,Sureste,-92.87509,17.09413
+07048,07,048,Juárez,Sureste,-93.19311,17.68957
+07049,07,049,Larráinzar,Sureste,-92.77814,16.92185
+07050,07,050,La Libertad,Sureste,-91.75117,17.60907
+07051,07,051,Mapastepec,Sureste,-92.86593,15.47999
+07052,07,052,Las Margaritas,Sureste,-91.79031,16.37376
+07053,07,053,Mazapa de Madero,Sureste,-92.1829,15.37609
+07054,07,054,Mazatán,Sureste,-92.49024,14.87174
+07055,07,055,Metapa,Sureste,-92.20029,14.82176
+07056,07,056,Mitontic,Sureste,-92.5619,16.87456
+07057,07,057,Motozintla,Sureste,-92.3311,15.31841
+07058,07,058,Nicolás Ruíz,Sureste,-92.5959,16.44241
+07059,07,059,Ocosingo,Sureste,-91.31461,16.73079
+07060,07,060,Ocotepec,Sureste,-93.17386,17.21953
+07061,07,061,Ocozocoautla de Espinosa,Sureste,-93.51829,16.95702
+07062,07,062,Ostuacán,Sureste,-93.40211,17.4236
+07063,07,063,Osumacinta,Sureste,-93.08846,16.90184
+07064,07,064,Oxchuc,Sureste,-92.29807,16.78676
+07065,07,065,Palenque,Sureste,-91.8077,17.41041
+07066,07,066,Pantelhó,Sureste,-92.45915,17.06136
+07067,07,067,Pantepec,Sureste,-93.05451,17.18814
+07068,07,068,Pichucalco,Sureste,-93.1562,17.51534
+07069,07,069,Pijijiapan,Sureste,-93.19564,15.6658
+07070,07,070,El Porvenir,Sureste,-92.25279,15.42965
+07071,07,071,Villa Comaltitlán,Sureste,-92.65602,15.12956
+07072,07,072,Pueblo Nuevo Solistahuacán,Sureste,-92.85279,17.21641
+07073,07,073,Rayón,Sureste,-92.99795,17.19163
+07074,07,074,Reforma,Sureste,-93.22765,17.86731
+07075,07,075,Las Rosas,Sureste,-92.37149,16.36308
+07076,07,076,Sabanilla,Sureste,-92.64913,17.35105
+07077,07,077,Salto de Agua,Sureste,-92.22232,17.46393
+07078,07,078,San Cristóbal de las Casas,Sureste,-92.61606,16.70072
+07079,07,079,San Fernando,Sureste,-93.2096,16.913
+07080,07,080,Siltepec,Sureste,-92.32008,15.51983
+07081,07,081,Simojovel,Sureste,-92.57263,17.15101
+07082,07,082,Sitalá,Sureste,-92.34746,17.03731
+07083,07,083,Socoltenango,Sureste,-92.39433,16.1132
+07084,07,084,Solosuchiapa,Sureste,-93.00456,17.38831
+07085,07,085,Soyaló,Sureste,-93.00411,16.93737
+07086,07,086,Suchiapa,Sureste,-93.1315,16.58414
+07087,07,087,Suchiate,Sureste,-92.22916,14.64021
+07088,07,088,Sunuapa,Sureste,-93.25173,17.4885
+07089,07,089,Tapachula,Sureste,-92.3348,14.76871
+07090,07,090,Tapalapa,Sureste,-93.10098,17.20762
+07091,07,091,Tapilula,Sureste,-93.00317,17.25426
+07092,07,092,Tecpatán,Sureste,-93.38681,17.1741
+07093,07,093,Tenejapa,Sureste,-92.49161,16.82476
+07094,07,094,Teopisca,Sureste,-92.50866,16.56114
+07096,07,096,Tila,Sureste,-92.49012,17.37949
+07097,07,097,Tonalá,Sureste,-93.72227,16.03278
+07098,07,098,Totolapa,Sureste,-92.64921,16.51826
+07099,07,099,La Trinitaria,Sureste,-91.9285,16.01107
+07100,07,100,Tumbalá,Sureste,-92.26886,17.30149
+07101,07,101,Tuxtla Gutiérrez,Sureste,-93.13726,16.73957
+07102,07,102,Tuxtla Chico,Sureste,-92.19509,14.89215
+07103,07,103,Tuzantán,Sureste,-92.4159,15.13082
+07104,07,104,Tzimol,Sureste,-92.22856,16.15171
+07105,07,105,Unión Juárez,Sureste,-92.10248,15.05462
+07106,07,106,Venustiano Carranza,Sureste,-92.59844,16.29072
+07107,07,107,Villa Corzo,Sureste,-93.22251,16.04507
+07108,07,108,Villaflores,Sureste,-93.3682,16.34855
+07109,07,109,Yajalón,Sureste,-92.32501,17.18434
+07110,07,110,San Lucas,Sureste,-92.74281,16.63402
+07111,07,111,Zinacantán,Sureste,-92.78195,16.72288
+07112,07,112,San Juan Cancuc,Sureste,-92.39166,16.93022
+07113,07,113,Aldama,Sureste,-92.69782,16.91911
+07114,07,114,Benemérito de las Américas,Sureste,-90.49766,16.33397
+07115,07,115,Maravilla Tenejapa,Sureste,-91.25096,16.1796
+07116,07,116,Marqués de Comillas,Sureste,-90.74414,16.25099
+07117,07,117,Montecristo de Guerrero,Sureste,-92.6532,15.66972
+07118,07,118,San Andrés Duraznal,Sureste,-92.80761,17.14885
+07119,07,119,Santiago el Pinar,Sureste,-92.7201,16.9471
+07120,07,120,Capitán Luis Ángel Vidal,Sureste,-92.61476,15.54918
+07121,07,121,Rincón Chamula San Pedro,Sureste,-92.93261,17.21752
+07122,07,122,El Parral,Sureste,-92.98568,16.33916
+07123,07,123,Emiliano Zapata,Sureste,-92.90239,16.55294
+07124,07,124,Mezcalapa,Sureste,-93.59222,17.21662
+07125,07,125,Honduras de la Sierra,Sureste,-92.46513,15.56759
+08000,08,000,Chihuahua (sin municipio),Norte,-106.46916,28.80845
+08001,08,001,Ahumada,Norte,-106.37309,30.45415
+08002,08,002,Aldama,Norte,-105.58856,29.07329
+08003,08,003,Allende,Norte,-105.37962,27.0681
+08004,08,004,Aquiles Serdán,Norte,-105.82666,28.59152
+08005,08,005,Ascensión,Norte,-107.51988,31.33195
+08006,08,006,Bachíniva,Norte,-107.29177,28.85776
+08007,08,007,Balleza,Norte,-106.5431,26.753
+08008,08,008,Batopilas de Manuel Gómez Morín,Norte,-107.69017,26.94819
+08009,08,009,Bocoyna,Norte,-107.57954,27.85183
+08010,08,010,Buenaventura,Norte,-107.11107,29.97312
+08011,08,011,Camargo,Norte,-104.40602,28.04035
+08012,08,012,Carichí,Norte,-107.07316,27.80909
+08013,08,013,Casas Grandes,Norte,-108.20202,30.19399
+08014,08,014,Coronado,Norte,-105.10521,26.61938
+08015,08,015,Coyame del Sotol,Norte,-105.2731,29.8456
+08016,08,016,La Cruz,Norte,-105.02465,27.91302
+08017,08,017,Cuauhtémoc,Norte,-107.01623,28.65586
+08018,08,018,Cusihuiriachi,Norte,-106.89683,28.21164
+08019,08,019,Chihuahua,Norte,-106.32318,29.33209
+08020,08,020,Chínipas,Norte,-108.49578,27.34613
+08021,08,021,Delicias,Norte,-105.46841,28.12309
+08022,08,022,Dr. Belisario Domínguez,Norte,-106.51452,27.9977
+08023,08,023,Galeana,Norte,-107.59975,30.15614
+08024,08,024,Santa Isabel,Norte,-106.34956,28.32119
+08025,08,025,Gómez Farías,Norte,-107.7373,29.33656
+08026,08,026,Gran Morelos,Norte,-106.54439,28.28206
+08027,08,027,Guachochi,Norte,-107.19437,27.17099
+08028,08,028,Guadalupe,Norte,-105.49322,30.68021
+08029,08,029,Guadalupe y Calvo,Norte,-106.98588,26.18621
+08030,08,030,Guazapares,Norte,-108.24192,27.46332
+08031,08,031,Guerrero,Norte,-107.55805,28.38501
+08032,08,032,Hidalgo del Parral,Norte,-105.70765,27.09655
+08033,08,033,Huejotitán,Norte,-106.06851,27.06897
+08034,08,034,Ignacio Zaragoza,Norte,-107.72351,29.72199
+08035,08,035,Janos,Norte,-108.43155,30.83895
+08036,08,036,Jiménez,Norte,-104.41387,27.13032
+08037,08,037,Juárez,Norte,-106.49625,31.4618
+08038,08,038,Julimes,Norte,-105.05444,28.54098
+08039,08,039,López,Norte,-104.98608,26.89072
+08040,08,040,Madera,Norte,-108.3293,29.32695
+08041,08,041,Maguarichi,Norte,-107.96654,27.85889
+08042,08,042,Manuel Benavides,Norte,-103.8245,28.92883
+08043,08,043,Matachí,Norte,-107.71605,28.81934
+08044,08,044,Matamoros,Norte,-105.51062,26.73321
+08045,08,045,Meoqui,Norte,-105.51505,28.34103
+08046,08,046,Morelos,Norte,-107.71308,26.561
+08047,08,047,Moris,Norte,-108.69315,28.14378
+08048,08,048,Namiquipa,Norte,-107.18623,29.35544
+08049,08,049,Nonoava,Norte,-106.68436,27.42466
+08050,08,050,Nuevo Casas Grandes,Norte,-107.72985,30.54506
+08051,08,051,Ocampo,Norte,-108.20471,28.16327
+08052,08,052,Ojinaga,Norte,-104.4131,29.01803
+08053,08,053,Praxedis G. Guerrero,Norte,-105.926,31.23815
+08054,08,054,Riva Palacio,Norte,-106.55663,28.6559
+08055,08,055,Rosales,Norte,-105.78879,28.14186
+08056,08,056,Rosario,Norte,-106.3146,27.26904
+08057,08,057,San Francisco de Borja,Norte,-106.74702,27.88459
+08058,08,058,San Francisco de Conchos,Norte,-105.36227,27.58213
+08059,08,059,San Francisco del Oro,Norte,-105.92063,26.88013
+08060,08,060,Santa Bárbara,Norte,-105.78278,26.80479
+08061,08,061,Satevó,Norte,-106.13811,27.85511
+08062,08,062,Saucillo,Norte,-105.45791,27.88199
+08063,08,063,Temósachic,Norte,-108.12274,28.58119
+08064,08,064,El Tule,Norte,-106.2832,27.05263
+08065,08,065,Urique,Norte,-107.98324,27.20598
+08066,08,066,Uruachi,Norte,-108.30121,27.86343
+08067,08,067,Valle de Zaragoza,Norte,-105.80824,27.48689
+09000,09,000,Ciudad de México (sin municipio),Valle de México,-99.14145,19.2753
+09002,09,002,Azcapotzalco,Valle de México,-99.17934,19.4867
+09003,09,003,Coyoacán,Valle de México,-99.15127,19.32831
+09004,09,004,Cuajimalpa de Morelos,Valle de México,-99.31306,19.32661
+09005,09,005,Gustavo A. Madero,Valle de México,-99.11222,19.48467
+09006,09,006,Iztacalco,Valle de México,-99.09736,19.39618
+09007,09,007,Iztapalapa,Valle de México,-99.05701,19.34863
+09008,09,008,La Magdalena Contreras,Valle de México,-99.26791,19.25889
+09009,09,009,Milpa Alta,Valle de México,-99.05228,19.1423
+09010,09,010,Álvaro Obregón,Valle de México,-99.23299,19.35862
+09011,09,011,Tláhuac,Valle de México,-99.00149,19.28632
+09012,09,012,Tlalpan,Valle de México,-99.20924,19.19016
+09013,09,013,Xochimilco,Valle de México,-99.09138,19.24912
+09014,09,014,Benito Juárez,Valle de México,-99.16098,19.381
+09015,09,015,Cuauhtémoc,Valle de México,-99.1494,19.431
+09016,09,016,Miguel Hidalgo,Valle de México,-99.20157,19.42853
+09017,09,017,Venustiano Carranza,Valle de México,-99.09427,19.4283
+10000,10,000,Durango (sin municipio),Norte,-104.91322,24.9236
+10001,10,001,Canatlán,Norte,-104.8207,24.50911
+10002,10,002,Canelas,Norte,-106.48493,25.08417
+10003,10,003,Coneto de Comonfort,Norte,-104.76788,25.04064
+10004,10,004,Cuencamé,Norte,-103.61648,24.80424
+10005,10,005,Durango,Norte,-104.8437,23.90892
+10006,10,006,General Simón Bolívar,Norte,-103.21188,24.76138
+10007,10,007,Gómez Palacio,Norte,-103.49037,25.7245
+10008,10,008,Guadalupe Victoria,Norte,-104.08062,24.34785
+10009,10,009,Guanaceví,Norte,-106.10576,26.02748
+10010,10,010,Hidalgo,Norte,-104.81381,26.14043
+10011,10,011,Indé,Norte,-104.96192,25.65457
+10012,10,012,Lerdo,Norte,-103.65969,25.46552
+10013,10,013,Mapimí,Norte,-104.14374,26.13555
+10014,10,014,Mezquital,Norte,-104.55328,22.95333
+10015,10,015,Nazas,Norte,-104.05053,25.20754
+10016,10,016,Nombre de Dios,Norte,-104.19911,23.79484
+10017,10,017,Ocampo,Norte,-105.95089,26.6044
+10018,10,018,El Oro,Norte,-105.21941,25.54085
+10019,10,019,Otáez,Norte,-105.93651,24.70005
+10020,10,020,Pánuco de Coronado,Norte,-104.35389,24.49486
+10021,10,021,Peñón Blanco,Norte,-104.08449,24.80463
+10022,10,022,Poanas,Norte,-104.02852,23.99841
+10023,10,023,Pueblo Nuevo,Norte,-105.22947,23.28963
+10024,10,024,Rodeo,Norte,-104.5434,25.20924
+10025,10,025,San Bernardo,Norte,-105.67177,26.1882
+10026,10,026,San Dimas,Norte,-105.74246,24.23059
+10027,10,027,San Juan de Guadalupe,Norte,-102.70024,24.63575
+10028,10,028,San Juan del Río,Norte,-104.47813,24.81987
+10029,10,029,San Luis del Cordero,Norte,-104.31675,25.35841
+10030,10,030,San Pedro del Gallo,Norte,-104.39812,25.62192
+10031,10,031,Santa Clara,Norte,-103.41331,24.518
+10032,10,032,Santiago Papasquiaro,Norte,-105.53381,24.97467
+10033,10,033,Súchil,Norte,-104.17471,23.44066
+10034,10,034,Tamazula,Norte,-106.41078,24.56514
+10035,10,035,Tepehuanes,Norte,-106.03215,25.47538
+10036,10,036,Tlahualilo,Norte,-103.61807,26.35176
+10037,10,037,Topia,Norte,-106.61123,25.28085
+10038,10,038,Vicente Guerrero,Norte,-103.9504,23.73691
+10039,10,039,Nuevo Ideal,Norte,-105.02842,24.85992
+11000,11,000,Guanajuato (sin municipio),Bajío,-101.11869,20.93057
+11001,11,001,Abasolo,Bajío,-101.54515,20.48195
+11002,11,002,Acámbaro,Bajío,-100.75008,20.05732
+11003,11,003,San Miguel de Allende,Bajío,-100.72592,20.95897
+11004,11,004,Apaseo el Alto,Bajío,-100.57369,20.42158
+11005,11,005,Apaseo el Grande,Bajío,-100.62199,20.57556
+11006,11,006,Atarjea,Bajío,-99.80763,21.2618
+11007,11,007,Celaya,Bajío,-100.8216,20.54475
+11008,11,008,Manuel Doblado,Bajío,-101.8801,20.71292
+11009,11,009,Comonfort,Bajío,-100.75572,20.73106
+11010,11,010,Coroneo,Bajío,-100.3864,20.21693
+11011,11,011,Cortazar,Bajío,-100.9401,20.4327
+11012,11,012,Cuerámaro,Bajío,-101.66302,20.61668
+11013,11,013,Doctor Mora,Bajío,-100.35942,21.14124
+11014,11,014,Dolores Hidalgo Cuna de la Independencia Nacional,Bajío,-100.94603,21.15875
+11015,11,015,Guanajuato,Bajío,-101.23847,21.01323
+11016,11,016,Huanímaro,Bajío,-101.49945,20.36678
+11017,11,017,Irapuato,Bajío,-101.36883,20.70054
+11018,11,018,Jaral del Progreso,Bajío,-101.05681,20.35708
+11019,11,019,Jerécuaro,Bajío,-100.53254,20.2045
+11020,11,020,León,Bajío,-101.62967,21.14058
+11021,11,021,Moroleón,Bajío,-101.24545,20.08487
+11022,11,022,Ocampo,Bajío,-101.47916,21.56701
+11023,11,023,Pénjamo,Bajío,-101.81594,20.402
+11024,11,024,Pueblo Nuevo,Bajío,-101.36113,20.55512
+11025,11,025,Purísima del Rincón,Bajío,-101.93192,20.88535
+11026,11,026,Romita,Bajío,-101.59511,20.83723
+11027,11,027,Salamanca,Bajío,-101.16842,20.62815
+11028,11,028,Salvatierra,Bajío,-100.90647,20.24803
+11029,11,029,San Diego de la Unión,Bajío,-100.84498,21.44707
+11030,11,030,San Felipe,Bajío,-101.17861,21.43416
+11031,11,031,San Francisco del Rincón,Bajío,-101.7897,20.91935
+11032,11,032,San José Iturbide,Bajío,-100.38853,21.00214
+11033,11,033,San Luis de la Paz,Bajío,-100.47628,21.39941
+11034,11,034,Santa Catarina,Bajío,-100.069,21.15269
+11035,11,035,Santa Cruz de Juventino Rosas,Bajío,-100.98221,20.65048
+11036,11,036,Santiago Maravatío,Bajío,-100.98672,20.16277
+11037,11,037,Silao de la Victoria,Bajío,-101.43744,20.9634
+11038,11,038,Tarandacuao,Bajío,-100.52872,20.00726
+11039,11,039,Tarimoro,Bajío,-100.74579,20.2974
+11040,11,040,Tierra Blanca,Bajío,-100.1564,21.03225
+11041,11,041,Uriangato,Bajío,-101.14639,20.11732
+11042,11,042,Valle de Santiago,Bajío,-101.27194,20.37555
+11043,11,043,Victoria,Bajío,-100.23348,21.35682
+11044,11,044,Villagrán,Bajío,-100.99162,20.53855
+11045,11,045,Xichú,Bajío,-99.97962,21.35361
+11046,11,046,Yuriria,Bajío,-101.25939,20.21895
+12000,12,000,Guerrero (sin municipio),Centro-Sur,-99.91837,17.68552
+12001,12,001,Acapulco de Juárez,Centro-Sur,-99.73198,16.94931
+12002,12,002,Ahuacuotzingo,Centro-Sur,-98.95048,17.75348
+12003,12,003,Ajuchitlán del Progreso,Centro-Sur,-100.64569,17.82696
+12004,12,004,Alcozauca de Guerrero,Centro-Sur,-98.36989,17.37458
+12005,12,005,Alpoyeca,Centro-Sur,-98.51265,17.64421
+12006,12,006,Apaxtla,Centro-Sur,-99.98015,18.09237
+12007,12,007,Arcelia,Centro-Sur,-100.19897,18.25241
+12008,12,008,Atenango del Río,Centro-Sur,-99.09796,18.17174
+12009,12,009,Atlamajalcingo del Monte,Centro-Sur,-98.5819,17.25645
+12010,12,010,Atlixtac,Centro-Sur,-98.88355,17.5465
+12011,12,011,Atoyac de Álvarez,Centro-Sur,-100.34187,17.33279
+12012,12,012,Ayutla de los Libres,Centro-Sur,-99.09914,17.02536
+12013,12,013,Azoyú,Centro-Sur,-98.58053,16.6988
+12014,12,014,Benito Juárez,Centro-Sur,-100.42731,17.10052
+12015,12,015,Buenavista de Cuéllar,Centro-Sur,-99.42097,18.46179
+12016,12,016,Coahuayutla de José María Izazaga,Centro-Sur,-101.64942,18.28299
+12017,12,017,Cocula,Centro-Sur,-99.75321,18.07935
+12018,12,018,Copala,Centro-Sur,-98.92948,16.60624
+12019,12,019,Copalillo,Centro-Sur,-99.04624,17.98076
+12020,12,020,Copanatoyac,Centro-Sur,-98.69623,17.40722
+12021,12,021,Coyuca de Benítez,Centro-Sur,-100.05893,17.14254
+12022,12,022,Coyuca de Catalán,Centro-Sur,-100.90158,18.06641
+12023,12,023,Cuajinicuilapa,Centro-Sur,-98.41919,16.44899
+12024,12,024,Cualác,Centro-Sur,-98.66597,17.73816
+12025,12,025,Cuautepec,Centro-Sur,-98.97853,16.72141
+12026,12,026,Cuetzala del Progreso,Centro-Sur,-99.82245,18.15327
+12027,12,027,Cutzamala de Pinzón,Centro-Sur,-100.61792,18.6601
+12028,12,028,Chilapa de Álvarez,Centro-Sur,-99.14416,17.53985
+12029,12,029,Chilpancingo de los Bravo,Centro-Sur,-99.66673,17.38197
+12030,12,030,Florencio Villarreal,Centro-Sur,-99.13884,16.69462
+12031,12,031,General Canuto A. Neri,Centro-Sur,-100.1045,18.44065
+12032,12,032,General Heliodoro Castillo,Centro-Sur,-100.02264,17.76182
+12033,12,033,Huamuxtitlán,Centro-Sur,-98.55477,17.78068
+12034,12,034,Huitzuco de los Figueroa,Centro-Sur,-99.27807,18.25979
+12035,12,035,Iguala de la Independencia,Centro-Sur,-99.5591,18.32577
+12036,12,036,Igualapa,Centro-Sur,-98.4717,16.79533
+12037,12,037,Ixcateopan de Cuauhtémoc,Centro-Sur,-99.76408,18.46371
+12038,12,038,Zihuatanejo de Azueta,Centro-Sur,-101.40522,17.88805
+12039,12,039,Juan R. Escudero,Centro-Sur,-99.51023,17.15191
+12040,12,040,Leonardo Bravo,Centro-Sur,-99.79607,17.63142
+12041,12,041,Malinaltepec,Centro-Sur,-98.69022,17.17591
+12042,12,042,Mártir de Cuilapan,Centro-Sur,-99.32808,17.83785
+12043,12,043,Metlatónoc,Centro-Sur,-98.35507,17.19207
+12044,12,044,Mochitlán,Centro-Sur,-99.38027,17.33486
+12045,12,045,Olinalá,Centro-Sur,-98.78398,17.89649
+12046,12,046,Ometepec,Centro-Sur,-98.35304,16.66161
+12047,12,047,Pedro Ascencio Alquisiras,Centro-Sur,-99.87125,18.54545
+12048,12,048,Petatlán,Centro-Sur,-101.17292,17.59182
+12049,12,049,Pilcaya,Centro-Sur,-99.60457,18.70173
+12050,12,050,Pungarabato,Centro-Sur,-100.61055,18.34455
+12051,12,051,Quechultenango,Centro-Sur,-99.16198,17.31735
+12052,12,052,San Luis Acatlán,Centro-Sur,-98.78042,16.84735
+12053,12,053,San Marcos,Centro-Sur,-99.43364,16.80227
+12054,12,054,San Miguel Totolapan,Centro-Sur,-100.31824,17.84003
+12055,12,055,Taxco de Alarcón,Centro-Sur,-99.59444,18.50437
+12056,12,056,Tecoanapa,Centro-Sur,-99.29802,16.97675
+12057,12,057,Técpan de Galeana,Centro-Sur,-100.74434,17.40602
+12058,12,058,Teloloapan,Centro-Sur,-99.90724,18.33808
+12059,12,059,Tepecoacuilco de Trujano,Centro-Sur,-99.46894,18.11198
+12060,12,060,Tetipac,Centro-Sur,-99.7131,18.66061
+12061,12,061,Tixtla de Guerrero,Centro-Sur,-99.36756,17.59926
+12062,12,062,Tlacoachistlahuaca,Centro-Sur,-98.31424,16.89182
+12063,12,063,Tlacoapa,Centro-Sur,-98.81006,17.20806
+12064,12,064,Tlalchapa,Centro-Sur,-100.44753,18.42777
+12065,12,065,Tlalixtaquilla de Maldonado,Centro-Sur,-98.44401,17.59531
+12066,12,066,Tlapa de Comonfort,Centro-Sur,-98.6149,17.56977
+12067,12,067,Tlapehuala,Centro-Sur,-100.46393,18.27408
+12068,12,068,La Unión de Isidoro Montes de Oca,Centro-Sur,-101.74961,17.96605
+12069,12,069,Xalpatláhuac,Centro-Sur,-98.48289,17.47568
+12070,12,070,Xochihuehuetlán,Centro-Sur,-98.47635,17.85638
+12071,12,071,Xochistlahuaca,Centro-Sur,-98.18829,16.78885
+12072,12,072,Zapotitlán Tablas,Centro-Sur,-98.81354,17.35971
+12073,12,073,Zirándaro,Centro-Sur,-101.2186,18.34508
+12074,12,074,Zitlala,Centro-Sur,-99.17759,17.74728
+12075,12,075,Eduardo Neri,Centro-Sur,-99.66174,17.83006
+12076,12,076,Acatepec,Centro-Sur,-98.99619,17.17252
+12077,12,077,Marquelia,Centro-Sur,-98.70554,16.70236
+12078,12,078,Cochoapa el Grande,Centro-Sur,-98.43334,17.08006
+12079,12,079,José Joaquín de Herrera,Centro-Sur,-98.99581,17.44263
+12080,12,080,Juchitán,Centro-Sur,-98.67766,16.59415
+12081,12,081,Iliatenco,Centro-Sur,-98.63742,17.04793
+12082,12,082,Las Vigas,Centro-Sur,-99.2399,16.68128
+12083,12,083,Ñuu Savi,Centro-Sur,-98.97168,16.90774
+12084,12,084,Santa Cruz del Rincón,Centro-Sur,-98.74211,16.99434
+12085,12,085,San Nicolás,Centro-Sur,-98.52261,16.45493
+13000,13,000,Hidalgo (sin municipio),Centro-Sur,-99.01285,20.48441
+13001,13,001,Acatlán,Centro-Sur,-98.42231,20.19247
+13002,13,002,Acaxochitlán,Centro-Sur,-98.19845,20.15973
+13003,13,003,Actopan,Centro-Sur,-98.86256,20.34128
+13004,13,004,Agua Blanca de Iturbide,Centro-Sur,-98.36957,20.3603
+13005,13,005,Ajacuba,Centro-Sur,-99.06697,20.11675
+13006,13,006,Alfajayucan,Centro-Sur,-99.40584,20.40677
+13007,13,007,Almoloya,Centro-Sur,-98.31026,19.77211
+13008,13,008,Apan,Centro-Sur,-98.48767,19.7192
+13009,13,009,El Arenal,Centro-Sur,-98.88328,20.21632
+13010,13,010,Atitalaquia,Centro-Sur,-99.2215,20.05463
+13011,13,011,Atlapexco,Centro-Sur,-98.36345,21.02779
+13012,13,012,Atotonilco el Grande,Centro-Sur,-98.67665,20.35492
+13013,13,013,Atotonilco de Tula,Centro-Sur,-99.23728,19.98299
+13014,13,014,Calnali,Centro-Sur,-98.57552,20.90348
+13015,13,015,Cardonal,Centro-Sur,-99.06015,20.59918
+13016,13,016,Cuautepec de Hinojosa,Centro-Sur,-98.28964,19.99189
+13017,13,017,Chapantongo,Centro-Sur,-99.49035,20.27854
+13018,13,018,Chapulhuacán,Centro-Sur,-98.96082,21.12758
+13019,13,019,Chilcuautla,Centro-Sur,-99.26535,20.30408
+13020,13,020,Eloxochitlán,Centro-Sur,-98.8782,20.74985
+13021,13,021,Emiliano Zapata,Centro-Sur,-98.59012,19.66695
+13022,13,022,Epazoyucan,Centro-Sur,-98.64576,20.03735
+13023,13,023,Francisco I. Madero,Centro-Sur,-99.08588,20.23175
+13024,13,024,Huasca de Ocampo,Centro-Sur,-98.54096,20.23115
+13025,13,025,Huautla,Centro-Sur,-98.24884,21.03977
+13026,13,026,Huazalingo,Centro-Sur,-98.49007,21.00066
+13027,13,027,Huehuetla,Centro-Sur,-98.05883,20.60423
+13028,13,028,Huejutla de Reyes,Centro-Sur,-98.45067,21.11383
+13029,13,029,Huichapan,Centro-Sur,-99.68085,20.38384
+13030,13,030,Ixmiquilpan,Centro-Sur,-99.19065,20.50248
+13031,13,031,Jacala de Ledezma,Centro-Sur,-99.14732,20.97025
+13032,13,032,Jaltocán,Centro-Sur,-98.52752,21.14798
+13033,13,033,Juárez Hidalgo,Centro-Sur,-98.83511,20.83007
+13034,13,034,Lolotla,Centro-Sur,-98.73564,20.92837
+13035,13,035,Metepec,Centro-Sur,-98.34155,20.25665
+13036,13,036,San Agustín Metzquititlán,Centro-Sur,-98.61108,20.53564
+13037,13,037,Metztitlán,Centro-Sur,-98.80982,20.56566
+13038,13,038,Mineral del Chico,Centro-Sur,-98.75872,20.22191
+13039,13,039,Mineral del Monte,Centro-Sur,-98.67079,20.14042
+13040,13,040,La Misión,Centro-Sur,-99.08936,21.08872
+13041,13,041,Mixquiahuala de Juárez,Centro-Sur,-99.17915,20.19848
+13042,13,042,Molango de Escamilla,Centro-Sur,-98.80523,20.91445
+13043,13,043,Nicolás Flores,Centro-Sur,-99.17055,20.78378
+13044,13,044,Nopala de Villagrán,Centro-Sur,-99.67237,20.23303
+13045,13,045,Omitlán de Juárez,Centro-Sur,-98.63304,20.1692
+13046,13,046,San Felipe Orizatlán,Centro-Sur,-98.56166,21.31434
+13047,13,047,Pacula,Centro-Sur,-99.31763,20.99136
+13048,13,048,Pachuca de Soto,Centro-Sur,-98.80224,20.08677
+13049,13,049,Pisaflores,Centro-Sur,-98.98886,21.23506
+13050,13,050,Progreso de Obregón,Centro-Sur,-99.18077,20.31814
+13051,13,051,Mineral de la Reforma,Centro-Sur,-98.72559,20.06082
+13052,13,052,San Agustín Tlaxiaca,Centro-Sur,-98.93861,20.10671
+13053,13,053,San Bartolo Tutotepec,Centro-Sur,-98.19106,20.46823
+13054,13,054,San Salvador,Centro-Sur,-99.04593,20.30869
+13055,13,055,Santiago de Anaya,Centro-Sur,-98.98042,20.40962
+13056,13,056,Santiago Tulantepec de Lugo Guerrero,Centro-Sur,-98.38296,20.04043
+13057,13,057,Singuilucan,Centro-Sur,-98.49937,19.9804
+13058,13,058,Tasquillo,Centro-Sur,-99.40152,20.54838
+13059,13,059,Tecozautla,Centro-Sur,-99.63443,20.53912
+13060,13,060,Tenango de Doria,Centro-Sur,-98.21491,20.34432
+13061,13,061,Tepeapulco,Centro-Sur,-98.51791,19.80389
+13062,13,062,Tepehuacán de Guerrero,Centro-Sur,-98.83873,21.06027
+13063,13,063,Tepeji del Río de Ocampo,Centro-Sur,-99.37135,19.90466
+13064,13,064,Tepetitlán,Centro-Sur,-99.40155,20.19432
+13065,13,065,Tetepango,Centro-Sur,-99.15152,20.11443
+13066,13,066,Villa de Tezontepec,Centro-Sur,-98.80355,19.91278
+13067,13,067,Tezontepec de Aldama,Centro-Sur,-99.29317,20.17883
+13068,13,068,Tianguistengo,Centro-Sur,-98.51776,20.78943
+13069,13,069,Tizayuca,Centro-Sur,-98.96153,19.8526
+13070,13,070,Tlahuelilpan,Centro-Sur,-99.21963,20.13467
+13071,13,071,Tlahuiltepa,Centro-Sur,-98.96044,20.88716
+13072,13,072,Tlanalapa,Centro-Sur,-98.60878,19.81685
+13073,13,073,Tlanchinol,Centro-Sur,-98.64994,21.02854
+13074,13,074,Tlaxcoapan,Centro-Sur,-99.24776,20.09266
+13075,13,075,Tolcayuca,Centro-Sur,-98.91986,19.95322
+13076,13,076,Tula de Allende,Centro-Sur,-99.37827,20.05713
+13077,13,077,Tulancingo de Bravo,Centro-Sur,-98.32706,20.13785
+13078,13,078,Xochiatipan,Centro-Sur,-98.29651,20.85467
+13079,13,079,Xochicoatlán,Centro-Sur,-98.63965,20.79848
+13080,13,080,Yahualica,Centro-Sur,-98.38408,20.91547
+13081,13,081,Zacualtipán de Ángeles,Centro-Sur,-98.58681,20.65067
+13082,13,082,Zapotlán de Juárez,Centro-Sur,-98.85501,19.99268
+13083,13,083,Zempoala,Centro-Sur,-98.6779,19.91217
+13084,13,084,Zimapán,Centro-Sur,-99.3685,20.75176
+14000,14,000,Jalisco (sin municipio),Occidente,-103.6418,20.5009
+14001,14,001,Acatic,Occidente,-102.90897,20.77009
+14002,14,002,Acatlán de Juárez,Occidente,-103.58898,20.42545
+14003,14,003,Ahualulco de Mercado,Occidente,-103.96652,20.67524
+14004,14,004,Amacueca,Occidente,-103.62365,20.00023
+14005,14,005,Amatitán,Occidente,-103.71913,20.85399
+14006,14,006,Ameca,Occidente,-104.08064,20.54169
+14007,14,007,San Juanito de Escobedo,Occidente,-104.00679,20.80577
+14008,14,008,Arandas,Occidente,-102.30373,20.76978
+14009,14,009,El Arenal,Occidente,-103.68437,20.75252
+14010,14,010,Atemajac de Brizuela,Occidente,-103.72759,20.17447
+14011,14,011,Atengo,Occidente,-104.27065,20.31563
+14012,14,012,Atenguillo,Occidente,-104.53544,20.36642
+14013,14,013,Atotonilco el Alto,Occidente,-102.53623,20.54791
+14014,14,014,Atoyac,Occidente,-103.47053,19.9964
+14015,14,015,Autlán de Navarro,Occidente,-104.29014,19.72491
+14016,14,016,Ayotlán,Occidente,-102.35817,20.49923
+14017,14,017,Ayutla,Occidente,-104.44461,20.03197
+14018,14,018,La Barca,Occidente,-102.52533,20.37239
+14019,14,019,Bolaños,Occidente,-103.94298,21.8588
+14020,14,020,Cabo Corrientes,Occidente,-105.40388,20.3491
+14021,14,021,Casimiro Castillo,Occidente,-104.46784,19.60119
+14022,14,022,Cihuatlán,Occidente,-104.6175,19.24531
+14023,14,023,Zapotlán el Grande,Occidente,-103.51146,19.70886
+14024,14,024,Cocula,Occidente,-103.80652,20.40008
+14025,14,025,Colotlán,Occidente,-103.29161,22.07741
+14026,14,026,Concepción de Buenos Aires,Occidente,-103.23616,19.98292
+14027,14,027,Cuautitlán de García Barragán,Occidente,-104.29378,19.42959
+14028,14,028,Cuautla,Occidente,-104.51064,20.20049
+14029,14,029,Cuquío,Occidente,-103.0286,20.95242
+14030,14,030,Chapala,Occidente,-103.18468,20.25036
+14031,14,031,Chimaltitán,Occidente,-103.67473,21.77268
+14032,14,032,Chiquilistlán,Occidente,-103.88521,20.08456
+14033,14,033,Degollado,Occidente,-102.16815,20.44745
+14034,14,034,Ejutla,Occidente,-104.10916,19.92601
+14035,14,035,Encarnación de Díaz,Occidente,-102.1883,21.55026
+14036,14,036,Etzatlán,Occidente,-104.11754,20.71767
+14037,14,037,El Grullo,Occidente,-104.17561,19.77554
+14038,14,038,Guachinango,Occidente,-104.39116,20.64717
+14039,14,039,Guadalajara,Occidente,-103.33569,20.67787
+14040,14,040,Hostotipaquillo,Occidente,-104.09518,21.06358
+14041,14,041,Huejúcar,Occidente,-103.26051,22.33267
+14042,14,042,Huejuquilla el Alto,Occidente,-103.91659,22.62599
+14043,14,043,La Huerta,Occidente,-104.87068,19.49219
+14044,14,044,Ixtlahuacán de los Membrillos,Occidente,-103.2059,20.39029
+14045,14,045,Ixtlahuacán del Río,Occidente,-103.24472,20.87498
+14046,14,046,Jalostotitlán,Occidente,-102.49553,21.18855
+14047,14,047,Jamay,Occidente,-102.69613,20.27174
+14048,14,048,Jesús María,Occidente,-102.12022,20.63838
+14049,14,049,Jilotlán de los Dolores,Occidente,-102.94109,19.30647
+14050,14,050,Jocotepec,Occidente,-103.43752,20.32133
+14051,14,051,Juanacatlán,Occidente,-103.13485,20.48221
+14052,14,052,Juchitlán,Occidente,-104.03651,20.05416
+14053,14,053,Lagos de Moreno,Occidente,-101.85293,21.48316
+14054,14,054,El Limón,Occidente,-104.10428,19.84073
+14055,14,055,Magdalena,Occidente,-103.97938,20.88657
+14056,14,056,Santa María del Oro,Occidente,-102.83538,19.53277
+14057,14,057,La Manzanilla de la Paz,Occidente,-103.11708,20.00943
+14058,14,058,Mascota,Occidente,-104.78111,20.60049
+14059,14,059,Mazamitla,Occidente,-103.06714,19.9017
+14060,14,060,Mexticacán,Occidente,-102.75402,21.26401
+14061,14,061,Mezquitic,Occidente,-104.05329,22.14904
+14062,14,062,Mixtlán,Occidente,-104.39172,20.4529
+14063,14,063,Ocotlán,Occidente,-102.72806,20.38538
+14064,14,064,Ojuelos de Jalisco,Occidente,-101.71477,21.81038
+14065,14,065,Pihuamo,Occidente,-103.38333,19.14667
+14066,14,066,Poncitlán,Occidente,-102.89515,20.27062
+14067,14,067,Puerto Vallarta,Occidente,-105.10884,20.75903
+14068,14,068,Villa Purificación,Occidente,-104.72309,19.80704
+14069,14,069,Quitupan,Occidente,-102.88355,19.81288
+14070,14,070,El Salto,Occidente,-103.24486,20.53737
+14071,14,071,San Cristóbal de la Barranca,Occidente,-103.49615,21.05899
+14072,14,072,San Diego de Alejandría,Occidente,-102.02433,20.97129
+14073,14,073,San Juan de los Lagos,Occidente,-102.29409,21.26936
+14074,14,074,San Julián,Occidente,-102.15903,21.00473
+14075,14,075,San Marcos,Occidente,-104.23386,20.82698
+14076,14,076,San Martín de Bolaños,Occidente,-103.79583,21.61273
+14077,14,077,San Martín Hidalgo,Occidente,-103.92183,20.42525
+14078,14,078,San Miguel el Alto,Occidente,-102.3798,20.99246
+14079,14,079,Gómez Farías,Occidente,-103.38404,19.86122
+14080,14,080,San Sebastián del Oeste,Occidente,-104.82329,20.84895
+14081,14,081,Santa María de los Ángeles,Occidente,-103.20697,22.2023
+14082,14,082,Sayula,Occidente,-103.59525,19.86104
+14083,14,083,Tala,Occidente,-103.68209,20.60772
+14084,14,084,Talpa de Allende,Occidente,-104.94917,20.28238
+14085,14,085,Tamazula de Gordiano,Occidente,-103.17804,19.68895
+14086,14,086,Tapalpa,Occidente,-103.76551,19.94856
+14087,14,087,Tecalitlán,Occidente,-103.15848,19.12496
+14088,14,088,Tecolotlán,Occidente,-104.00814,20.2354
+14089,14,089,Techaluta de Montenegro,Occidente,-103.57419,20.09248
+14090,14,090,Tenamaxtlán,Occidente,-104.15669,20.17889
+14091,14,091,Teocaltiche,Occidente,-102.53893,21.47444
+14092,14,092,Teocuitatlán de Corona,Occidente,-103.34709,20.10897
+14093,14,093,Tepatitlán de Morelos,Occidente,-102.70118,20.8204
+14094,14,094,Tequila,Occidente,-103.76255,21.12186
+14095,14,095,Teuchitlán,Occidente,-103.82515,20.67507
+14096,14,096,Tizapán el Alto,Occidente,-103.08507,20.11723
+14097,14,097,Tlajomulco de Zúñiga,Occidente,-103.41019,20.45975
+14098,14,098,San Pedro Tlaquepaque,Occidente,-103.35017,20.58848
+14099,14,099,Tolimán,Occidente,-103.95177,19.54577
+14100,14,100,Tomatlán,Occidente,-105.16481,19.97951
+14101,14,101,Tonalá,Occidente,-103.21953,20.61625
+14102,14,102,Tonaya,Occidente,-103.92621,19.84588
+14103,14,103,Tonila,Occidente,-103.5341,19.43266
+14104,14,104,Totatiche,Occidente,-103.46577,21.95702
+14105,14,105,Tototlán,Occidente,-102.74861,20.54866
+14106,14,106,Tuxcacuesco,Occidente,-104.03311,19.68018
+14107,14,107,Tuxcueca,Occidente,-103.19502,20.09267
+14108,14,108,Tuxpan,Occidente,-103.43085,19.5133
+14109,14,109,Unión de San Antonio,Occidente,-101.98875,21.14508
+14110,14,110,Unión de Tula,Occidente,-104.25159,19.99252
+14111,14,111,Valle de Guadalupe,Occidente,-102.63989,21.04959
+14112,14,112,Valle de Juárez,Occidente,-102.9562,19.94842
+14113,14,113,San Gabriel,Occidente,-103.73905,19.70989
+14114,14,114,Villa Corona,Occidente,-103.696,20.38944
+14115,14,115,Villa Guerrero,Occidente,-103.65807,22.02542
+14116,14,116,Villa Hidalgo,Occidente,-102.5932,21.6677
+14117,14,117,Cañadas de Obregón,Occidente,-102.70975,21.14969
+14118,14,118,Yahualica de González Gallo,Occidente,-102.91264,21.13452
+14119,14,119,Zacoalco de Torres,Occidente,-103.56777,20.23402
+14120,14,120,Zapopan,Occidente,-103.4941,20.79469
+14121,14,121,Zapotiltic,Occidente,-103.3745,19.64954
+14122,14,122,Zapotitlán de Vadillo,Occidente,-103.75832,19.51242
+14123,14,123,Zapotlán del Rey,Occidente,-102.92309,20.45102
+14124,14,124,Zapotlanejo,Occidente,-103.05412,20.63283
+14125,14,125,San Ignacio Cerro Gordo,Occidente,-102.50599,20.76464
+15000,15,000,Estado de México (sin municipio),Valle de México,-99.7497,19.38252
+15001,15,001,Acambay de Ruíz Castañeda,Valle de México,-99.84587,19.94592
+15002,15,002,Acolman,Valle de México,-98.92029,19.63502
+15003,15,003,Aculco,Valle de México,-99.83952,20.12216
+15004,15,004,Almoloya de Alquisiras,Valle de México,-99.88043,18.8546
+15005,15,005,Almoloya de Juárez,Valle de México,-99.80359,19.38983
+15006,15,006,Almoloya del Río,Valle de México,-99.48674,19.15844
+15007,15,007,Amanalco,Valle de México,-99.988,19.24938
+15008,15,008,Amatepec,Valle de México,-100.26441,18.71428
+15009,15,009,Amecameca,Valle de México,-98.71682,19.12462
+15010,15,010,Apaxco,Valle de México,-99.147,19.98818
+15011,15,011,Atenco,Valle de México,-98.95901,19.54665
+15012,15,012,Atizapán,Valle de México,-99.49953,19.17516
+15013,15,013,Atizapán de Zaragoza,Valle de México,-99.26723,19.56222
+15014,15,014,Atlacomulco,Valle de México,-99.84582,19.80973
+15015,15,015,Atlautla,Valle de México,-98.71755,19.03045
+15016,15,016,Axapusco,Valle de México,-98.67722,19.73692
+15017,15,017,Ayapango,Valle de México,-98.81658,19.12456
+15018,15,018,Calimaya,Valle de México,-99.63869,19.17116
+15019,15,019,Capulhuac,Valle de México,-99.4623,19.20989
+15020,15,020,Coacalco de Berriozábal,Valle de México,-99.10262,19.62649
+15021,15,021,Coatepec Harinas,Valle de México,-99.79963,18.94559
+15022,15,022,Cocotitlán,Valle de México,-98.86007,19.22733
+15023,15,023,Coyotepec,Valle de México,-99.2039,19.78875
+15024,15,024,Cuautitlán,Valle de México,-99.16117,19.68402
+15025,15,025,Chalco,Valle de México,-98.82824,19.25763
+15026,15,026,Chapa de Mota,Valle de México,-99.55099,19.81632
+15027,15,027,Chapultepec,Valle de México,-99.54681,19.20838
+15028,15,028,Chiautla,Valle de México,-98.88434,19.58098
+15029,15,029,Chicoloapan,Valle de México,-98.87923,19.40796
+15030,15,030,Chiconcuac,Valle de México,-98.89985,19.55775
+15031,15,031,Chimalhuacán,Valle de México,-98.95156,19.42006
+15032,15,032,Donato Guerra,Valle de México,-100.27205,19.34943
+15033,15,033,Ecatepec de Morelos,Valle de México,-99.04684,19.57493
+15034,15,034,Ecatzingo,Valle de México,-98.73617,18.9679
+15035,15,035,Huehuetoca,Valle de México,-99.22133,19.84762
+15036,15,036,Hueypoxtla,Valle de México,-99.02809,19.92806
+15037,15,037,Huixquilucan,Valle de México,-99.34547,19.38895
+15038,15,038,Isidro Fabela,Valle de México,-99.4725,19.54316
+15039,15,039,Ixtapaluca,Valle de México,-98.78425,19.35392
+15040,15,040,Ixtapan de la Sal,Valle de México,-99.69023,18.85952
+15041,15,041,Ixtapan del Oro,Valle de México,-100.27817,19.25713
+15042,15,042,Ixtlahuaca,Valle de México,-99.82167,19.57932
+15043,15,043,Xalatlaco,Valle de México,-99.35009,19.16647
+15044,15,044,Jaltenco,Valle de México,-99.09296,19.75382
+15045,15,045,Jilotepec,Valle de México,-99.60075,19.97249
+15046,15,046,Jilotzingo,Valle de México,-99.39049,19.50407
+15047,15,047,Jiquipilco,Valle de México,-99.64199,19.58587
+15048,15,048,Jocotitlán,Valle de México,-99.77335,19.69504
+15049,15,049,Joquicingo,Valle de México,-99.50761,19.07611
+15050,15,050,Juchitepec,Valle de México,-98.90259,19.09633
+15051,15,051,Lerma,Valle de México,-99.47607,19.34893
+15052,15,052,Malinalco,Valle de México,-99.48758,18.87838
+15053,15,053,Melchor Ocampo,Valle de México,-99.14177,19.70883
+15054,15,054,Metepec,Valle de México,-99.58832,19.24706
+15055,15,055,Mexicaltzingo,Valle de México,-99.59048,19.21048
+15056,15,056,Morelos,Valle de México,-99.65262,19.76443
+15057,15,057,Naucalpan de Juárez,Valle de México,-99.29466,19.47559
+15058,15,058,Nezahualcóyotl,Valle de México,-99.02548,19.41204
+15059,15,059,Nextlalpan,Valle de México,-99.07039,19.7254
+15060,15,060,Nicolás Romero,Valle de México,-99.38998,19.62542
+15061,15,061,Nopaltepec,Valle de México,-98.7171,19.81184
+15062,15,062,Ocoyoacac,Valle de México,-99.40239,19.26798
+15063,15,063,Ocuilan,Valle de México,-99.39479,19.00933
+15064,15,064,El Oro,Valle de México,-100.09979,19.81526
+15065,15,065,Otumba,Valle de México,-98.73064,19.66207
+15066,15,066,Otzoloapan,Valle de México,-100.32012,19.10649
+15067,15,067,Otzolotepec,Valle de México,-99.5242,19.45388
+15068,15,068,Ozumba,Valle de México,-98.81324,19.0575
+15069,15,069,Papalotla,Valle de México,-98.85514,19.55998
+15070,15,070,La Paz,Valle de México,-98.94692,19.36072
+15071,15,071,Polotitlán,Valle de México,-99.82832,20.22899
+15072,15,072,Rayón,Valle de México,-99.56705,19.13836
+15073,15,073,San Antonio la Isla,Valle de México,-99.53768,19.16819
+15074,15,074,San Felipe del Progreso,Valle de México,-99.98318,19.65359
+15075,15,075,San Martín de las Pirámides,Valle de México,-98.82959,19.72659
+15076,15,076,San Mateo Atenco,Valle de México,-99.53939,19.2683
+15077,15,077,San Simón de Guerrero,Valle de México,-100.03707,18.98009
+15078,15,078,Santo Tomás,Valle de México,-100.29741,19.18001
+15079,15,079,Soyaniquilpan de Juárez,Valle de México,-99.51453,20.05759
+15080,15,080,Sultepec,Valle de México,-99.98574,18.74837
+15081,15,081,Tecámac,Valle de México,-98.98521,19.68961
+15082,15,082,Tejupilco,Valle de México,-100.17902,18.86914
+15083,15,083,Temamatla,Valle de México,-98.87951,19.19749
+15084,15,084,Temascalapa,Valle de México,-98.88182,19.8211
+15085,15,085,Temascalcingo,Valle de México,-100.03672,19.92146
+15086,15,086,Temascaltepec,Valle de México,-99.93478,19.08528
+15087,15,087,Temoaya,Valle de México,-99.60003,19.4801
+15088,15,088,Tenancingo,Valle de México,-99.57174,18.97596
+15089,15,089,Tenango del Aire,Valle de México,-98.86541,19.15096
+15090,15,090,Tenango del Valle,Valle de México,-99.62732,19.08396
+15091,15,091,Teoloyucan,Valle de México,-99.16394,19.77063
+15092,15,092,Teotihuacán,Valle de México,-98.87098,19.6845
+15093,15,093,Tepetlaoxtoc,Valle de México,-98.76482,19.57349
+15094,15,094,Tepetlixpa,Valle de México,-98.84155,19.00998
+15095,15,095,Tepotzotlán,Valle de México,-99.30279,19.71647
+15096,15,096,Tequixquiac,Valle de México,-99.15037,19.90098
+15097,15,097,Texcaltitlán,Valle de México,-99.94126,18.94092
+15098,15,098,Texcalyacac,Valle de México,-99.50485,19.13289
+15099,15,099,Texcoco,Valle de México,-98.82601,19.47705
+15100,15,100,Tezoyuca,Valle de México,-98.91845,19.59133
+15101,15,101,Tianguistenco,Valle de México,-99.46186,19.12749
+15102,15,102,Timilpan,Valle de México,-99.71351,19.88629
+15103,15,103,Tlalmanalco,Valle de México,-98.7245,19.21439
+15104,15,104,Tlalnepantla de Baz,Valle de México,-99.19306,19.54434
+15105,15,105,Tlatlaya,Valle de México,-100.25686,18.54435
+15106,15,106,Toluca,Valle de México,-99.64992,19.32043
+15107,15,107,Tonatico,Valle de México,-99.63395,18.78326
+15108,15,108,Tultepec,Valle de México,-99.12751,19.68122
+15109,15,109,Tultitlán,Valle de México,-99.15822,19.61474
+15110,15,110,Valle de Bravo,Valle de México,-100.12193,19.17716
+15111,15,111,Villa de Allende,Valle de México,-100.1328,19.39687
+15112,15,112,Villa del Carbón,Valle de México,-99.46861,19.69823
+15113,15,113,Villa Guerrero,Valle de México,-99.6884,18.98035
+15114,15,114,Villa Victoria,Valle de México,-99.99137,19.44265
+15115,15,115,Xonacatlán,Valle de México,-99.44805,19.44888
+15116,15,116,Zacazonapan,Valle de México,-100.26186,19.04596
+15117,15,117,Zacualpan,Valle de México,-99.78417,18.74543
+15118,15,118,Zinacantepec,Valle de México,-99.8014,19.21749
+15119,15,119,Zumpahuacán,Valle de México,-99.53969,18.77064
+15120,15,120,Zumpango,Valle de México,-99.07327,19.8056
+15121,15,121,Cuautitlán Izcalli,Valle de México,-99.22505,19.65483
+15122,15,122,Valle de Chalco Solidaridad,Valle de México,-98.94855,19.27683
+15123,15,123,Luvianos,Valle de México,-100.41214,18.95138
+15124,15,124,San José del Rincón,Valle de México,-100.15124,19.61778
+15125,15,125,Tonanitla,Valle de México,-99.0603,19.6827
+16000,16,000,Michoacán (sin municipio),Occidente,-101.87366,19.28496
+16001,16,001,Acuitzio,Occidente,-101.33362,19.46781
+16002,16,002,Aguililla,Occidente,-102.76113,18.77823
+16003,16,003,Álvaro Obregón,Occidente,-101.02151,19.87364
+16004,16,004,Angamacutiro,Occidente,-101.72763,20.13915
+16005,16,005,Angangueo,Occidente,-100.29837,19.62932
+16006,16,006,Apatzingán,Occidente,-102.46294,18.88813
+16007,16,007,Aporo,Occidente,-100.39564,19.66189
+16008,16,008,Aquila,Occidente,-103.3328,18.37143
+16009,16,009,Ario,Occidente,-101.7092,19.15565
+16010,16,010,Arteaga,Occidente,-102.11856,18.42004
+16011,16,011,Briseñas,Occidente,-102.58856,20.23594
+16012,16,012,Buenavista,Occidente,-102.57303,19.19946
+16013,16,013,Carácuaro,Occidente,-101.02127,18.97043
+16014,16,014,Coahuayana,Occidente,-103.61127,18.73503
+16015,16,015,Coalcomán de Vázquez Pallares,Occidente,-103.08595,18.67951
+16016,16,016,Coeneo,Occidente,-101.6275,19.79573
+16017,16,017,Contepec,Occidente,-100.20708,19.95952
+16018,16,018,Copándaro,Occidente,-101.22136,19.91607
+16019,16,019,Cotija,Occidente,-102.70291,19.76195
+16020,16,020,Cuitzeo,Occidente,-101.09246,19.98298
+16021,16,021,Charapan,Occidente,-102.22798,19.69277
+16022,16,022,Charo,Occidente,-101.01294,19.66842
+16023,16,023,Chavinda,Occidente,-102.44234,20.04212
+16024,16,024,Cherán,Occidente,-101.96052,19.72725
+16025,16,025,Chilchota,Occidente,-102.09046,19.82201
+16026,16,026,Chinicuila,Occidente,-103.40815,18.76324
+16027,16,027,Chucándiro,Occidente,-101.34877,19.89814
+16028,16,028,Churintzio,Occidente,-102.08633,20.12819
+16029,16,029,Churumuco,Occidente,-101.61267,18.7007
+16030,16,030,Ecuandureo,Occidente,-102.23804,20.15269
+16031,16,031,Epitacio Huerta,Occidente,-100.29949,20.13992
+16032,16,032,Erongarícuaro,Occidente,-101.72187,19.6214
+16033,16,033,Gabriel Zamora,Occidente,-102.01514,19.1596
+16034,16,034,Hidalgo,Occidente,-100.67765,19.61293
+16035,16,035,La Huacana,Occidente,-101.90993,18.83994
+16036,16,036,Huandacareo,Occidente,-101.29002,20.00085
+16037,16,037,Huaniqueo,Occidente,-101.48883,19.9
+16038,16,038,Huetamo,Occidente,-101.10526,18.65761
+16039,16,039,Huiramba,Occidente,-101.45495,19.52031
+16040,16,040,Indaparapeo,Occidente,-100.94206,19.7659
+16041,16,041,Irimbo,Occidente,-100.46454,19.70366
+16042,16,042,Ixtlán,Occidente,-102.40647,20.15062
+16043,16,043,Jacona,Occidente,-102.31554,19.93515
+16044,16,044,Jiménez,Occidente,-101.67624,19.92174
+16045,16,045,Jiquilpan,Occidente,-102.74038,19.96079
+16046,16,046,Juárez,Occidente,-100.46933,19.29032
+16047,16,047,Jungapeo,Occidente,-100.52583,19.43786
+16048,16,048,Lagunillas,Occidente,-101.4111,19.57781
+16049,16,049,Madero,Occidente,-101.17019,19.34048
+16050,16,050,Maravatío,Occidente,-100.4292,19.88952
+16051,16,051,Marcos Castellanos,Occidente,-102.96868,20.0421
+16052,16,052,Lázaro Cárdenas,Occidente,-102.33447,18.07615
+16053,16,053,Morelia,Occidente,-101.26984,19.66064
+16054,16,054,Morelos,Occidente,-101.44305,19.98983
+16055,16,055,Múgica,Occidente,-102.12357,18.9707
+16056,16,056,Nahuatzen,Occidente,-101.8717,19.6407
+16057,16,057,Nocupétaro,Occidente,-101.21615,19.09346
+16058,16,058,Nuevo Parangaricutiro,Occidente,-102.19599,19.40793
+16059,16,059,Nuevo Urecho,Occidente,-101.86723,19.15705
+16060,16,060,Numarán,Occidente,-101.96373,20.24753
+16061,16,061,Ocampo,Occidente,-100.34094,19.56584
+16062,16,062,Pajacuarán,Occidente,-102.52199,20.14506
+16063,16,063,Panindícuaro,Occidente,-101.7937,19.99281
+16064,16,064,Parácuaro,Occidente,-102.18116,19.13919
+16065,16,065,Paracho,Occidente,-102.0684,19.64773
+16066,16,066,Pátzcuaro,Occidente,-101.59734,19.503
+16067,16,067,Penjamillo,Occidente,-101.89679,20.10461
+16068,16,068,Peribán,Occidente,-102.45229,19.49545
+16069,16,069,La Piedad,Occidente,-102.06354,20.30617
+16070,16,070,Purépero,Occidente,-101.98389,19.92038
+16071,16,071,Puruándiro,Occidente,-101.51819,20.10431
+16072,16,072,Queréndaro,Occidente,-100.84693,19.72625
+16073,16,073,Quiroga,Occidente,-101.53841,19.69505
+16074,16,074,Cojumatlán de Régules,Occidente,-102.88261,20.11137
+16075,16,075,Los Reyes,Occidente,-102.38391,19.65306
+16076,16,076,Sahuayo,Occidente,-102.76531,20.05779
+16077,16,077,San Lucas,Occidente,-100.80146,18.63148
+16078,16,078,Santa Ana Maya,Occidente,-101.04502,20.04975
+16079,16,079,Salvador Escalante,Occidente,-101.69019,19.37689
+16080,16,080,Senguio,Occidente,-100.34174,19.74647
+16081,16,081,Susupuato,Occidente,-100.41496,19.20239
+16082,16,082,Tacámbaro,Occidente,-101.45209,19.25467
+16083,16,083,Tancítaro,Occidente,-102.35055,19.32922
+16084,16,084,Tangamandapio,Occidente,-102.45689,19.89113
+16085,16,085,Tangancícuaro,Occidente,-102.30945,19.83837
+16086,16,086,Tanhuato,Occidente,-102.34619,20.25618
+16087,16,087,Taretan,Occidente,-101.89415,19.32687
+16088,16,088,Tarímbaro,Occidente,-101.15613,19.81553
+16089,16,089,Tepalcatepec,Occidente,-102.85845,19.06828
+16090,16,090,Tingambato,Occidente,-101.85262,19.51435
+16091,16,091,Tingüindín,Occidente,-102.50021,19.76501
+16092,16,092,Tiquicheo de Nicolás Romero,Occidente,-100.79505,19.05832
+16093,16,093,Tlalpujahua,Occidente,-100.20616,19.78002
+16094,16,094,Tlazazalca,Occidente,-102.06045,20.00403
+16095,16,095,Tocumbo,Occidente,-102.60137,19.6555
+16096,16,096,Tumbiscatío,Occidente,-102.51058,18.5503
+16097,16,097,Turicato,Occidente,-101.42236,18.93206
+16098,16,098,Tuxpan,Occidente,-100.48778,19.56851
+16099,16,099,Tuzantla,Occidente,-100.62273,19.2202
+16100,16,100,Tzintzuntzan,Occidente,-101.5592,19.61106
+16101,16,101,Tzitzio,Occidente,-100.92002,19.42907
+16102,16,102,Uruapan,Occidente,-102.0503,19.44532
+16103,16,103,Venustiano Carranza,Occidente,-102.65497,20.13745
+16104,16,104,Villamar,Occidente,-102.58635,19.99388
+16105,16,105,Vista Hermosa,Occidente,-102.48049,20.26518
+16106,16,106,Yurécuaro,Occidente,-102.2175,20.29969
+16107,16,107,Zacapu,Occidente,-101.82813,19.82284
+16108,16,108,Zamora,Occidente,-102.26367,20.03019
+16109,16,109,Zináparo,Occidente,-102.01139,20.18237
+16110,16,110,Zinapécuaro,Occidente,-100.76992,19.85301
+16111,16,111,Ziracuaretiro,Occidente,-101.92133,19.42632
+16112,16,112,Zitácuaro,Occidente,-100.34273,19.44261
+16113,16,113,José Sixto Verduzco,Occidente,-101.57701,20.25852
+17000,17,000,Morelos (sin municipio),Centro-Sur,-99.07514,18.74227
+17001,17,001,Amacuzac,Centro-Sur,-99.38729,18.59022
+17002,17,002,Atlatlahucan,Centro-Sur,-98.88967,18.93457
+17003,17,003,Axochiapan,Centro-Sur,-98.75662,18.5263
+17004,17,004,Ayala,Centro-Sur,-98.99165,18.71826
+17005,17,005,Coatlán del Río,Centro-Sur,-99.44872,18.73239
+17006,17,006,Cuautla,Centro-Sur,-98.96216,18.83532
+17007,17,007,Cuernavaca,Centro-Sur,-99.25753,18.94738
+17008,17,008,Emiliano Zapata,Centro-Sur,-99.18029,18.82227
+17009,17,009,Huitzilac,Centro-Sur,-99.23801,19.05313
+17010,17,010,Jantetelco,Centro-Sur,-98.76336,18.68845
+17011,17,011,Jiutepec,Centro-Sur,-99.16606,18.88524
+17012,17,012,Jojutla,Centro-Sur,-99.21391,18.58212
+17013,17,013,Jonacatepec de Leandro Valle,Centro-Sur,-98.81114,18.67876
+17014,17,014,Mazatepec,Centro-Sur,-99.37397,18.66311
+17015,17,015,Miacatlán,Centro-Sur,-99.3837,18.82088
+17016,17,016,Ocuituco,Centro-Sur,-98.77988,18.88133
+17017,17,017,Puente de Ixtla,Centro-Sur,-99.2946,18.50792
+17018,17,018,Temixco,Centro-Sur,-99.24937,18.84907
+17019,17,019,Tepalcingo,Centro-Sur,-98.88797,18.56667
+17020,17,020,Tepoztlán,Centro-Sur,-99.10525,18.98145
+17021,17,021,Tetecala,Centro-Sur,-99.41215,18.69674
+17022,17,022,Tetela del Volcán,Centro-Sur,-98.71434,18.92114
+17023,17,023,Tlalnepantla,Centro-Sur,-98.99529,19.03977
+17024,17,024,Tlaltizapán de Zapata,Centro-Sur,-99.13349,18.70531
+17025,17,025,Tlaquiltenango,Centro-Sur,-99.07038,18.49723
+17026,17,026,Tlayacapan,Centro-Sur,-98.97493,18.95889
+17027,17,027,Totolapan,Centro-Sur,-98.91006,18.99817
+17028,17,028,Xochitepec,Centro-Sur,-99.23143,18.75762
+17029,17,029,Yautepec,Centro-Sur,-99.06856,18.88207
+17030,17,030,Yecapixtla,Centro-Sur,-98.86163,18.85626
+17031,17,031,Zacatepec,Centro-Sur,-99.20391,18.65602
+17032,17,032,Zacualpan de Amilpas,Centro-Sur,-98.75417,18.80326
+17033,17,033,Temoac,Centro-Sur,-98.79014,18.75896
+17034,17,034,Coatetelco,Centro-Sur,-99.31806,18.73463
+17035,17,035,Xoxocotla,Centro-Sur,-99.24964,18.68537
+17036,17,036,Hueyapan,Centro-Sur,-98.68772,18.88328
+18000,18,000,Nayarit (sin municipio),Occidente,-104.83118,21.81357
+18001,18,001,Acaponeta,Occidente,-105.24522,22.44053
+18002,18,002,Ahuacatlán,Occidente,-104.54619,21.04261
+18003,18,003,Amatlán de Cañas,Occidente,-104.41874,20.86639
+18004,18,004,Compostela,Occidente,-105.05811,21.13651
+18005,18,005,Huajicori,Occidente,-105.24422,22.78866
+18006,18,006,Ixtlán del Río,Occidente,-104.30653,21.01555
+18007,18,007,Jala,Occidente,-104.40822,21.1842
+18008,18,008,Xalisco,Occidente,-104.95161,21.39638
+18009,18,009,Del Nayar,Occidente,-104.62109,22.14239
+18010,18,010,Rosamorada,Occidente,-105.21431,22.11766
+18011,18,011,Ruíz,Occidente,-104.88551,22.0093
+18012,18,012,San Blas,Occidente,-105.19094,21.59802
+18013,18,013,San Pedro Lagunillas,Occidente,-104.73564,21.15978
+18014,18,014,Santa María del Oro,Occidente,-104.59027,21.35683
+18015,18,015,Santiago Ixcuintla,Occidente,-105.39497,21.77528
+18016,18,016,Tecuala,Occidente,-105.51963,22.32558
+18017,18,017,Tepic,Occidente,-104.84035,21.62545
+18018,18,018,Tuxpan,Occidente,-105.32738,21.92868
+18019,18,019,La Yesca,Occidente,-104.1526,21.54199
+18020,18,020,Bahía de Banderas,Occidente,-105.25446,20.834
+19000,19,000,Nuevo León (sin municipio),Norte,-99.76436,25.72994
+19001,19,001,Abasolo,Norte,-100.40573,25.94039
+19002,19,002,Agualeguas,Norte,-99.75011,26.27733
+19003,19,003,Los Aldamas,Norte,-99.28047,26.10403
+19004,19,004,Allende,Norte,-100.02991,25.30173
+19005,19,005,Anáhuac,Norte,-99.99039,27.29766
+19006,19,006,Apodaca,Norte,-100.18691,25.79231
+19007,19,007,Aramberri,Norte,-99.8865,24.22522
+19008,19,008,Bustamante,Norte,-100.5602,26.58609
+19009,19,009,Cadereyta Jiménez,Norte,-99.91085,25.53896
+19010,19,010,El Carmen,Norte,-100.35866,25.89678
+19011,19,011,Cerralvo,Norte,-99.70567,26.07221
+19012,19,012,Ciénega de Flores,Norte,-100.18542,25.97762
+19013,19,013,China,Norte,-98.90434,25.40993
+19014,19,014,Doctor Arroyo,Norte,-100.30619,23.86004
+19015,19,015,Doctor Coss,Norte,-99.03366,25.96132
+19016,19,016,Doctor González,Norte,-99.80487,25.84923
+19017,19,017,Galeana,Norte,-100.39229,24.76048
+19018,19,018,García,Norte,-100.69313,25.79084
+19019,19,019,San Pedro Garza García,Norte,-100.37419,25.64069
+19020,19,020,General Bravo,Norte,-98.83934,25.794
+19021,19,021,General Escobedo,Norte,-100.32823,25.80949
+19022,19,022,General Terán,Norte,-99.41774,25.28448
+19023,19,023,General Treviño,Norte,-99.44382,26.20228
+19024,19,024,General Zaragoza,Norte,-99.67923,23.89772
+19025,19,025,General Zuazua,Norte,-100.1206,25.90296
+19026,19,026,Guadalupe,Norte,-100.20595,25.67234
+19027,19,027,Los Herreras,Norte,-99.41411,25.91617
+19028,19,028,Higueras,Norte,-99.99757,26.03313
+19029,19,029,Hualahuises,Norte,-99.67818,24.88388
+19030,19,030,Iturbide,Norte,-99.8816,24.70409
+19031,19,031,Juárez,Norte,-100.14943,25.60136
+19032,19,032,Lampazos de Naranjo,Norte,-100.37557,27.05427
+19033,19,033,Linares,Norte,-99.50098,24.84831
+19034,19,034,Marín,Norte,-100.02369,25.87004
+19035,19,035,Melchor Ocampo,Norte,-99.49347,26.04881
+19036,19,036,Mier y Noriega,Norte,-100.17906,23.43745
+19037,19,037,Mina,Norte,-100.78632,26.28553
+19038,19,038,Montemorelos,Norte,-99.83398,25.11627
+19039,19,039,Monterrey,Norte,-100.2753,25.57971
+19040,19,040,Parás,Norte,-99.57861,26.55234
+19041,19,041,Pesquería,Norte,-100.03462,25.75168
+19042,19,042,Los Ramones,Norte,-99.58767,25.65346
+19043,19,043,Rayones,Norte,-100.07751,25.00623
+19044,19,044,Sabinas Hidalgo,Norte,-100.19861,26.67099
+19045,19,045,Salinas Victoria,Norte,-100.27364,26.15107
+19046,19,046,San Nicolás de los Garza,Norte,-100.2707,25.7363
+19047,19,047,Hidalgo,Norte,-100.44809,25.99009
+19048,19,048,Santa Catarina,Norte,-100.45787,25.55829
+19049,19,049,Santiago,Norte,-100.19865,25.36223
+19050,19,050,Vallecillo,Norte,-99.89029,26.5907
+19051,19,051,Villaldama,Norte,-100.34788,26.4706
+20000,20,000,Oaxaca (sin municipio),Centro-Sur,-96.53035,16.8796
+20001,20,001,Abejones,Centro-Sur,-96.62324,17.48232
+20002,20,002,Acatlán de Pérez Figueroa,Centro-Sur,-96.54379,18.47386
+20003,20,003,Asunción Cacalotepec,Centro-Sur,-95.92974,17.03373
+20004,20,004,Asunción Cuyotepeji,Centro-Sur,-97.65018,17.93046
+20005,20,005,Asunción Ixtaltepec,Centro-Sur,-94.92015,16.6763
+20006,20,006,Asunción Nochixtlán,Centro-Sur,-97.16931,17.44215
+20007,20,007,Asunción Ocotlán,Centro-Sur,-96.72708,16.76306
+20008,20,008,Asunción Tlacolulita,Centro-Sur,-95.7766,16.30027
+20009,20,009,Ayotzintepec,Centro-Sur,-96.14281,17.70083
+20010,20,010,El Barrio de la Soledad,Centro-Sur,-95.06614,16.76657
+20011,20,011,Calihualá,Centro-Sur,-98.25413,17.54573
+20012,20,012,Candelaria Loxicha,Centro-Sur,-96.53304,15.88079
+20013,20,013,Ciénega de Zimatlán,Centro-Sur,-96.76508,16.89411
+20014,20,014,Ciudad Ixtepec,Centro-Sur,-95.0852,16.62452
+20015,20,015,Coatecas Altas,Centro-Sur,-96.63738,16.51243
+20016,20,016,Coicoyán de las Flores,Centro-Sur,-98.19331,17.14668
+20017,20,017,La Compañía,Centro-Sur,-96.82129,16.56902
+20018,20,018,Concepción Buenavista,Centro-Sur,-97.44252,17.99032
+20019,20,019,Concepción Pápalo,Centro-Sur,-96.85475,17.87184
+20020,20,020,Constancia del Rosario,Centro-Sur,-97.97076,17.03938
+20021,20,021,Cosolapa,Centro-Sur,-96.64709,18.60251
+20022,20,022,Cosoltepec,Centro-Sur,-97.81419,18.13975
+20023,20,023,Cuilápam de Guerrero,Centro-Sur,-96.79288,17.0045
+20024,20,024,Cuyamecalco Villa de Zaragoza,Centro-Sur,-96.85729,17.96713
+20025,20,025,Chahuites,Centro-Sur,-94.2051,16.27321
+20026,20,026,Chalcatongo de Hidalgo,Centro-Sur,-97.5618,17.00148
+20027,20,027,Chiquihuitlán de Benito Juárez,Centro-Sur,-96.74854,17.99258
+20028,20,028,Heroica Ciudad de Ejutla de Crespo,Centro-Sur,-96.73153,16.53456
+20029,20,029,Eloxochitlán de Flores Magón,Centro-Sur,-96.86946,18.19419
+20030,20,030,El Espinal,Centro-Sur,-95.05956,16.44906
+20031,20,031,Tamazulápam del Espíritu Santo,Centro-Sur,-96.02286,17.03767
+20032,20,032,Fresnillo de Trujano,Centro-Sur,-98.12946,17.92948
+20033,20,033,Guadalupe Etla,Centro-Sur,-96.80922,17.17674
+20034,20,034,Guadalupe de Ramírez,Centro-Sur,-98.15685,17.75253
+20035,20,035,Guelatao de Juárez,Centro-Sur,-96.50045,17.31642
+20036,20,036,Guevea de Humboldt,Centro-Sur,-95.36922,16.83232
+20037,20,037,Mesones Hidalgo,Centro-Sur,-98.01007,16.92596
+20038,20,038,Villa Hidalgo Yalálag,Centro-Sur,-96.16018,17.18114
+20039,20,039,Heroica Ciudad de Huajuapan de León,Centro-Sur,-97.78789,17.80433
+20040,20,040,Huautepec,Centro-Sur,-96.7878,18.07791
+20041,20,041,Huautla de Jiménez,Centro-Sur,-96.79857,18.15464
+20042,20,042,Ixtlán de Juárez,Centro-Sur,-96.34134,17.49111
+20043,20,043,Juchitán de Zaragoza,Centro-Sur,-94.90045,16.39503
+20044,20,044,Loma Bonita,Centro-Sur,-95.8875,18.0285
+20045,20,045,Magdalena Apasco,Centro-Sur,-96.81527,17.24724
+20046,20,046,Magdalena Jaltepec,Centro-Sur,-97.24301,17.27013
+20047,20,047,Santa Magdalena Jicotlán,Centro-Sur,-97.48157,17.80577
+20048,20,048,Magdalena Mixtepec,Centro-Sur,-96.90264,16.89977
+20049,20,049,Magdalena Ocotlán,Centro-Sur,-96.715,16.70861
+20050,20,050,Magdalena Peñasco,Centro-Sur,-97.55793,17.23637
+20051,20,051,Magdalena Teitipac,Centro-Sur,-96.56273,16.89615
+20052,20,052,Magdalena Tequisistlán,Centro-Sur,-95.61453,16.36324
+20053,20,053,Magdalena Tlacotepec,Centro-Sur,-95.24372,16.50459
+20054,20,054,Magdalena Zahuatlán,Centro-Sur,-97.22485,17.3904
+20055,20,055,Mariscala de Juárez,Centro-Sur,-98.14346,17.86954
+20056,20,056,Mártires de Tacubaya,Centro-Sur,-98.23669,16.54223
+20057,20,057,Matías Romero Avendaño,Centro-Sur,-95.06715,17.24541
+20058,20,058,Mazatlán Villa de Flores,Centro-Sur,-96.91369,18.03146
+20059,20,059,Miahuatlán de Porfirio Díaz,Centro-Sur,-96.58253,16.32261
+20060,20,060,Mixistlán de la Reforma,Centro-Sur,-96.09436,17.16483
+20061,20,061,Monjas,Centro-Sur,-96.63097,16.37275
+20062,20,062,Natividad,Centro-Sur,-96.4252,17.30127
+20063,20,063,Nazareno Etla,Centro-Sur,-96.83086,17.1816
+20064,20,064,Nejapa de Madero,Centro-Sur,-95.67075,16.75315
+20065,20,065,Ixpantepec Nieves,Centro-Sur,-97.99916,17.51746
+20066,20,066,Santiago Niltepec,Centro-Sur,-94.58806,16.52121
+20067,20,067,Oaxaca de Juárez,Centro-Sur,-96.7241,17.10731
+20068,20,068,Ocotlán de Morelos,Centro-Sur,-96.65724,16.78613
+20069,20,069,La Pe,Centro-Sur,-96.79427,16.6232
+20070,20,070,Pinotepa de Don Luis,Centro-Sur,-97.96361,16.40335
+20071,20,071,Pluma Hidalgo,Centro-Sur,-96.42983,15.91955
+20072,20,072,San José del Progreso,Centro-Sur,-96.66481,16.67072
+20073,20,073,Putla Villa de Guerrero,Centro-Sur,-97.89879,16.99116
+20074,20,074,Santa Catarina Quioquitani,Centro-Sur,-96.27287,16.30242
+20075,20,075,Reforma de Pineda,Centro-Sur,-94.451,16.41127
+20076,20,076,La Reforma,Centro-Sur,-97.86217,16.64712
+20077,20,077,Reyes Etla,Centro-Sur,-96.81798,17.20762
+20078,20,078,Rojas de Cuauhtémoc,Centro-Sur,-96.63516,17.00058
+20079,20,079,Salina Cruz,Centro-Sur,-95.22077,16.19513
+20080,20,080,San Agustín Amatengo,Centro-Sur,-96.81178,16.50698
+20081,20,081,San Agustín Atenango,Centro-Sur,-97.99628,17.58934
+20082,20,082,San Agustín Chayuco,Centro-Sur,-97.80564,16.44557
+20083,20,083,San Agustín de las Juntas,Centro-Sur,-96.68555,16.99211
+20084,20,084,San Agustín Etla,Centro-Sur,-96.70962,17.20773
+20085,20,085,San Agustín Loxicha,Centro-Sur,-96.61958,15.97613
+20086,20,086,San Agustín Tlacotepec,Centro-Sur,-97.51484,17.20083
+20087,20,087,San Agustín Yatareni,Centro-Sur,-96.67979,17.08065
+20088,20,088,San Andrés Cabecera Nueva,Centro-Sur,-97.79496,16.85915
+20089,20,089,San Andrés Dinicuiti,Centro-Sur,-97.67498,17.69758
+20090,20,090,San Andrés Huaxpaltepec,Centro-Sur,-97.91797,16.34736
+20091,20,091,San Andrés Huayápam,Centro-Sur,-96.66737,17.12768
+20092,20,092,San Andrés Ixtlahuaca,Centro-Sur,-96.88298,17.04251
+20093,20,093,San Andrés Lagunas,Centro-Sur,-97.52723,17.59012
+20094,20,094,San Andrés Nuxiño,Centro-Sur,-97.07006,17.24647
+20095,20,095,San Andrés Paxtlán,Centro-Sur,-96.51563,16.2114
+20096,20,096,San Andrés Sinaxtla,Centro-Sur,-97.27177,17.47442
+20097,20,097,San Andrés Solaga,Centro-Sur,-96.21842,17.27391
+20098,20,098,San Andrés Teotilálpam,Centro-Sur,-96.62735,17.92984
+20099,20,099,San Andrés Tepetlapa,Centro-Sur,-98.38782,17.65867
+20100,20,100,San Andrés Yaá,Centro-Sur,-96.13085,17.29313
+20101,20,101,San Andrés Zabache,Centro-Sur,-96.86082,16.60055
+20102,20,102,San Andrés Zautla,Centro-Sur,-96.90666,17.18722
+20103,20,103,San Antonino Castillo Velasco,Centro-Sur,-96.69017,16.81153
+20104,20,104,San Antonino el Alto,Centro-Sur,-97.01618,16.83413
+20105,20,105,San Antonino Monte Verde,Centro-Sur,-97.74405,17.51865
+20106,20,106,San Antonio Acutla,Centro-Sur,-97.49568,17.74288
+20107,20,107,San Antonio de la Cal,Centro-Sur,-96.69164,17.02502
+20108,20,108,San Antonio Huitepec,Centro-Sur,-97.14482,16.92033
+20109,20,109,San Antonio Nanahuatípam,Centro-Sur,-97.16484,18.14591
+20110,20,110,San Antonio Sinicahua,Centro-Sur,-97.57391,17.14631
+20111,20,111,San Antonio Tepetlapa,Centro-Sur,-98.04752,16.54106
+20112,20,112,San Baltazar Chichicápam,Centro-Sur,-96.5027,16.77535
+20113,20,113,San Baltazar Loxicha,Centro-Sur,-96.79998,16.01413
+20114,20,114,San Baltazar Yatzachi el Bajo,Centro-Sur,-96.21016,17.21683
+20115,20,115,San Bartolo Coyotepec,Centro-Sur,-96.68422,16.9476
+20116,20,116,San Bartolomé Ayautla,Centro-Sur,-96.65961,18.04101
+20117,20,117,San Bartolomé Loxicha,Centro-Sur,-96.7511,15.93546
+20118,20,118,San Bartolomé Quialana,Centro-Sur,-96.50024,16.89658
+20119,20,119,San Bartolomé Yucuañe,Centro-Sur,-97.45457,17.23467
+20120,20,120,San Bartolomé Zoogocho,Centro-Sur,-96.24347,17.24512
+20121,20,121,San Bartolo Soyaltepec,Centro-Sur,-97.31194,17.58796
+20122,20,122,San Bartolo Yautepec,Centro-Sur,-95.94452,16.42845
+20123,20,123,San Bernardo Mixtepec,Centro-Sur,-96.9086,16.83816
+20124,20,124,Heroica Villa de San Blas Atempa,Centro-Sur,-95.14322,16.3588
+20125,20,125,San Carlos Yautepec,Centro-Sur,-96.1403,16.49054
+20126,20,126,San Cristóbal Amatlán,Centro-Sur,-96.38473,16.30299
+20127,20,127,San Cristóbal Amoltepec,Centro-Sur,-97.58056,17.28238
+20128,20,128,San Cristóbal Lachirioag,Centro-Sur,-96.17465,17.35291
+20129,20,129,San Cristóbal Suchixtlahuaca,Centro-Sur,-97.38296,17.72521
+20130,20,130,San Dionisio del Mar,Centro-Sur,-94.72835,16.35053
+20131,20,131,San Dionisio Ocotepec,Centro-Sur,-96.29692,16.79825
+20132,20,132,San Dionisio Ocotlán,Centro-Sur,-96.66472,16.74949
+20133,20,133,San Esteban Atatlahuca,Centro-Sur,-97.69221,17.07693
+20134,20,134,San Felipe Jalapa de Díaz,Centro-Sur,-96.53348,18.07344
+20135,20,135,San Felipe Tejalápam,Centro-Sur,-96.8954,17.09613
+20136,20,136,San Felipe Usila,Centro-Sur,-96.50709,17.82045
+20137,20,137,San Francisco Cahuacuá,Centro-Sur,-97.33739,16.8791
+20138,20,138,San Francisco Cajonos,Centro-Sur,-96.24149,17.17954
+20139,20,139,San Francisco Chapulapa,Centro-Sur,-96.71334,17.88734
+20140,20,140,San Francisco Chindúa,Centro-Sur,-97.30841,17.41878
+20141,20,141,San Francisco del Mar,Centro-Sur,-94.6327,16.2745
+20142,20,142,San Francisco Huehuetlán,Centro-Sur,-96.93902,18.19193
+20143,20,143,San Francisco Ixhuatán,Centro-Sur,-94.52954,16.4015
+20144,20,144,San Francisco Jaltepetongo,Centro-Sur,-97.27523,17.34641
+20145,20,145,San Francisco Lachigoló,Centro-Sur,-96.59542,17.02607
+20146,20,146,San Francisco Logueche,Centro-Sur,-96.38025,16.37366
+20147,20,147,San Francisco Nuxaño,Centro-Sur,-97.33406,17.36288
+20148,20,148,San Francisco Ozolotepec,Centro-Sur,-96.19956,16.09437
+20149,20,149,San Francisco Sola,Centro-Sur,-96.90603,16.51546
+20150,20,150,San Francisco Telixtlahuaca,Centro-Sur,-96.92804,17.36722
+20151,20,151,San Francisco Teopan,Centro-Sur,-97.5499,17.8879
+20152,20,152,San Francisco Tlapancingo,Centro-Sur,-98.26339,17.47629
+20153,20,153,San Gabriel Mixtepec,Centro-Sur,-97.06522,16.04826
+20154,20,154,San Ildefonso Amatlán,Centro-Sur,-96.45359,16.28947
+20155,20,155,San Ildefonso Sola,Centro-Sur,-96.94759,16.59926
+20156,20,156,San Ildefonso Villa Alta,Centro-Sur,-96.12028,17.3871
+20157,20,157,San Jacinto Amilpas,Centro-Sur,-96.75915,17.10126
+20158,20,158,San Jacinto Tlacotepec,Centro-Sur,-97.36384,16.50396
+20159,20,159,San Jerónimo Coatlán,Centro-Sur,-96.94724,16.20671
+20160,20,160,San Jerónimo Silacayoapilla,Centro-Sur,-97.86908,17.80672
+20161,20,161,San Jerónimo Sosola,Centro-Sur,-97.04321,17.38608
+20162,20,162,San Jerónimo Taviche,Centro-Sur,-96.57167,16.70408
+20163,20,163,San Jerónimo Tecóatl,Centro-Sur,-96.92883,18.15812
+20164,20,164,San Jorge Nuchita,Centro-Sur,-98.09091,17.6895
+20165,20,165,San José Ayuquila,Centro-Sur,-97.972,17.95434
+20166,20,166,San José Chiltepec,Centro-Sur,-96.13703,17.94902
+20167,20,167,San José del Peñasco,Centro-Sur,-96.49337,16.28095
+20168,20,168,San José Estancia Grande,Centro-Sur,-98.25588,16.37646
+20169,20,169,San José Independencia,Centro-Sur,-96.64287,18.25787
+20170,20,170,San José Lachiguiri,Centro-Sur,-96.33074,16.40293
+20171,20,171,San José Tenango,Centro-Sur,-96.66791,18.16338
+20172,20,172,San Juan Achiutla,Centro-Sur,-97.50271,17.35101
+20173,20,173,San Juan Atepec,Centro-Sur,-96.49751,17.44837
+20174,20,174,Ánimas Trujano,Centro-Sur,-96.71589,16.98926
+20175,20,175,San Juan Bautista Atatlahuca,Centro-Sur,-96.76889,17.58895
+20176,20,176,San Juan Bautista Coixtlahuaca,Centro-Sur,-97.26002,17.71781
+20177,20,177,San Juan Bautista Cuicatlán,Centro-Sur,-96.9309,17.6748
+20178,20,178,San Juan Bautista Guelache,Centro-Sur,-96.75912,17.23835
+20179,20,179,San Juan Bautista Jayacatlán,Centro-Sur,-96.80641,17.44238
+20180,20,180,San Juan Bautista Lo de Soto,Centro-Sur,-98.34438,16.51791
+20181,20,181,San Juan Bautista Suchitepec,Centro-Sur,-97.64297,18.00005
+20182,20,182,San Juan Bautista Tlacoatzintepec,Centro-Sur,-96.59254,17.87305
+20183,20,183,San Juan Bautista Tlachichilco,Centro-Sur,-98.34745,17.61646
+20184,20,184,San Juan Bautista Tuxtepec,Centro-Sur,-96.0693,18.03906
+20185,20,185,San Juan Cacahuatepec,Centro-Sur,-98.18886,16.65669
+20186,20,186,San Juan Cieneguilla,Centro-Sur,-98.22394,17.84613
+20187,20,187,San Juan Coatzóspam,Centro-Sur,-96.71033,18.07619
+20188,20,188,San Juan Colorado,Centro-Sur,-97.91393,16.47816
+20189,20,189,San Juan Comaltepec,Centro-Sur,-95.93295,17.31188
+20190,20,190,San Juan Cotzocón,Centro-Sur,-95.48599,17.34794
+20191,20,191,San Juan Chicomezúchil,Centro-Sur,-96.50345,17.28181
+20192,20,192,San Juan Chilateca,Centro-Sur,-96.67178,16.82884
+20193,20,193,San Juan del Estado,Centro-Sur,-96.77913,17.32934
+20194,20,194,San Juan del Río,Centro-Sur,-96.16139,16.89174
+20195,20,195,San Juan Diuxi,Centro-Sur,-97.38903,17.27832
+20196,20,196,San Juan Evangelista Analco,Centro-Sur,-96.53922,17.40077
+20197,20,197,San Juan Guelavía,Centro-Sur,-96.5417,16.95394
+20198,20,198,San Juan Guichicovi,Centro-Sur,-95.10813,17.01682
+20199,20,199,San Juan Ihualtepec,Centro-Sur,-98.29285,17.73975
+20200,20,200,San Juan Juquila Mixes,Centro-Sur,-95.89527,16.87172
+20201,20,201,San Juan Juquila Vijanos,Centro-Sur,-96.3004,17.32183
+20202,20,202,San Juan Lachao,Centro-Sur,-97.11537,16.2116
+20203,20,203,San Juan Lachigalla,Centro-Sur,-96.54575,16.56849
+20204,20,204,San Juan Lajarcia,Centro-Sur,-95.91501,16.51689
+20205,20,205,San Juan Lalana,Centro-Sur,-95.82801,17.50795
+20206,20,206,San Juan de los Cués,Centro-Sur,-97.03708,18.04062
+20207,20,207,San Juan Mazatlán,Centro-Sur,-95.42882,17.127
+20208,20,208,San Juan Mixtepec,Centro-Sur,-97.84189,17.33437
+20209,20,209,San Juan Mixtepec,Centro-Sur,-96.31791,16.24615
+20210,20,210,San Juan Ñumí,Centro-Sur,-97.74271,17.41803
+20211,20,211,San Juan Ozolotepec,Centro-Sur,-96.24205,16.15541
+20212,20,212,San Juan Petlapa,Centro-Sur,-96.04588,17.49572
+20213,20,213,San Juan Quiahije,Centro-Sur,-97.36456,16.35139
+20214,20,214,San Juan Quiotepec,Centro-Sur,-96.63093,17.67113
+20215,20,215,San Juan Sayultepec,Centro-Sur,-97.29162,17.44789
+20216,20,216,San Juan Tabaá,Centro-Sur,-96.21882,17.31872
+20217,20,217,San Juan Tamazola,Centro-Sur,-97.17304,17.11253
+20218,20,218,San Juan Teita,Centro-Sur,-97.42757,17.07852
+20219,20,219,San Juan Teitipac,Centro-Sur,-96.60575,16.91121
+20220,20,220,San Juan Tepeuxila,Centro-Sur,-96.74003,17.73544
+20221,20,221,San Juan Teposcolula,Centro-Sur,-97.42042,17.58956
+20222,20,222,San Juan Yaeé,Centro-Sur,-96.28006,17.44164
+20223,20,223,San Juan Yatzona,Centro-Sur,-96.18249,17.41034
+20224,20,224,San Juan Yucuita,Centro-Sur,-97.26762,17.50944
+20225,20,225,San Lorenzo,Centro-Sur,-97.87846,16.41151
+20226,20,226,San Lorenzo Albarradas,Centro-Sur,-96.25895,16.90259
+20227,20,227,San Lorenzo Cacaotepec,Centro-Sur,-96.80659,17.13127
+20228,20,228,San Lorenzo Cuaunecuiltitla,Centro-Sur,-96.91533,18.22666
+20229,20,229,San Lorenzo Texmelúcan,Centro-Sur,-97.18391,16.52616
+20230,20,230,San Lorenzo Victoria,Centro-Sur,-98.12112,17.63643
+20231,20,231,San Lucas Camotlán,Centro-Sur,-95.69199,16.93443
+20232,20,232,San Lucas Ojitlán,Centro-Sur,-96.36875,18.06086
+20233,20,233,San Lucas Quiaviní,Centro-Sur,-96.45354,16.87888
+20234,20,234,San Lucas Zoquiápam,Centro-Sur,-96.91593,18.11406
+20235,20,235,San Luis Amatlán,Centro-Sur,-96.47884,16.4532
+20236,20,236,San Marcial Ozolotepec,Centro-Sur,-96.39259,16.05781
+20237,20,237,San Marcos Arteaga,Centro-Sur,-97.90925,17.73438
+20238,20,238,San Martín de los Cansecos,Centro-Sur,-96.72636,16.65616
+20239,20,239,San Martín Huamelúlpam,Centro-Sur,-97.60994,17.39271
+20240,20,240,San Martín Itunyoso,Centro-Sur,-97.85228,17.22721
+20241,20,241,San Martín Lachilá,Centro-Sur,-96.85779,16.61757
+20242,20,242,San Martín Peras,Centro-Sur,-98.24196,17.36216
+20243,20,243,San Martín Tilcajete,Centro-Sur,-96.6983,16.86726
+20244,20,244,San Martín Toxpalan,Centro-Sur,-97.03051,18.10726
+20245,20,245,San Martín Zacatepec,Centro-Sur,-98.07087,17.8159
+20246,20,246,San Mateo Cajonos,Centro-Sur,-96.19687,17.15296
+20247,20,247,Capulálpam de Méndez,Centro-Sur,-96.41515,17.32553
+20248,20,248,San Mateo del Mar,Centro-Sur,-95.07038,16.20444
+20249,20,249,San Mateo Yoloxochitlán,Centro-Sur,-96.86877,18.14168
+20250,20,250,San Mateo Etlatongo,Centro-Sur,-97.26271,17.42359
+20251,20,251,San Mateo Nejápam,Centro-Sur,-98.42776,17.6517
+20252,20,252,San Mateo Peñasco,Centro-Sur,-97.46825,17.14513
+20253,20,253,San Mateo Piñas,Centro-Sur,-96.33879,15.97153
+20254,20,254,San Mateo Río Hondo,Centro-Sur,-96.53541,16.13626
+20255,20,255,San Mateo Sindihui,Centro-Sur,-97.37089,17.00367
+20256,20,256,San Mateo Tlapiltepec,Centro-Sur,-97.42939,17.80506
+20257,20,257,San Melchor Betaza,Centro-Sur,-96.15152,17.2483
+20258,20,258,San Miguel Achiutla,Centro-Sur,-97.47298,17.30649
+20259,20,259,San Miguel Ahuehuetitlán,Centro-Sur,-98.33217,17.68283
+20260,20,260,San Miguel Aloápam,Centro-Sur,-96.70422,17.43402
+20261,20,261,San Miguel Amatitlán,Centro-Sur,-98.02948,17.89894
+20262,20,262,San Miguel Amatlán,Centro-Sur,-96.44511,17.14728
+20263,20,263,San Miguel Coatlán,Centro-Sur,-96.68496,16.16478
+20264,20,264,San Miguel Chicahua,Centro-Sur,-97.19815,17.62664
+20265,20,265,San Miguel Chimalapa,Centro-Sur,-94.20027,16.635
+20266,20,266,San Miguel del Puerto,Centro-Sur,-96.08526,15.94077
+20267,20,267,San Miguel del Río,Centro-Sur,-96.57553,17.3264
+20268,20,268,San Miguel Ejutla,Centro-Sur,-96.73388,16.60093
+20269,20,269,San Miguel el Grande,Centro-Sur,-97.60879,17.07669
+20270,20,270,San Miguel Huautla,Centro-Sur,-97.14616,17.75499
+20271,20,271,San Miguel Mixtepec,Centro-Sur,-96.94642,16.75561
+20272,20,272,San Miguel Panixtlahuaca,Centro-Sur,-97.39755,16.26349
+20273,20,273,San Miguel Peras,Centro-Sur,-97.01194,16.92846
+20274,20,274,San Miguel Piedras,Centro-Sur,-97.21583,16.98072
+20275,20,275,San Miguel Quetzaltepec,Centro-Sur,-95.76605,16.98507
+20276,20,276,San Miguel Santa Flor,Centro-Sur,-96.79715,17.92037
+20277,20,277,Villa Sola de Vega,Centro-Sur,-97.0587,16.44325
+20278,20,278,San Miguel Soyaltepec,Centro-Sur,-96.43634,18.22436
+20279,20,279,San Miguel Suchixtepec,Centro-Sur,-96.458,16.08037
+20280,20,280,Villa Talea de Castro,Centro-Sur,-96.23159,17.36646
+20281,20,281,San Miguel Tecomatlán,Centro-Sur,-97.29956,17.37845
+20282,20,282,San Miguel Tenango,Centro-Sur,-95.54779,16.23206
+20283,20,283,San Miguel Tequixtepec,Centro-Sur,-97.31462,17.8236
+20284,20,284,San Miguel Tilquiápam,Centro-Sur,-96.5654,16.77481
+20285,20,285,San Miguel Tlacamama,Centro-Sur,-98.10904,16.43983
+20286,20,286,San Miguel Tlacotepec,Centro-Sur,-98.01109,17.44181
+20287,20,287,San Miguel Tulancingo,Centro-Sur,-97.44544,17.7535
+20288,20,288,San Miguel Yotao,Centro-Sur,-96.3535,17.34809
+20289,20,289,San Nicolás,Centro-Sur,-96.74445,16.43117
+20290,20,290,San Nicolás Hidalgo,Centro-Sur,-98.12344,17.77495
+20291,20,291,San Pablo Coatlán,Centro-Sur,-96.7755,16.16571
+20292,20,292,San Pablo Cuatro Venados,Centro-Sur,-96.89082,16.98427
+20293,20,293,San Pablo Etla,Centro-Sur,-96.7329,17.16236
+20294,20,294,San Pablo Huitzo,Centro-Sur,-96.86573,17.3088
+20295,20,295,San Pablo Huixtepec,Centro-Sur,-96.8002,16.81889
+20296,20,296,San Pablo Macuiltianguis,Centro-Sur,-96.51917,17.5169
+20297,20,297,San Pablo Tijaltepec,Centro-Sur,-97.47318,17.008
+20298,20,298,San Pablo Villa de Mitla,Centro-Sur,-96.26506,17.00962
+20299,20,299,San Pablo Yaganiza,Centro-Sur,-96.21759,17.1251
+20300,20,300,San Pedro Amuzgos,Centro-Sur,-98.08375,16.67746
+20301,20,301,San Pedro Apóstol,Centro-Sur,-96.734,16.74081
+20302,20,302,San Pedro Atoyac,Centro-Sur,-97.96958,16.51671
+20303,20,303,San Pedro Cajonos,Centro-Sur,-96.26193,17.16318
+20304,20,304,San Pedro Coxcaltepec Cántaros,Centro-Sur,-97.13426,17.5073
+20305,20,305,San Pedro Comitancillo,Centro-Sur,-95.1674,16.46813
+20306,20,306,San Pedro el Alto,Centro-Sur,-96.47132,16.01479
+20307,20,307,San Pedro Huamelula,Centro-Sur,-95.77528,15.96676
+20308,20,308,San Pedro Huilotepec,Centro-Sur,-95.1444,16.24258
+20309,20,309,San Pedro Ixcatlán,Centro-Sur,-96.55124,18.15899
+20310,20,310,San Pedro Ixtlahuaca,Centro-Sur,-96.81847,17.05518
+20311,20,311,San Pedro Jaltepetongo,Centro-Sur,-97.02626,17.68668
+20312,20,312,San Pedro Jicayán,Centro-Sur,-98.04208,16.46939
+20313,20,313,San Pedro Jocotipac,Centro-Sur,-97.0723,17.76324
+20314,20,314,San Pedro Juchatengo,Centro-Sur,-97.10918,16.31916
+20315,20,315,San Pedro Mártir,Centro-Sur,-96.70485,16.74997
+20316,20,316,San Pedro Mártir Quiechapa,Centro-Sur,-96.2534,16.4382
+20317,20,317,San Pedro Mártir Yucuxaco,Centro-Sur,-97.64543,17.44998
+20318,20,318,San Pedro Mixtepec,Centro-Sur,-97.07062,15.94753
+20319,20,319,San Pedro Mixtepec,Centro-Sur,-96.21808,16.22505
+20320,20,320,San Pedro Molinos,Centro-Sur,-97.55178,17.10312
+20321,20,321,San Pedro Nopala,Centro-Sur,-97.57974,17.81536
+20322,20,322,San Pedro Ocopetatillo,Centro-Sur,-96.91192,18.1821
+20323,20,323,San Pedro Ocotepec,Centro-Sur,-95.83949,16.97221
+20324,20,324,San Pedro Pochutla,Centro-Sur,-96.41861,15.78634
+20325,20,325,San Pedro Quiatoni,Centro-Sur,-96.0345,16.76725
+20326,20,326,San Pedro Sochiápam,Centro-Sur,-96.64109,17.81971
+20327,20,327,San Pedro Tapanatepec,Centro-Sur,-94.31124,16.24217
+20328,20,328,San Pedro Taviche,Centro-Sur,-96.53264,16.63797
+20329,20,329,San Pedro Teozacoalco,Centro-Sur,-97.26202,16.96595
+20330,20,330,San Pedro Teutila,Centro-Sur,-96.62268,17.99232
+20331,20,331,San Pedro Tidaá,Centro-Sur,-97.39132,17.3375
+20332,20,332,San Pedro Topiltepec,Centro-Sur,-97.35983,17.45557
+20333,20,333,San Pedro Totolápam,Centro-Sur,-96.26384,16.65842
+20334,20,334,Villa de Tututepec,Centro-Sur,-97.53943,16.08668
+20335,20,335,San Pedro Yaneri,Centro-Sur,-96.37942,17.42403
+20336,20,336,San Pedro Yólox,Centro-Sur,-96.45725,17.63386
+20337,20,337,San Pedro y San Pablo Ayutla,Centro-Sur,-96.14471,17.02169
+20338,20,338,Villa de Etla,Centro-Sur,-96.79282,17.19412
+20339,20,339,San Pedro y San Pablo Teposcolula,Centro-Sur,-97.5022,17.5057
+20340,20,340,San Pedro y San Pablo Tequixtepec,Centro-Sur,-97.71525,18.08242
+20341,20,341,San Pedro Yucunama,Centro-Sur,-97.47919,17.57669
+20342,20,342,San Raymundo Jalpan,Centro-Sur,-96.75392,16.98376
+20343,20,343,San Sebastián Abasolo,Centro-Sur,-96.58973,16.99314
+20344,20,344,San Sebastián Coatlán,Centro-Sur,-96.89744,16.06048
+20345,20,345,San Sebastián Ixcapa,Centro-Sur,-98.14978,16.52581
+20346,20,346,San Sebastián Nicananduta,Centro-Sur,-97.67428,17.51971
+20347,20,347,San Sebastián Río Hondo,Centro-Sur,-96.42368,16.205
+20348,20,348,San Sebastián Tecomaxtlahuaca,Centro-Sur,-98.09578,17.3448
+20349,20,349,San Sebastián Teitipac,Centro-Sur,-96.63538,16.95378
+20350,20,350,San Sebastián Tutla,Centro-Sur,-96.67716,17.05505
+20351,20,351,San Simón Almolongas,Centro-Sur,-96.7211,16.39795
+20352,20,352,San Simón Zahuatlán,Centro-Sur,-97.99487,17.83373
+20353,20,353,Santa Ana,Centro-Sur,-96.7303,16.33427
+20354,20,354,Santa Ana Ateixtlahuaca,Centro-Sur,-96.88865,18.22376
+20355,20,355,Santa Ana Cuauhtémoc,Centro-Sur,-96.80166,17.99057
+20356,20,356,Santa Ana del Valle,Centro-Sur,-96.46492,17.01166
+20357,20,357,Santa Ana Tavela,Centro-Sur,-95.88374,16.60408
+20358,20,358,Santa Ana Tlapacoyan,Centro-Sur,-96.86322,16.7386
+20359,20,359,Santa Ana Yareni,Centro-Sur,-96.62278,17.39461
+20360,20,360,Santa Ana Zegache,Centro-Sur,-96.73184,16.8357
+20361,20,361,Santa Catalina Quierí,Centro-Sur,-96.22163,16.31738
+20362,20,362,Santa Catarina Cuixtla,Centro-Sur,-96.64834,16.29646
+20363,20,363,Santa Catarina Ixtepeji,Centro-Sur,-96.58016,17.19863
+20364,20,364,Santa Catarina Juquila,Centro-Sur,-97.32457,16.13772
+20365,20,365,Santa Catarina Lachatao,Centro-Sur,-96.49647,17.16173
+20366,20,366,Santa Catarina Loxicha,Centro-Sur,-96.71882,16.07118
+20367,20,367,Santa Catarina Mechoacán,Centro-Sur,-97.83923,16.33951
+20368,20,368,Santa Catarina Minas,Centro-Sur,-96.61553,16.79424
+20369,20,369,Santa Catarina Quiané,Centro-Sur,-96.73246,16.88342
+20370,20,370,Santa Catarina Tayata,Centro-Sur,-97.55197,17.33297
+20371,20,371,Santa Catarina Ticuá,Centro-Sur,-97.535,17.06206
+20372,20,372,Santa Catarina Yosonotú,Centro-Sur,-97.67106,17.00875
+20373,20,373,Santa Catarina Zapoquila,Centro-Sur,-97.56385,18.01402
+20374,20,374,Santa Cruz Acatepec,Centro-Sur,-96.88356,18.15734
+20375,20,375,Santa Cruz Amilpas,Centro-Sur,-96.68666,17.05065
+20376,20,376,Santa Cruz de Bravo,Centro-Sur,-98.21512,17.56689
+20377,20,377,Santa Cruz Itundujia,Centro-Sur,-97.67909,16.72667
+20378,20,378,Santa Cruz Mixtepec,Centro-Sur,-96.93636,16.80137
+20379,20,379,Santa Cruz Nundaco,Centro-Sur,-97.7178,17.15606
+20380,20,380,Santa Cruz Papalutla,Centro-Sur,-96.58438,16.95298
+20381,20,381,Santa Cruz Tacache de Mina,Centro-Sur,-98.16086,17.82591
+20382,20,382,Santa Cruz Tacahua,Centro-Sur,-97.46485,16.9158
+20383,20,383,Santa Cruz Tayata,Centro-Sur,-97.56908,17.37244
+20384,20,384,Santa Cruz Xitla,Centro-Sur,-96.66988,16.34098
+20385,20,385,Santa Cruz Xoxocotlán,Centro-Sur,-96.73685,17.01857
+20386,20,386,Santa Cruz Zenzontepec,Centro-Sur,-97.47071,16.46581
+20387,20,387,Santa Gertrudis,Centro-Sur,-96.79269,16.77828
+20388,20,388,Santa Inés del Monte,Centro-Sur,-96.8548,16.92182
+20389,20,389,Santa Inés Yatzeche,Centro-Sur,-96.75883,16.80628
+20390,20,390,Santa Lucía del Camino,Centro-Sur,-96.70051,17.06209
+20391,20,391,Santa Lucía Miahuatlán,Centro-Sur,-96.61499,16.18313
+20392,20,392,Santa Lucía Monteverde,Centro-Sur,-97.70732,16.94961
+20393,20,393,Santa Lucía Ocotlán,Centro-Sur,-96.66808,16.72455
+20394,20,394,Santa María Alotepec,Centro-Sur,-95.84203,17.08838
+20395,20,395,Santa María Apazco,Centro-Sur,-97.08009,17.62484
+20396,20,396,Santa María la Asunción,Centro-Sur,-96.81674,18.10396
+20397,20,397,Heroica Ciudad de Tlaxiaco,Centro-Sur,-97.68452,17.2449
+20398,20,398,Ayoquezco de Aldama,Centro-Sur,-96.89227,16.67748
+20399,20,399,Santa María Atzompa,Centro-Sur,-96.78432,17.08961
+20400,20,400,Santa María Camotlán,Centro-Sur,-97.64999,17.8696
+20401,20,401,Santa María Colotepec,Centro-Sur,-96.92224,15.86195
+20402,20,402,Santa María Cortijo,Centro-Sur,-98.32219,16.41956
+20403,20,403,Santa María Coyotepec,Centro-Sur,-96.7089,16.97178
+20404,20,404,Santa María Chachoápam,Centro-Sur,-97.23986,17.57639
+20405,20,405,Villa de Chilapa de Díaz,Centro-Sur,-97.63194,17.59682
+20406,20,406,Santa María Chilchotla,Centro-Sur,-96.74637,18.29347
+20407,20,407,Santa María Chimalapa,Centro-Sur,-94.38855,16.94693
+20408,20,408,Santa María del Rosario,Centro-Sur,-97.60476,17.34376
+20409,20,409,Santa María del Tule,Centro-Sur,-96.63438,17.02887
+20410,20,410,Santa María Ecatepec,Centro-Sur,-95.85754,16.2582
+20411,20,411,Santa María Guelacé,Centro-Sur,-96.61555,16.99189
+20412,20,412,Santa María Guienagati,Centro-Sur,-95.35512,16.70014
+20413,20,413,Santa María Huatulco,Centro-Sur,-96.22329,15.79208
+20414,20,414,Santa María Huazolotitlán,Centro-Sur,-97.91491,16.23386
+20415,20,415,Santa María Ipalapa,Centro-Sur,-97.9988,16.61666
+20416,20,416,Santa María Ixcatlán,Centro-Sur,-97.15838,17.85045
+20417,20,417,Santa María Jacatepec,Centro-Sur,-96.19298,17.88029
+20418,20,418,Santa María Jalapa del Marqués,Centro-Sur,-95.46444,16.52503
+20419,20,419,Santa María Jaltianguis,Centro-Sur,-96.54359,17.36153
+20420,20,420,Santa María Lachixío,Centro-Sur,-97.04059,16.74227
+20421,20,421,Santa María Mixtequilla,Centro-Sur,-95.27541,16.42475
+20422,20,422,Santa María Nativitas,Centro-Sur,-97.3321,17.64713
+20423,20,423,Santa María Nduayaco,Centro-Sur,-97.50059,17.41046
+20424,20,424,Santa María Ozolotepec,Centro-Sur,-96.34659,16.10116
+20425,20,425,Santa María Pápalo,Centro-Sur,-96.80112,17.80721
+20426,20,426,Santa María Peñoles,Centro-Sur,-97.06003,17.02624
+20427,20,427,Santa María Petapa,Centro-Sur,-95.09891,16.86075
+20428,20,428,Santa María Quiegolani,Centro-Sur,-96.04942,16.31237
+20429,20,429,Santa María Sola,Centro-Sur,-97.03789,16.55038
+20430,20,430,Santa María Tataltepec,Centro-Sur,-97.39564,17.13771
+20431,20,431,Santa María Tecomavaca,Centro-Sur,-97.11453,17.95864
+20432,20,432,Santa María Temaxcalapa,Centro-Sur,-96.15836,17.37916
+20433,20,433,Santa María Temaxcaltepec,Centro-Sur,-97.19027,16.17206
+20434,20,434,Santa María Teopoxco,Centro-Sur,-96.9736,18.1736
+20435,20,435,Santa María Tepantlali,Centro-Sur,-95.986,16.94991
+20436,20,436,Santa María Texcatitlán,Centro-Sur,-97.05193,17.72437
+20437,20,437,Santa María Tlahuitoltepec,Centro-Sur,-96.04705,17.11043
+20438,20,438,Santa María Tlalixtac,Centro-Sur,-96.72901,17.93362
+20439,20,439,Santa María Tonameca,Centro-Sur,-96.74726,15.78964
+20440,20,440,Santa María Totolapilla,Centro-Sur,-95.61465,16.62211
+20441,20,441,Santa María Xadani,Centro-Sur,-95.02643,16.36358
+20442,20,442,Santa María Yalina,Centro-Sur,-96.29453,17.2739
+20443,20,443,Santa María Yavesía,Centro-Sur,-96.41126,17.20078
+20444,20,444,Santa María Yolotepec,Centro-Sur,-97.45528,16.88619
+20445,20,445,Santa María Yosoyúa,Centro-Sur,-97.50015,17.10746
+20446,20,446,Santa María Yucuhiti,Centro-Sur,-97.80594,17.03904
+20447,20,447,Santa María Zacatepec,Centro-Sur,-97.97368,16.77871
+20448,20,448,Santa María Zaniza,Centro-Sur,-97.37242,16.64608
+20449,20,449,Santa María Zoquitlán,Centro-Sur,-96.37046,16.55898
+20450,20,450,Santiago Amoltepec,Centro-Sur,-97.52058,16.6319
+20451,20,451,Santiago Apoala,Centro-Sur,-97.13687,17.66641
+20452,20,452,Santiago Apóstol,Centro-Sur,-96.71688,16.80083
+20453,20,453,Santiago Astata,Centro-Sur,-95.61175,15.97806
+20454,20,454,Santiago Atitlán,Centro-Sur,-95.91892,17.09841
+20455,20,455,Santiago Ayuquililla,Centro-Sur,-97.96173,17.91145
+20456,20,456,Santiago Cacaloxtepec,Centro-Sur,-97.73274,17.73066
+20457,20,457,Santiago Camotlán,Centro-Sur,-96.16351,17.52041
+20458,20,458,Santiago Comaltepec,Centro-Sur,-96.34865,17.62341
+20459,20,459,Villa de Santiago Chazumba,Centro-Sur,-97.69585,18.20858
+20460,20,460,Santiago Choápam,Centro-Sur,-95.84537,17.32479
+20461,20,461,Santiago del Río,Centro-Sur,-98.10903,17.41946
+20462,20,462,Santiago Huajolotitlán,Centro-Sur,-97.68924,17.79616
+20463,20,463,Santiago Huauclilla,Centro-Sur,-97.06001,17.4636
+20464,20,464,Santiago Ihuitlán Plumas,Centro-Sur,-97.40952,17.84234
+20465,20,465,Santiago Ixcuintepec,Centro-Sur,-95.58228,16.92807
+20466,20,466,Santiago Ixtayutla,Centro-Sur,-97.69613,16.54561
+20467,20,467,Santiago Jamiltepec,Centro-Sur,-97.81499,16.12976
+20468,20,468,Santiago Jocotepec,Centro-Sur,-95.98266,17.65587
+20469,20,469,Santiago Juxtlahuaca,Centro-Sur,-98.01866,17.19424
+20470,20,470,Santiago Lachiguiri,Centro-Sur,-95.51502,16.79776
+20471,20,471,Santiago Lalopa,Centro-Sur,-96.2507,17.41397
+20472,20,472,Santiago Laollaga,Centro-Sur,-95.25933,16.62224
+20473,20,473,Santiago Laxopa,Centro-Sur,-96.3362,17.22063
+20474,20,474,Santiago Llano Grande,Centro-Sur,-98.26096,16.48543
+20475,20,475,Santiago Matatlán,Centro-Sur,-96.39116,16.84984
+20476,20,476,Santiago Miltepec,Centro-Sur,-97.71937,17.98004
+20477,20,477,Santiago Minas,Centro-Sur,-97.26618,16.43971
+20478,20,478,Santiago Nacaltepec,Centro-Sur,-96.91006,17.52419
+20479,20,479,Santiago Nejapilla,Centro-Sur,-97.38528,17.4257
+20480,20,480,Santiago Nundiche,Centro-Sur,-97.71739,17.3273
+20481,20,481,Santiago Nuyoó,Centro-Sur,-97.75226,17.00146
+20482,20,482,Santiago Pinotepa Nacional,Centro-Sur,-98.12139,16.2923
+20483,20,483,Santiago Suchilquitongo,Centro-Sur,-96.90491,17.23968
+20484,20,484,Santiago Tamazola,Centro-Sur,-98.23004,17.69382
+20485,20,485,Santiago Tapextla,Centro-Sur,-98.46614,16.33345
+20486,20,486,Villa Tejúpam de la Unión,Centro-Sur,-97.46365,17.66626
+20487,20,487,Santiago Tenango,Centro-Sur,-96.99628,17.28925
+20488,20,488,Santiago Tepetlapa,Centro-Sur,-97.3953,17.79151
+20489,20,489,Santiago Tetepec,Centro-Sur,-97.65971,16.30448
+20490,20,490,Santiago Texcalcingo,Centro-Sur,-96.97895,18.21496
+20491,20,491,Santiago Textitlán,Centro-Sur,-97.30779,16.73349
+20492,20,492,Santiago Tilantongo,Centro-Sur,-97.35335,17.21008
+20493,20,493,Santiago Tillo,Centro-Sur,-97.31665,17.46426
+20494,20,494,Santiago Tlazoyaltepec,Centro-Sur,-96.96981,17.0271
+20495,20,495,Santiago Xanica,Centro-Sur,-96.22396,15.99477
+20496,20,496,Santiago Xiacuí,Centro-Sur,-96.39391,17.27212
+20497,20,497,Santiago Yaitepec,Centro-Sur,-97.23762,16.20788
+20498,20,498,Santiago Yaveo,Centro-Sur,-95.47383,17.51941
+20499,20,499,Santiago Yolomécatl,Centro-Sur,-97.57373,17.47014
+20500,20,500,Santiago Yosondúa,Centro-Sur,-97.54417,16.83125
+20501,20,501,Santiago Yucuyachi,Centro-Sur,-98.22058,17.61571
+20502,20,502,Santiago Zacatepec,Centro-Sur,-95.88627,17.19162
+20503,20,503,Santiago Zoochila,Centro-Sur,-96.25141,17.21713
+20504,20,504,Nuevo Zoquiápam,Centro-Sur,-96.6496,17.26176
+20505,20,505,Santo Domingo Ingenio,Centro-Sur,-94.7485,16.5685
+20506,20,506,Santo Domingo Albarradas,Centro-Sur,-96.21013,17.07152
+20507,20,507,Santo Domingo Armenta,Centro-Sur,-98.3647,16.32868
+20508,20,508,Santo Domingo Chihuitán,Centro-Sur,-95.17403,16.63061
+20509,20,509,Santo Domingo de Morelos,Centro-Sur,-96.63499,15.83331
+20510,20,510,Santo Domingo Ixcatlán,Centro-Sur,-97.52388,16.90939
+20511,20,511,Santo Domingo Nuxaá,Centro-Sur,-97.03873,17.16648
+20512,20,512,Santo Domingo Ozolotepec,Centro-Sur,-96.30977,16.17023
+20513,20,513,Santo Domingo Petapa,Centro-Sur,-95.21789,16.85432
+20514,20,514,Santo Domingo Roayaga,Centro-Sur,-96.10085,17.33139
+20515,20,515,Santo Domingo Tehuantepec,Centro-Sur,-95.3897,16.20825
+20516,20,516,Santo Domingo Teojomulco,Centro-Sur,-97.27875,16.56209
+20517,20,517,Santo Domingo Tepuxtepec,Centro-Sur,-96.07513,16.92537
+20518,20,518,Santo Domingo Tlatayápam,Centro-Sur,-97.3399,17.40095
+20519,20,519,Santo Domingo Tomaltepec,Centro-Sur,-96.59149,17.07332
+20520,20,520,Santo Domingo Tonalá,Centro-Sur,-97.98603,17.68253
+20521,20,521,Santo Domingo Tonaltepec,Centro-Sur,-97.3512,17.6074
+20522,20,522,Santo Domingo Xagacía,Centro-Sur,-96.2808,17.12381
+20523,20,523,Santo Domingo Yanhuitlán,Centro-Sur,-97.3397,17.54231
+20524,20,524,Santo Domingo Yodohino,Centro-Sur,-97.70063,17.63473
+20525,20,525,Santo Domingo Zanatepec,Centro-Sur,-94.33713,16.46855
+20526,20,526,Santos Reyes Nopala,Centro-Sur,-97.187,16.08171
+20527,20,527,Santos Reyes Pápalo,Centro-Sur,-96.87531,17.79183
+20528,20,528,Santos Reyes Tepejillo,Centro-Sur,-97.94967,17.42517
+20529,20,529,Santos Reyes Yucuná,Centro-Sur,-98.00532,17.7723
+20530,20,530,Santo Tomás Jalieza,Centro-Sur,-96.63104,16.86069
+20531,20,531,Santo Tomás Mazaltepec,Centro-Sur,-96.91547,17.14346
+20532,20,532,Santo Tomás Ocotepec,Centro-Sur,-97.77696,17.11293
+20533,20,533,Santo Tomás Tamazulapan,Centro-Sur,-96.5831,16.24087
+20534,20,534,San Vicente Coatlán,Centro-Sur,-96.83413,16.3763
+20535,20,535,San Vicente Lachixío,Centro-Sur,-97.03834,16.65555
+20536,20,536,San Vicente Nuñú,Centro-Sur,-97.4354,17.43013
+20537,20,537,Silacayoápam,Centro-Sur,-98.15372,17.51435
+20538,20,538,Sitio de Xitlapehua,Centro-Sur,-96.53256,16.34964
+20539,20,539,Soledad Etla,Centro-Sur,-96.82691,17.1623
+20540,20,540,Villa de Tamazulápam del Progreso,Centro-Sur,-97.58084,17.68975
+20541,20,541,Tanetze de Zaragoza,Centro-Sur,-96.2943,17.38415
+20542,20,542,Taniche,Centro-Sur,-96.76921,16.57285
+20543,20,543,Tataltepec de Valdés,Centro-Sur,-97.53532,16.30954
+20544,20,544,Teococuilco de Marcos Pérez,Centro-Sur,-96.67334,17.33838
+20545,20,545,Teotitlán de Flores Magón,Centro-Sur,-97.16418,18.07497
+20546,20,546,Teotitlán del Valle,Centro-Sur,-96.50606,17.05351
+20547,20,547,Teotongo,Centro-Sur,-97.54277,17.7489
+20548,20,548,Tepelmeme Villa de Morelos,Centro-Sur,-97.2956,18.00332
+20549,20,549,"""Heroica Villa Tezoatlán de Segura y Luna","Cuna de la Independencia de Oaxaca""",Centro-Sur,-97.85801
+20550,20,550,San Jerónimo Tlacochahuaya,Centro-Sur,-96.54547,17.00629
+20551,20,551,Tlacolula de Matamoros,Centro-Sur,-96.47938,16.94625
+20552,20,552,Tlacotepec Plumas,Centro-Sur,-97.46526,17.86638
+20553,20,553,Tlalixtac de Cabrera,Centro-Sur,-96.62524,17.09959
+20554,20,554,Totontepec Villa de Morelos,Centro-Sur,-96.02099,17.24506
+20555,20,555,Trinidad Zaachila,Centro-Sur,-96.79295,16.93015
+20556,20,556,La Trinidad Vista Hermosa,Centro-Sur,-97.50309,17.77656
+20557,20,557,Unión Hidalgo,Centro-Sur,-94.82547,16.49479
+20558,20,558,Valerio Trujano,Centro-Sur,-96.98735,17.76543
+20559,20,559,San Juan Bautista Valle Nacional,Centro-Sur,-96.33486,17.79729
+20560,20,560,Villa Díaz Ordaz,Centro-Sur,-96.38051,17.05761
+20561,20,561,Yaxe,Centro-Sur,-96.44556,16.7087
+20562,20,562,Magdalena Yodocono de Porfirio Díaz,Centro-Sur,-97.39587,17.38125
+20563,20,563,Yogana,Centro-Sur,-96.7958,16.43787
+20564,20,564,Yutanduchi de Guerrero,Centro-Sur,-97.29657,17.07694
+20565,20,565,Villa de Zaachila,Centro-Sur,-96.75244,16.946
+20566,20,566,San Mateo Yucutindoo,Centro-Sur,-97.28368,16.81591
+20567,20,567,Zapotitlán Lagunas,Centro-Sur,-98.3967,17.77575
+20568,20,568,Zapotitlán Palmas,Centro-Sur,-97.83498,17.88238
+20569,20,569,Santa Inés de Zaragoza,Centro-Sur,-97.1455,17.27936
+20570,20,570,Zimatlán de Álvarez,Centro-Sur,-97.10864,16.76932
+21000,21,000,Puebla (sin municipio),Centro-Sur,-98.0576,18.66095
+21001,21,001,Acajete,Centro-Sur,-97.93118,19.10824
+21002,21,002,Acateno,Centro-Sur,-97.22203,20.11228
+21003,21,003,Acatlán,Centro-Sur,-98.06441,18.23397
+21004,21,004,Acatzingo,Centro-Sur,-97.76523,19.02578
+21005,21,005,Acteopan,Centro-Sur,-98.67824,18.76764
+21006,21,006,Ahuacatlán,Centro-Sur,-97.85941,20.0154
+21007,21,007,Ahuatlán,Centro-Sur,-98.283,18.57577
+21008,21,008,Ahuazotepec,Centro-Sur,-98.13315,20.0616
+21009,21,009,Ahuehuetitla,Centro-Sur,-98.19302,18.22107
+21010,21,010,Ajalpan,Centro-Sur,-97.21565,18.40247
+21011,21,011,Albino Zertuche,Centro-Sur,-98.53274,18.01718
+21012,21,012,Aljojuca,Centro-Sur,-97.51735,19.10208
+21013,21,013,Altepexi,Centro-Sur,-97.2987,18.35339
+21014,21,014,Amixtlán,Centro-Sur,-97.80077,20.053
+21015,21,015,Amozoc,Centro-Sur,-98.05367,19.04776
+21016,21,016,Aquixtla,Centro-Sur,-97.93038,19.77237
+21017,21,017,Atempan,Centro-Sur,-97.44121,19.81444
+21018,21,018,Atexcal,Centro-Sur,-97.68834,18.37534
+21019,21,019,Atlixco,Centro-Sur,-98.45122,18.89447
+21020,21,020,Atoyatempan,Centro-Sur,-97.90915,18.80566
+21021,21,021,Atzala,Centro-Sur,-98.54796,18.54812
+21022,21,022,Atzitzihuacán,Centro-Sur,-98.6058,18.80074
+21023,21,023,Atzitzintla,Centro-Sur,-97.30411,18.9341
+21024,21,024,Axutla,Centro-Sur,-98.39911,18.17998
+21025,21,025,Ayotoxco de Guerrero,Centro-Sur,-97.41009,20.08623
+21026,21,026,Calpan,Centro-Sur,-98.45229,19.10254
+21027,21,027,Caltepec,Centro-Sur,-97.46482,18.13627
+21028,21,028,Camocuautla,Centro-Sur,-97.75366,20.03167
+21029,21,029,Caxhuacan,Centro-Sur,-97.60719,20.07394
+21030,21,030,Coatepec,Centro-Sur,-97.73031,20.05553
+21031,21,031,Coatzingo,Centro-Sur,-98.16497,18.57125
+21032,21,032,Cohetzala,Centro-Sur,-98.79134,18.18487
+21033,21,033,Cohuecan,Centro-Sur,-98.7057,18.73183
+21034,21,034,Coronango,Centro-Sur,-98.2916,19.1348
+21035,21,035,Coxcatlán,Centro-Sur,-97.1267,18.22233
+21036,21,036,Coyomeapan,Centro-Sur,-96.9673,18.27408
+21037,21,037,Coyotepec,Centro-Sur,-97.81281,18.40108
+21038,21,038,Cuapiaxtla de Madero,Centro-Sur,-97.83102,18.91948
+21039,21,039,Cuautempan,Centro-Sur,-97.79183,19.91378
+21040,21,040,Cuautinchán,Centro-Sur,-98.047,18.96042
+21041,21,041,Cuautlancingo,Centro-Sur,-98.25042,19.10994
+21042,21,042,Cuayuca de Andrade,Centro-Sur,-98.19052,18.4469
+21043,21,043,Cuetzalan del Progreso,Centro-Sur,-97.50194,20.03272
+21044,21,044,Cuyoaco,Centro-Sur,-97.56976,19.58931
+21045,21,045,Chalchicomula de Sesma,Centro-Sur,-97.43179,18.97814
+21046,21,046,Chapulco,Centro-Sur,-97.40149,18.6055
+21047,21,047,Chiautla,Centro-Sur,-98.59281,18.26902
+21048,21,048,Chiautzingo,Centro-Sur,-98.50585,19.19104
+21049,21,049,Chiconcuautla,Centro-Sur,-97.96391,20.08847
+21050,21,050,Chichiquila,Centro-Sur,-97.0806,19.20928
+21051,21,051,Chietla,Centro-Sur,-98.6248,18.5122
+21052,21,052,Chigmecatitlán,Centro-Sur,-98.06234,18.64955
+21053,21,053,Chignahuapan,Centro-Sur,-98.13133,19.8245
+21054,21,054,Chignautla,Centro-Sur,-97.44689,19.71488
+21055,21,055,Chila,Centro-Sur,-97.87909,17.96006
+21056,21,056,Chila de la Sal,Centro-Sur,-98.4819,18.14387
+21057,21,057,Honey,Centro-Sur,-98.23963,20.26159
+21058,21,058,Chilchotla,Centro-Sur,-97.21139,19.25637
+21059,21,059,Chinantla,Centro-Sur,-98.27575,18.22762
+21060,21,060,Domingo Arenas,Centro-Sur,-98.44144,19.13192
+21061,21,061,Eloxochitlán,Centro-Sur,-96.94043,18.50537
+21062,21,062,Epatlán,Centro-Sur,-98.37697,18.61595
+21063,21,063,Esperanza,Centro-Sur,-97.35947,18.85297
+21064,21,064,Francisco Z. Mena,Centro-Sur,-97.82165,20.71244
+21065,21,065,General Felipe Ángeles,Centro-Sur,-97.66766,19.02277
+21066,21,066,Guadalupe,Centro-Sur,-98.14977,18.04897
+21067,21,067,Guadalupe Victoria,Centro-Sur,-97.38433,19.31713
+21068,21,068,Hermenegildo Galeana,Centro-Sur,-97.73098,20.1168
+21069,21,069,Huaquechula,Centro-Sur,-98.51561,18.77064
+21070,21,070,Huatlatlauca,Centro-Sur,-98.04208,18.6947
+21071,21,071,Huauchinango,Centro-Sur,-98.0548,20.15966
+21072,21,072,Huehuetla,Centro-Sur,-97.61965,20.11393
+21073,21,073,Huehuetlán el Chico,Centro-Sur,-98.70932,18.37742
+21074,21,074,Huejotzingo,Centro-Sur,-98.40764,19.17321
+21075,21,075,Hueyapan,Centro-Sur,-97.39367,19.92069
+21076,21,076,Hueytamalco,Centro-Sur,-97.30259,19.9763
+21077,21,077,Hueytlalpan,Centro-Sur,-97.6807,20.03724
+21078,21,078,Huitzilan de Serdán,Centro-Sur,-97.71202,19.93731
+21079,21,079,Huitziltepec,Centro-Sur,-97.86317,18.76309
+21080,21,080,Atlequizayan,Centro-Sur,-97.62638,20.01195
+21081,21,081,Ixcamilpa de Guerrero,Centro-Sur,-98.69878,18.0257
+21082,21,082,Ixcaquixtla,Centro-Sur,-97.83294,18.48146
+21083,21,083,Ixtacamaxtitlán,Centro-Sur,-97.85415,19.63412
+21084,21,084,Ixtepec,Centro-Sur,-97.63695,20.05067
+21085,21,085,Izúcar de Matamoros,Centro-Sur,-98.44659,18.50176
+21086,21,086,Jalpan,Centro-Sur,-97.85729,20.45243
+21087,21,087,Jolalpan,Centro-Sur,-98.91512,18.30725
+21088,21,088,Jonotla,Centro-Sur,-97.56585,20.04449
+21089,21,089,Jopala,Centro-Sur,-97.77852,20.20668
+21090,21,090,Juan C. Bonilla,Centro-Sur,-98.34578,19.11958
+21091,21,091,Juan Galindo,Centro-Sur,-97.997,20.22502
+21092,21,092,Juan N. Méndez,Centro-Sur,-97.73028,18.52238
+21093,21,093,Lafragua,Centro-Sur,-97.28742,19.28949
+21094,21,094,Libres,Centro-Sur,-97.67596,19.46949
+21095,21,095,La Magdalena Tlatlauquitepec,Centro-Sur,-98.09388,18.74743
+21096,21,096,Mazapiltepec de Juárez,Centro-Sur,-97.6833,19.17195
+21097,21,097,Mixtla,Centro-Sur,-97.89141,18.90733
+21098,21,098,Molcaxac,Centro-Sur,-97.88038,18.65169
+21099,21,099,Cañada Morelos,Centro-Sur,-97.43029,18.73385
+21100,21,100,Naupan,Centro-Sur,-98.08413,20.2761
+21101,21,101,Nauzontla,Centro-Sur,-97.58503,19.96114
+21102,21,102,Nealtican,Centro-Sur,-98.44749,19.0611
+21103,21,103,Nicolás Bravo,Centro-Sur,-97.3334,18.63049
+21104,21,104,Nopalucan,Centro-Sur,-97.83228,19.18929
+21105,21,105,Ocotepec,Centro-Sur,-97.67289,19.55937
+21106,21,106,Ocoyucan,Centro-Sur,-98.31805,18.93201
+21107,21,107,Olintla,Centro-Sur,-97.67189,20.11187
+21108,21,108,Oriental,Centro-Sur,-97.58677,19.33943
+21109,21,109,Pahuatlán,Centro-Sur,-98.13752,20.29315
+21110,21,110,Palmar de Bravo,Centro-Sur,-97.53607,18.83423
+21111,21,111,Pantepec,Centro-Sur,-97.87612,20.55316
+21112,21,112,Petlalcingo,Centro-Sur,-97.91613,18.06956
+21113,21,113,Piaxtla,Centro-Sur,-98.25215,18.15017
+21114,21,114,Puebla,Centro-Sur,-98.19817,18.97362
+21115,21,115,Quecholac,Centro-Sur,-97.63022,18.93513
+21116,21,116,Quimixtlán,Centro-Sur,-97.11532,19.26275
+21117,21,117,Rafael Lara Grajales,Centro-Sur,-97.82577,19.2651
+21118,21,118,Los Reyes de Juárez,Centro-Sur,-97.81063,18.94344
+21119,21,119,San Andrés Cholula,Centro-Sur,-98.29011,19.02326
+21120,21,120,San Antonio Cañada,Centro-Sur,-97.27323,18.49673
+21121,21,121,San Diego la Mesa Tochimiltzingo,Centro-Sur,-98.3413,18.77066
+21122,21,122,San Felipe Teotlalcingo,Centro-Sur,-98.52635,19.23045
+21123,21,123,San Felipe Tepatlán,Centro-Sur,-97.78645,20.11179
+21124,21,124,San Gabriel Chilac,Centro-Sur,-97.38353,18.32094
+21125,21,125,San Gregorio Atzompa,Centro-Sur,-98.34631,19.0114
+21126,21,126,San Jerónimo Tecuanipan,Centro-Sur,-98.37739,19.01289
+21127,21,127,San Jerónimo Xayacatlán,Centro-Sur,-97.92149,18.19962
+21128,21,128,San José Chiapa,Centro-Sur,-97.72815,19.25417
+21129,21,129,San José Miahuatlán,Centro-Sur,-97.29021,18.22881
+21130,21,130,San Juan Atenco,Centro-Sur,-97.55171,19.04812
+21131,21,131,San Juan Atzompa,Centro-Sur,-98.02536,18.74202
+21132,21,132,San Martín Texmelucan,Centro-Sur,-98.42927,19.26809
+21133,21,133,San Martín Totoltepec,Centro-Sur,-98.35641,18.65668
+21134,21,134,San Matías Tlalancaleca,Centro-Sur,-98.50288,19.34627
+21135,21,135,San Miguel Ixitlán,Centro-Sur,-97.77059,18.03023
+21136,21,136,San Miguel Xoxtla,Centro-Sur,-98.30643,19.17474
+21137,21,137,San Nicolás Buenos Aires,Centro-Sur,-97.48659,19.227
+21138,21,138,San Nicolás de los Ranchos,Centro-Sur,-98.56743,19.07884
+21139,21,139,San Pablo Anicano,Centro-Sur,-98.13373,18.14939
+21140,21,140,San Pedro Cholula,Centro-Sur,-98.3433,19.07268
+21141,21,141,San Pedro Yeloixtlahuaca,Centro-Sur,-98.04644,18.04028
+21142,21,142,San Salvador el Seco,Centro-Sur,-97.6139,19.15413
+21143,21,143,San Salvador el Verde,Centro-Sur,-98.6168,19.21772
+21144,21,144,San Salvador Huixcolotla,Centro-Sur,-97.77188,18.92587
+21145,21,145,San Sebastián Tlacotepec,Centro-Sur,-96.82411,18.38285
+21146,21,146,Santa Catarina Tlaltempan,Centro-Sur,-98.08551,18.60931
+21147,21,147,Santa Inés Ahuatempan,Centro-Sur,-98.04392,18.40424
+21148,21,148,Santa Isabel Cholula,Centro-Sur,-98.38596,18.97517
+21149,21,149,Santiago Miahuatlán,Centro-Sur,-97.44569,18.56566
+21150,21,150,Huehuetlán el Grande,Centro-Sur,-98.15718,18.7573
+21151,21,151,Santo Tomás Hueyotlipan,Centro-Sur,-97.86444,18.8878
+21152,21,152,Soltepec,Centro-Sur,-97.74762,19.12151
+21153,21,153,Tecali de Herrera,Centro-Sur,-97.96786,18.88505
+21154,21,154,Tecamachalco,Centro-Sur,-97.7329,18.86051
+21155,21,155,Tecomatlán,Centro-Sur,-98.32458,18.07968
+21156,21,156,Tehuacán,Centro-Sur,-97.39073,18.45255
+21157,21,157,Tehuitzingo,Centro-Sur,-98.30778,18.33858
+21158,21,158,Tenampulco,Centro-Sur,-97.40162,20.18909
+21159,21,159,Teopantlán,Centro-Sur,-98.25961,18.71858
+21160,21,160,Teotlalco,Centro-Sur,-98.81948,18.45989
+21161,21,161,Tepanco de López,Centro-Sur,-97.54343,18.57757
+21162,21,162,Tepango de Rodríguez,Centro-Sur,-97.792,20.01198
+21163,21,163,Tepatlaxco de Hidalgo,Centro-Sur,-98.00708,19.16076
+21164,21,164,Tepeaca,Centro-Sur,-97.86723,19.05034
+21165,21,165,Tepemaxalco,Centro-Sur,-98.63403,18.72958
+21166,21,166,Tepeojuma,Centro-Sur,-98.43157,18.72116
+21167,21,167,Tepetzintla,Centro-Sur,-97.85239,19.94889
+21168,21,168,Tepexco,Centro-Sur,-98.68101,18.63886
+21169,21,169,Tepexi de Rodríguez,Centro-Sur,-97.94557,18.51158
+21170,21,170,Tepeyahualco,Centro-Sur,-97.46454,19.46328
+21171,21,171,Tepeyahualco de Cuauhtémoc,Centro-Sur,-97.86789,18.80599
+21172,21,172,Tetela de Ocampo,Centro-Sur,-97.7839,19.8118
+21173,21,173,Teteles de Ávila Castillo,Centro-Sur,-97.44806,19.8545
+21174,21,174,Teziutlán,Centro-Sur,-97.36968,19.86822
+21175,21,175,Tianguismanalco,Centro-Sur,-98.471,19.00541
+21176,21,176,Tilapa,Centro-Sur,-98.53887,18.61166
+21177,21,177,Tlacotepec de Benito Juárez,Centro-Sur,-97.62359,18.66291
+21178,21,178,Tlacuilotepec,Centro-Sur,-97.98916,20.36398
+21179,21,179,Tlachichuca,Centro-Sur,-97.35164,19.12477
+21180,21,180,Tlahuapan,Centro-Sur,-98.58821,19.3728
+21181,21,181,Tlaltenango,Centro-Sur,-98.34276,19.1568
+21182,21,182,Tlanepantla,Centro-Sur,-97.88692,18.8559
+21183,21,183,Tlaola,Centro-Sur,-97.90924,20.1663
+21184,21,184,Tlapacoya,Centro-Sur,-97.83553,20.12908
+21185,21,185,Tlapanalá,Centro-Sur,-98.53631,18.68957
+21186,21,186,Tlatlauquitepec,Centro-Sur,-97.50865,19.81101
+21187,21,187,Tlaxco,Centro-Sur,-98.049,20.39936
+21188,21,188,Tochimilco,Centro-Sur,-98.61248,18.92258
+21189,21,189,Tochtepec,Centro-Sur,-97.82858,18.83399
+21190,21,190,Totoltepec de Guerrero,Centro-Sur,-97.84852,18.29224
+21191,21,191,Tulcingo,Centro-Sur,-98.3758,17.94861
+21192,21,192,Tuzamapan de Galeana,Centro-Sur,-97.51702,20.10783
+21193,21,193,Tzicatlacoyan,Centro-Sur,-98.07079,18.83248
+21194,21,194,Venustiano Carranza,Centro-Sur,-97.68721,20.50572
+21195,21,195,Vicente Guerrero,Centro-Sur,-97.17019,18.52107
+21196,21,196,Xayacatlán de Bravo,Centro-Sur,-97.95191,18.26224
+21197,21,197,Xicotepec,Centro-Sur,-97.90469,20.32816
+21198,21,198,Xicotlán,Centro-Sur,-98.60179,18.07737
+21199,21,199,Xiutetelco,Centro-Sur,-97.36579,19.72405
+21200,21,200,Xochiapulco,Centro-Sur,-97.64656,19.84829
+21201,21,201,Xochiltepec,Centro-Sur,-98.33276,18.64128
+21202,21,202,Xochitlán de Vicente Suárez,Centro-Sur,-97.65428,19.93835
+21203,21,203,Xochitlán Todos Santos,Centro-Sur,-97.77845,18.69577
+21204,21,204,Yaonáhuac,Centro-Sur,-97.42839,19.9445
+21205,21,205,Yehualtepec,Centro-Sur,-97.67996,18.77181
+21206,21,206,Zacapala,Centro-Sur,-98.07803,18.52928
+21207,21,207,Zacapoaxtla,Centro-Sur,-97.57648,19.8566
+21208,21,208,Zacatlán,Centro-Sur,-97.99913,19.96479
+21209,21,209,Zapotitlán,Centro-Sur,-97.51497,18.29147
+21210,21,210,Zapotitlán de Méndez,Centro-Sur,-97.71235,20.0065
+21211,21,211,Zaragoza,Centro-Sur,-97.56587,19.75926
+21212,21,212,Zautla,Centro-Sur,-97.68266,19.71512
+21213,21,213,Zihuateutla,Centro-Sur,-97.77866,20.31266
+21214,21,214,Zinacatepec,Centro-Sur,-97.22175,18.32603
+21215,21,215,Zongozotla,Centro-Sur,-97.74568,19.97384
+21216,21,216,Zoquiapan,Centro-Sur,-97.59981,20.00873
+21217,21,217,Zoquitlán,Centro-Sur,-97.00326,18.35581
+22000,22,000,Querétaro (sin municipio),Bajío,-100.11476,20.62513
+22001,22,001,Amealco de Bonfil,Bajío,-100.10923,20.1535
+22002,22,002,Pinal de Amoles,Bajío,-99.59984,21.10924
+22003,22,003,Arroyo Seco,Bajío,-99.66087,21.42361
+22004,22,004,Cadereyta de Montes,Bajío,-99.65859,20.78686
+22005,22,005,Colón,Bajío,-100.08373,20.76688
+22006,22,006,Corregidora,Bajío,-100.44198,20.49197
+22007,22,007,Ezequiel Montes,Bajío,-99.89258,20.66201
+22008,22,008,Huimilpan,Bajío,-100.3349,20.39085
+22009,22,009,Jalpan de Serra,Bajío,-99.33166,21.37463
+22010,22,010,Landa de Matamoros,Bajío,-99.18894,21.25486
+22011,22,011,El Marqués,Bajío,-100.27855,20.72059
+22012,22,012,Pedro Escobedo,Bajío,-100.17285,20.472
+22013,22,013,Peñamiller,Bajío,-99.79549,21.09336
+22014,22,014,Querétaro,Bajío,-100.46149,20.73113
+22015,22,015,San Joaquín,Bajío,-99.55746,20.94135
+22016,22,016,San Juan del Río,Bajío,-100.00053,20.36917
+22017,22,017,Tequisquiapan,Bajío,-99.94802,20.5558
+22018,22,018,Tolimán,Bajío,-99.96159,20.92668
+23000,23,000,Quintana Roo (sin municipio),Sureste,-88.37403,19.40793
+23001,23,001,Cozumel,Sureste,-86.9058,20.44596
+23002,23,002,Felipe Carrillo Puerto,Sureste,-88.11236,19.67763
+23003,23,003,Isla Mujeres,Sureste,-86.98794,21.36413
+23004,23,004,Othón P. Blanco,Sureste,-88.82223,18.39599
+23005,23,005,Benito Juárez,Sureste,-86.94081,21.07816
+23006,23,006,José María Morelos,Sureste,-88.88293,19.53571
+23007,23,007,Lázaro Cárdenas,Sureste,-87.38121,21.24265
+23008,23,008,Solidaridad,Sureste,-87.39951,20.55953
+23009,23,009,Tulum,Sureste,-87.67919,20.34436
+23010,23,010,Bacalar,Sureste,-88.56829,18.93718
+23011,23,011,Puerto Morelos,Sureste,-87.18246,20.97327
+24000,24,000,San Luis Potosí (sin municipio),Bajío,-100.63861,22.47884
+24001,24,001,Ahualulco del Sonido 13,Bajío,-101.24238,22.44715
+24002,24,002,Alaquines,Bajío,-99.60564,22.11642
+24003,24,003,Aquismón,Bajío,-99.09285,21.71468
+24004,24,004,Armadillo de los Infante,Bajío,-100.65224,22.27393
+24005,24,005,Cárdenas,Bajío,-99.68006,21.99966
+24006,24,006,Catorce,Bajío,-101.04906,23.64759
+24007,24,007,Cedral,Bajío,-100.67472,23.93214
+24008,24,008,Cerritos,Bajío,-100.23463,22.46634
+24009,24,009,Cerro de San Pedro,Bajío,-100.77738,22.18713
+24010,24,010,Ciudad del Maíz,Bajío,-99.71752,22.4392
+24011,24,011,Ciudad Fernández,Bajío,-100.04064,22.01507
+24012,24,012,Tancanhuitz,Bajío,-98.95959,21.63166
+24013,24,013,Ciudad Valles,Bajío,-99.05427,22.13178
+24014,24,014,Coxcatlán,Bajío,-98.90599,21.51522
+24015,24,015,Charcas,Bajío,-101.11814,23.21886
+24016,24,016,Ebano,Bajío,-98.45339,22.20887
+24017,24,017,Guadalcázar,Bajío,-100.30661,22.86706
+24018,24,018,Huehuetlán,Bajío,-98.99255,21.53216
+24019,24,019,Lagunillas,Bajío,-99.59718,21.60311
+24020,24,020,Matehuala,Bajío,-100.59306,23.54599
+24021,24,021,Mexquitic de Carmona,Bajío,-101.15068,22.24877
+24022,24,022,Moctezuma,Bajío,-101.15639,22.6979
+24023,24,023,Rayón,Bajío,-99.66162,21.80925
+24024,24,024,Rioverde,Bajío,-99.91856,21.82431
+24025,24,025,Salinas,Bajío,-101.68022,22.70535
+24026,24,026,San Antonio,Bajío,-98.87107,21.62227
+24027,24,027,San Ciro de Acosta,Bajío,-99.884,21.57129
+24028,24,028,San Luis Potosí,Bajío,-101.01672,22.08909
+24029,24,029,San Martín Chalchicuautla,Bajío,-98.59926,21.43489
+24030,24,030,San Nicolás Tolentino,Bajío,-100.4577,22.16946
+24031,24,031,Santa Catarina,Bajío,-99.41699,21.60302
+24032,24,032,Santa María del Río,Bajío,-100.49024,21.8434
+24033,24,033,Santo Domingo,Bajío,-101.70864,23.27763
+24034,24,034,San Vicente Tancuayalab,Bajío,-98.59786,21.79941
+24035,24,035,Soledad de Graciano Sánchez,Bajío,-100.86197,22.24903
+24036,24,036,Tamasopo,Bajío,-99.35636,22.03963
+24037,24,037,Tamazunchale,Bajío,-98.77734,21.24067
+24038,24,038,Tampacán,Bajío,-98.74526,21.41718
+24039,24,039,Tampamolón Corona,Bajío,-98.77017,21.56083
+24040,24,040,Tamuín,Bajío,-98.7343,22.08627
+24041,24,041,Tanlajás,Bajío,-98.82589,21.72579
+24042,24,042,Tanquián de Escobedo,Bajío,-98.674,21.61797
+24043,24,043,Tierra Nueva,Bajío,-100.51737,21.67374
+24044,24,044,Vanegas,Bajío,-100.99579,24.05319
+24045,24,045,Venado,Bajío,-101.13795,22.92836
+24046,24,046,Villa de Arriaga,Bajío,-101.24927,21.97265
+24047,24,047,Villa de Guadalupe,Bajío,-100.72348,23.14372
+24048,24,048,Villa de la Paz,Bajío,-100.75639,23.665
+24049,24,049,Villa de Ramos,Bajío,-101.95727,22.90198
+24050,24,050,Villa de Reyes,Bajío,-100.96681,21.86642
+24051,24,051,Villa Hidalgo,Bajío,-100.64944,22.47288
+24052,24,052,Villa Juárez,Bajío,-100.21231,22.29184
+24053,24,053,Axtla de Terrazas,Bajío,-98.87742,21.42581
+24054,24,054,Xilitla,Bajío,-99.0196,21.38635
+24055,24,055,Zaragoza,Bajío,-100.6765,22.00834
+24056,24,056,Villa de Arista,Bajío,-100.80427,22.66007
+24057,24,057,Matlapa,Bajío,-98.83306,21.32858
+24058,24,058,El Naranjo,Bajío,-99.36492,22.5001
+25000,25,000,Sinaloa (sin municipio),Noroeste,-107.7826,25.38247
+25001,25,001,Ahome,Noroeste,-109.19205,25.87571
+25002,25,002,Angostura,Noroeste,-108.16396,25.16527
+25003,25,003,Badiraguato,Noroeste,-107.3844,25.59125
+25004,25,004,Concordia,Noroeste,-106.01003,23.44081
+25005,25,005,Cosalá,Noroeste,-106.79961,24.48161
+25006,25,006,Culiacán,Noroeste,-107.25677,24.6026
+25007,25,007,Choix,Noroeste,-108.25178,26.69714
+25008,25,008,Elota,Noroeste,-106.84201,24.04324
+25009,25,009,Escuinapa,Noroeste,-105.68589,22.72409
+25010,25,010,El Fuerte,Noroeste,-108.69592,26.29813
+25011,25,011,Guasave,Noroeste,-108.56285,25.52125
+25012,25,012,Mazatlán,Noroeste,-106.37241,23.47779
+25013,25,013,Mocorito,Noroeste,-107.82809,25.49414
+25014,25,014,Rosario,Noroeste,-105.79059,23.08238
+25015,25,015,Salvador Alvarado,Noroeste,-108.07761,25.51016
+25016,25,016,San Ignacio,Noroeste,-106.37025,23.95451
+25017,25,017,Sinaloa,Noroeste,-108.11021,25.96868
+25018,25,018,Navolato,Noroeste,-107.76479,24.72311
+26000,26,000,Sonora (sin municipio),Noroeste,-110.71909,29.78062
+26001,26,001,Aconchi,Noroeste,-110.26131,29.78825
+26002,26,002,Agua Prieta,Noroeste,-109.1804,31.10612
+26003,26,003,Álamos,Noroeste,-108.87691,27.05128
+26004,26,004,Altar,Noroeste,-111.92535,31.21901
+26005,26,005,Arivechi,Noroeste,-109.03139,28.8674
+26006,26,006,Arizpe,Noroeste,-110.20209,30.3967
+26007,26,007,Atil,Noroeste,-111.55581,30.80209
+26008,26,008,Bacadéhuachi,Noroeste,-109.10083,29.85578
+26009,26,009,Bacanora,Noroeste,-109.40068,28.89854
+26010,26,010,Bacerac,Noroeste,-108.79429,30.34899
+26011,26,011,Bacoachi,Noroeste,-109.98861,30.67411
+26012,26,012,Bácum,Noroeste,-110.18222,27.89453
+26013,26,013,Banámichi,Noroeste,-110.25323,30.03653
+26014,26,014,Baviácora,Noroeste,-110.11975,29.62454
+26015,26,015,Bavispe,Noroeste,-109.0046,30.61786
+26016,26,016,Benjamín Hill,Noroeste,-111.21297,30.19484
+26017,26,017,Caborca,Noroeste,-112.53954,30.82474
+26018,26,018,Cajeme,Noroeste,-109.86934,27.9139
+26019,26,019,Cananea,Noroeste,-110.23535,30.98838
+26020,26,020,Carbó,Noroeste,-111.06632,29.66974
+26021,26,021,La Colorada,Noroeste,-110.50907,28.73503
+26022,26,022,Cucurpe,Noroeste,-110.6305,30.41175
+26023,26,023,Cumpas,Noroeste,-109.80986,30.06749
+26024,26,024,Divisaderos,Noroeste,-109.39414,29.62734
+26025,26,025,Empalme,Noroeste,-110.66857,28.00866
+26026,26,026,Etchojoa,Noroeste,-109.68227,27.00846
+26027,26,027,Fronteras,Noroeste,-109.64797,30.84852
+26028,26,028,Granados,Noroeste,-109.32375,29.76437
+26029,26,029,Guaymas,Noroeste,-110.76207,28.33412
+26030,26,030,Hermosillo,Noroeste,-111.40231,29.02765
+26031,26,031,Huachinera,Noroeste,-108.93984,30.1434
+26032,26,032,Huásabas,Noroeste,-109.38661,29.9569
+26033,26,033,Huatabampo,Noroeste,-109.1481,26.4357
+26034,26,034,Huépac,Noroeste,-110.39799,29.96108
+26035,26,035,Imuris,Noroeste,-110.73364,30.87022
+26036,26,036,Magdalena,Noroeste,-110.9293,30.6288
+26037,26,037,Mazatán,Noroeste,-110.14866,28.99471
+26038,26,038,Moctezuma,Noroeste,-109.72372,29.72844
+26039,26,039,Naco,Noroeste,-109.86176,31.22281
+26040,26,040,Nácori Chico,Noroeste,-108.85188,29.63529
+26041,26,041,Nacozari de García,Noroeste,-109.56173,30.44568
+26042,26,042,Navojoa,Noroeste,-109.40279,27.07806
+26043,26,043,Nogales,Noroeste,-111.00256,31.19871
+26044,26,044,Ónavas,Noroeste,-109.48936,28.46718
+26045,26,045,Opodepe,Noroeste,-110.7468,30.04436
+26046,26,046,Oquitoa,Noroeste,-111.6757,30.71535
+26047,26,047,Pitiquito,Noroeste,-112.08508,29.92671
+26048,26,048,Puerto Peñasco,Noroeste,-113.30529,31.52623
+26049,26,049,Quiriego,Noroeste,-109.50294,27.55177
+26050,26,050,Rayón,Noroeste,-110.54493,29.75341
+26051,26,051,Rosario,Noroeste,-109.31829,28.03263
+26052,26,052,Sahuaripa,Noroeste,-108.94946,29.14389
+26053,26,053,San Felipe de Jesús,Noroeste,-110.32952,29.87644
+26054,26,054,San Javier,Noroeste,-109.75885,28.60945
+26055,26,055,San Luis Río Colorado,Noroeste,-114.3507,32.01716
+26056,26,056,San Miguel de Horcasitas,Noroeste,-110.72795,29.47467
+26057,26,057,San Pedro de la Cueva,Noroeste,-109.69564,29.22151
+26058,26,058,Santa Ana,Noroeste,-111.05889,30.45167
+26059,26,059,Santa Cruz,Noroeste,-110.54197,31.18927
+26060,26,060,Sáric,Noroeste,-111.4549,31.31549
+26061,26,061,Soyopa,Noroeste,-109.63863,28.81971
+26062,26,062,Suaqui Grande,Noroeste,-109.88846,28.37864
+26063,26,063,Tepache,Noroeste,-109.52939,29.46468
+26064,26,064,Trincheras,Noroeste,-111.61561,30.31333
+26065,26,065,Tubutama,Noroeste,-111.3602,30.87747
+26066,26,066,Ures,Noroeste,-110.32904,29.34216
+26067,26,067,Villa Hidalgo,Noroeste,-109.33385,30.23428
+26068,26,068,Villa Pesqueira,Noroeste,-109.96795,29.07667
+26069,26,069,Yécora,Noroeste,-109.07149,28.43314
+26070,26,070,General Plutarco Elías Calles,Noroeste,-112.86297,31.69975
+26071,26,071,Benito Juárez,Noroeste,-109.88572,27.08833
+26072,26,072,San Ignacio Río Muerto,Noroeste,-110.332,27.36248
+27000,27,000,Tabasco (sin municipio),Sureste,-92.64314,17.98929
+27001,27,001,Balancán,Sureste,-91.31164,17.80481
+27002,27,002,Cárdenas,Sureste,-93.62751,18.20746
+27003,27,003,Centla,Sureste,-92.55107,18.39037
+27004,27,004,Centro,Sureste,-92.80585,18.00272
+27005,27,005,Comalcalco,Sureste,-93.37993,18.28887
+27006,27,006,Cunduacán,Sureste,-93.22382,18.07541
+27007,27,007,Emiliano Zapata,Sureste,-91.74364,17.81978
+27008,27,008,Huimanguillo,Sureste,-93.71826,17.84765
+27009,27,009,Jalapa,Sureste,-92.78726,17.76342
+27010,27,010,Jalpa de Méndez,Sureste,-93.09182,18.189
+27011,27,011,Jonuta,Sureste,-92.18301,18.02674
+27012,27,012,Macuspana,Sureste,-92.45868,17.84523
+27013,27,013,Nacajuca,Sureste,-92.95021,18.19407
+27014,27,014,Paraíso,Sureste,-93.20421,18.3811
+27015,27,015,Tacotalpa,Sureste,-92.73274,17.52797
+27016,27,016,Teapa,Sureste,-92.96894,17.63018
+27017,27,017,Tenosique,Sureste,-91.29331,17.41534
+28000,28,000,Tamaulipas (sin municipio),Norte,-98.57249,24.21895
+28001,28,001,Abasolo,Norte,-98.19977,24.21237
+28002,28,002,Aldama,Norte,-98.03035,23.02533
+28003,28,003,Altamira,Norte,-98.08461,22.5272
+28004,28,004,Antiguo Morelos,Norte,-99.08222,22.56105
+28005,28,005,Burgos,Norte,-98.84632,24.92852
+28006,28,006,Bustamante,Norte,-99.81182,23.34147
+28007,28,007,Camargo,Norte,-98.85895,26.18382
+28008,28,008,Casas,Norte,-98.64017,23.52189
+28009,28,009,Ciudad Madero,Norte,-97.82854,22.28015
+28010,28,010,Cruillas,Norte,-98.47726,24.62824
+28011,28,011,Gómez Farías,Norte,-99.19742,23.02828
+28012,28,012,González,Norte,-98.55467,22.78754
+28013,28,013,Güémez,Norte,-99.00498,23.87509
+28014,28,014,Guerrero,Norte,-99.44757,26.81967
+28015,28,015,Gustavo Díaz Ordaz,Norte,-98.64127,26.13597
+28016,28,016,Hidalgo,Norte,-99.38047,24.19557
+28017,28,017,Jaumave,Norte,-99.43921,23.57224
+28018,28,018,Jiménez,Norte,-98.52657,24.27305
+28019,28,019,Llera,Norte,-98.95921,23.31184
+28020,28,020,Mainero,Norte,-99.6037,24.57557
+28021,28,021,El Mante,Norte,-98.82986,22.48421
+28022,28,022,Matamoros,Norte,-97.51834,25.61076
+28023,28,023,Méndez,Norte,-98.44706,25.22903
+28024,28,024,Mier,Norte,-99.25699,26.41523
+28025,28,025,Miguel Alemán,Norte,-99.07579,26.19276
+28026,28,026,Miquihuana,Norte,-99.77512,23.62256
+28027,28,027,Nuevo Laredo,Norte,-99.65494,27.48528
+28028,28,028,Nuevo Morelos,Norte,-99.20403,22.50762
+28029,28,029,Ocampo,Norte,-99.33552,22.82983
+28030,28,030,Padilla,Norte,-98.82979,24.03813
+28031,28,031,Palmillas,Norte,-99.59004,23.30301
+28032,28,032,Reynosa,Norte,-98.37331,25.81039
+28033,28,033,Río Bravo,Norte,-98.05631,25.75903
+28034,28,034,San Carlos,Norte,-98.98862,24.47467
+28035,28,035,San Fernando,Norte,-97.95808,24.8912
+28036,28,036,San Nicolás,Norte,-98.76971,24.63218
+28037,28,037,Soto la Marina,Norte,-98.02526,23.73299
+28038,28,038,Tampico,Norte,-97.89722,22.27961
+28039,28,039,Tula,Norte,-99.77629,22.93976
+28040,28,040,Valle Hermoso,Norte,-97.84472,25.70099
+28041,28,041,Victoria,Norte,-99.15134,23.70746
+28042,28,042,Villagrán,Norte,-99.33782,24.56055
+28043,28,043,Xicoténcatl,Norte,-98.90714,23.01244
+29000,29,000,Tlaxcala (sin municipio),Centro-Sur,-98.16838,19.42831
+29001,29,001,Amaxac de Guerrero,Centro-Sur,-98.1668,19.35585
+29002,29,002,Apetatitlán de Antonio Carvajal,Centro-Sur,-98.1934,19.35285
+29003,29,003,Atlangatepec,Centro-Sur,-98.18523,19.54021
+29004,29,004,Atltzayanca,Centro-Sur,-97.79288,19.41241
+29005,29,005,Apizaco,Centro-Sur,-98.1361,19.41136
+29006,29,006,Calpulalpan,Centro-Sur,-98.59012,19.56219
+29007,29,007,El Carmen Tequexquitla,Centro-Sur,-97.66729,19.33914
+29008,29,008,Cuapiaxtla,Centro-Sur,-97.78013,19.32674
+29009,29,009,Cuaxomulco,Centro-Sur,-98.09272,19.34746
+29010,29,010,Chiautempan,Centro-Sur,-98.1359,19.28456
+29011,29,011,Muñoz de Domingo Arenas,Centro-Sur,-98.20283,19.4889
+29012,29,012,Españita,Centro-Sur,-98.44238,19.44494
+29013,29,013,Huamantla,Centro-Sur,-97.9391,19.34194
+29014,29,014,Hueyotlipan,Centro-Sur,-98.33964,19.49252
+29015,29,015,Ixtacuixtla de Mariano Matamoros,Centro-Sur,-98.38293,19.35565
+29016,29,016,Ixtenco,Centro-Sur,-97.91146,19.25767
+29017,29,017,Mazatecochco de José María Morelos,Centro-Sur,-98.16438,19.19185
+29018,29,018,Contla de Juan Cuamatzi,Centro-Sur,-98.14428,19.32397
+29019,29,019,Tepetitla de Lardizábal,Centro-Sur,-98.3752,19.27766
+29020,29,020,Sanctórum de Lázaro Cárdenas,Centro-Sur,-98.45226,19.50838
+29021,29,021,Nanacamilpa de Mariano Arista,Centro-Sur,-98.55339,19.49866
+29022,29,022,Acuamanala de Miguel Hidalgo,Centro-Sur,-98.18301,19.22086
+29023,29,023,Natívitas,Centro-Sur,-98.33425,19.22553
+29024,29,024,Panotla,Centro-Sur,-98.2825,19.36249
+29025,29,025,San Pablo del Monte,Centro-Sur,-98.13628,19.1544
+29026,29,026,Santa Cruz Tlaxcala,Centro-Sur,-98.13663,19.35167
+29027,29,027,Tenancingo,Centro-Sur,-98.19196,19.15076
+29028,29,028,Teolocholco,Centro-Sur,-98.08662,19.21582
+29029,29,029,Tepeyanco,Centro-Sur,-98.22767,19.24743
+29030,29,030,Terrenate,Centro-Sur,-97.93488,19.48362
+29031,29,031,Tetla de la Solidaridad,Centro-Sur,-98.07601,19.47671
+29032,29,032,Tetlatlahuca,Centro-Sur,-98.28816,19.23396
+29033,29,033,Tlaxcala,Centro-Sur,-98.23962,19.29877
+29034,29,034,Tlaxco,Centro-Sur,-98.10393,19.61345
+29035,29,035,Tocatlán,Centro-Sur,-98.01617,19.38933
+29036,29,036,Totolac,Centro-Sur,-98.2433,19.33507
+29037,29,037,Ziltlaltépec de Trinidad Sánchez Santos,Centro-Sur,-97.93,19.20464
+29038,29,038,Tzompantepec,Centro-Sur,-98.08556,19.38126
+29039,29,039,Xaloztoc,Centro-Sur,-98.0351,19.41639
+29040,29,040,Xaltocan,Centro-Sur,-98.23742,19.4241
+29041,29,041,Papalotla de Xicohténcatl,Centro-Sur,-98.21324,19.1627
+29042,29,042,Xicohtzinco,Centro-Sur,-98.2413,19.1704
+29043,29,043,Yauhquemehcan,Centro-Sur,-98.17888,19.40196
+29044,29,044,Zacatelco,Centro-Sur,-98.25631,19.19146
+29045,29,045,Benito Juárez,Centro-Sur,-98.40026,19.59411
+29046,29,046,Emiliano Zapata,Centro-Sur,-97.92575,19.56358
+29047,29,047,Lázaro Cárdenas,Centro-Sur,-97.99672,19.52609
+29048,29,048,La Magdalena Tlaltelulco,Centro-Sur,-98.19336,19.27749
+29049,29,049,San Damián Texóloc,Centro-Sur,-98.29011,19.27863
+29050,29,050,San Francisco Tetlanohcan,Centro-Sur,-98.06091,19.25618
+29051,29,051,San Jerónimo Zacualpan,Centro-Sur,-98.26466,19.24869
+29052,29,052,San José Teacalco,Centro-Sur,-98.04885,19.32795
+29053,29,053,San Juan Huactzinco,Centro-Sur,-98.25381,19.23482
+29054,29,054,San Lorenzo Axocomanitla,Centro-Sur,-98.2641,19.21567
+29055,29,055,San Lucas Tecopilco,Centro-Sur,-98.25455,19.49397
+29056,29,056,Santa Ana Nopalucan,Centro-Sur,-98.33011,19.30056
+29057,29,057,Santa Apolonia Teacalco,Centro-Sur,-98.31403,19.24809
+29058,29,058,Santa Catarina Ayometla,Centro-Sur,-98.21513,19.19386
+29059,29,059,Santa Cruz Quilehtla,Centro-Sur,-98.2248,19.21309
+29060,29,060,Santa Isabel Xiloxoxtla,Centro-Sur,-98.20383,19.25982
+30000,30,000,Veracruz (sin municipio),Sureste,-95.41277,18.27009
+30001,30,001,Acajete,Sureste,-97.04919,19.56636
+30002,30,002,Acatlán,Sureste,-96.83976,19.69273
+30003,30,003,Acayucan,Sureste,-95.03207,18.04106
+30004,30,004,Actopan,Sureste,-96.52494,19.53466
+30005,30,005,Acula,Sureste,-95.79277,18.52419
+30006,30,006,Acultzingo,Sureste,-97.27705,18.71637
+30007,30,007,Camarón de Tejeda,Sureste,-96.57051,19.00981
+30008,30,008,Alpatláhuac,Sureste,-97.13612,19.09742
+30009,30,009,Alto Lucero de Gutiérrez Barrios,Sureste,-96.58262,19.71812
+30010,30,010,Altotonga,Sureste,-97.10369,19.79322
+30011,30,011,Alvarado,Sureste,-95.79897,18.73113
+30012,30,012,Amatitlán,Sureste,-95.69083,18.43337
+30013,30,013,Naranjos Amatlán,Sureste,-97.70889,21.31159
+30014,30,014,Amatlán de los Reyes,Sureste,-96.87536,18.84034
+30015,30,015,Angel R. Cabada,Sureste,-95.39189,18.6023
+30016,30,016,La Antigua,Sureste,-96.30025,19.29103
+30017,30,017,Apazapan,Sureste,-96.6814,19.33553
+30018,30,018,Aquila,Sureste,-97.32419,18.78874
+30019,30,019,Astacinga,Sureste,-97.10103,18.55957
+30020,30,020,Atlahuilco,Sureste,-97.09928,18.67979
+30021,30,021,Atoyac,Sureste,-96.79922,18.92682
+30022,30,022,Atzacan,Sureste,-97.07896,18.94951
+30023,30,023,Atzalan,Sureste,-97.11943,19.92114
+30024,30,024,Tlaltetela,Sureste,-96.83965,19.33295
+30025,30,025,Ayahualulco,Sureste,-97.2089,19.42893
+30026,30,026,Banderilla,Sureste,-96.94518,19.58735
+30027,30,027,Benito Juárez,Sureste,-98.18061,20.81893
+30028,30,028,Boca del Río,Sureste,-96.11973,19.13015
+30029,30,029,Calcahualco,Sureste,-97.22619,19.0828
+30030,30,030,Camerino Z. Mendoza,Sureste,-97.16228,18.7923
+30031,30,031,Carrillo Puerto,Sureste,-96.58173,18.81655
+30032,30,032,Catemaco,Sureste,-95.0257,18.43476
+30033,30,033,Cazones de Herrera,Sureste,-97.28501,20.71441
+30034,30,034,Cerro Azul,Sureste,-97.75538,21.1807
+30035,30,035,Citlaltépetl,Sureste,-97.88654,21.34333
+30036,30,036,Coacoatzintla,Sureste,-96.95001,19.67539
+30037,30,037,Coahuitlán,Sureste,-97.70443,20.26516
+30038,30,038,Coatepec,Sureste,-96.93276,19.44981
+30039,30,039,Coatzacoalcos,Sureste,-94.37301,18.12104
+30040,30,040,Coatzintla,Sureste,-97.5382,20.4272
+30041,30,041,Coetzala,Sureste,-96.91943,18.77503
+30042,30,042,Colipa,Sureste,-96.70065,19.93451
+30043,30,043,Comapa,Sureste,-96.67352,19.13379
+30044,30,044,Córdoba,Sureste,-96.93268,18.9379
+30045,30,045,Cosamaloapan de Carpio,Sureste,-95.96898,18.3178
+30046,30,046,Cosautlán de Carvajal,Sureste,-96.96653,19.32729
+30047,30,047,Coscomatepec,Sureste,-97.07258,19.05732
+30048,30,048,Cosoleacaque,Sureste,-94.61381,18.00754
+30049,30,049,Cotaxtla,Sureste,-96.36637,18.86255
+30050,30,050,Coxquihui,Sureste,-97.56407,20.18883
+30051,30,051,Coyutla,Sureste,-97.69823,20.38241
+30052,30,052,Cuichapa,Sureste,-96.85461,18.77439
+30053,30,053,Cuitláhuac,Sureste,-96.72618,18.78359
+30054,30,054,Chacaltianguis,Sureste,-95.79603,18.2142
+30055,30,055,Chalma,Sureste,-98.38891,21.20855
+30056,30,056,Chiconamel,Sureste,-98.48915,21.28004
+30057,30,057,Chiconquiaco,Sureste,-96.79515,19.75409
+30058,30,058,Chicontepec,Sureste,-98.04076,21.00341
+30059,30,059,Chinameca,Sureste,-94.70021,18.05977
+30060,30,060,Chinampa de Gorostiza,Sureste,-97.64068,21.38008
+30061,30,061,Las Choapas,Sureste,-93.95117,17.53391
+30062,30,062,Chocamán,Sureste,-97.03458,19.00731
+30063,30,063,Chontla,Sureste,-97.99046,21.36703
+30064,30,064,Chumatlán,Sureste,-97.58811,20.22244
+30065,30,065,Emiliano Zapata,Sureste,-96.75585,19.44698
+30066,30,066,Espinal,Sureste,-97.51647,20.30216
+30067,30,067,Filomeno Mata,Sureste,-97.70908,20.20109
+30068,30,068,Fortín,Sureste,-96.99366,18.91304
+30069,30,069,Gutiérrez Zamora,Sureste,-97.10979,20.44633
+30070,30,070,Hidalgotitlán,Sureste,-94.62477,17.56096
+30071,30,071,Huatusco,Sureste,-96.95811,19.13114
+30072,30,072,Huayacocotla,Sureste,-98.48787,20.49015
+30073,30,073,Hueyapan de Ocampo,Sureste,-95.15568,18.19721
+30074,30,074,Huiloapan de Cuauhtémoc,Sureste,-97.13667,18.81881
+30075,30,075,Ignacio de la Llave,Sureste,-95.96369,18.66575
+30076,30,076,Ilamatlán,Sureste,-98.41631,20.80772
+30077,30,077,Isla,Sureste,-95.55594,18.02173
+30078,30,078,Ixcatepec,Sureste,-98.01108,21.21291
+30079,30,079,Ixhuacán de los Reyes,Sureste,-97.09029,19.36502
+30080,30,080,Ixhuatlán del Café,Sureste,-96.93102,19.04505
+30081,30,081,Ixhuatlancillo,Sureste,-97.16576,18.88958
+30082,30,082,Ixhuatlán del Sureste,Sureste,-94.39949,17.95961
+30083,30,083,Ixhuatlán de Madero,Sureste,-98.00721,20.72633
+30084,30,084,Ixmatlahuacan,Sureste,-95.90221,18.48175
+30085,30,085,Ixtaczoquitlán,Sureste,-97.03069,18.84363
+30086,30,086,Jalacingo,Sureste,-97.28543,19.80548
+30087,30,087,Xalapa,Sureste,-96.88776,19.54121
+30088,30,088,Jalcomulco,Sureste,-96.75845,19.35245
+30089,30,089,Jáltipan,Sureste,-94.68706,17.8269
+30090,30,090,Jamapa,Sureste,-96.25246,19.00044
+30091,30,091,Jesús Carranza,Sureste,-94.95509,17.43854
+30092,30,092,Xico,Sureste,-97.08581,19.46226
+30093,30,093,Jilotepec,Sureste,-96.91571,19.61264
+30094,30,094,Juan Rodríguez Clara,Sureste,-95.34724,17.98264
+30095,30,095,Juchique de Ferrer,Sureste,-96.66188,19.81904
+30096,30,096,Landero y Coss,Sureste,-96.85619,19.74845
+30097,30,097,Lerdo de Tejada,Sureste,-95.49608,18.64459
+30098,30,098,Magdalena,Sureste,-97.0457,18.76695
+30099,30,099,Maltrata,Sureste,-97.26862,18.83758
+30100,30,100,Manlio Fabio Altamirano,Sureste,-96.33496,19.10904
+30101,30,101,Mariano Escobedo,Sureste,-97.19571,18.93903
+30102,30,102,Martínez de la Torre,Sureste,-97.05134,20.134
+30103,30,103,Mecatlán,Sureste,-97.65787,20.20444
+30104,30,104,Mecayapan,Sureste,-94.81515,18.21528
+30105,30,105,Medellín de Bravo,Sureste,-96.14595,18.9661
+30106,30,106,Miahuatlán,Sureste,-96.88156,19.72286
+30107,30,107,Las Minas,Sureste,-97.15154,19.71113
+30108,30,108,Minatitlán,Sureste,-94.38074,17.72712
+30109,30,109,Misantla,Sureste,-96.88542,19.95548
+30110,30,110,Mixtla de Altamirano,Sureste,-96.97503,18.58944
+30111,30,111,Moloacán,Sureste,-94.28293,17.9813
+30112,30,112,Naolinco,Sureste,-96.83936,19.63305
+30113,30,113,Naranjal,Sureste,-96.95847,18.79313
+30114,30,114,Nautla,Sureste,-96.79337,20.10709
+30115,30,115,Nogales,Sureste,-97.20231,18.83596
+30116,30,116,Oluta,Sureste,-94.88935,17.90328
+30117,30,117,Omealca,Sureste,-96.67387,18.70748
+30118,30,118,Orizaba,Sureste,-97.1022,18.85393
+30119,30,119,Otatitlán,Sureste,-96.0346,18.16281
+30120,30,120,Oteapan,Sureste,-94.67354,17.98882
+30121,30,121,Ozuluama de Mascareñas,Sureste,-97.84663,21.7227
+30122,30,122,Pajapan,Sureste,-94.68611,18.16739
+30123,30,123,Pánuco,Sureste,-98.23717,22.07251
+30124,30,124,Papantla,Sureste,-97.30061,20.40904
+30125,30,125,Paso del Macho,Sureste,-96.68021,18.93723
+30126,30,126,Paso de Ovejas,Sureste,-96.4321,19.25305
+30127,30,127,La Perla,Sureste,-97.19628,18.99926
+30128,30,128,Perote,Sureste,-97.28029,19.53376
+30129,30,129,Platón Sánchez,Sureste,-98.42546,21.32248
+30130,30,130,Playa Vicente,Sureste,-95.60241,17.79878
+30131,30,131,Poza Rica de Hidalgo,Sureste,-97.43847,20.52838
+30132,30,132,Las Vigas de Ramírez,Sureste,-97.09524,19.62232
+30133,30,133,Pueblo Viejo,Sureste,-97.92336,22.16025
+30134,30,134,Puente Nacional,Sureste,-96.52122,19.3241
+30135,30,135,Rafael Delgado,Sureste,-97.07317,18.81946
+30136,30,136,Rafael Lucio,Sureste,-96.98496,19.599
+30137,30,137,Los Reyes,Sureste,-97.04015,18.66745
+30138,30,138,Río Blanco,Sureste,-97.15163,18.84227
+30139,30,139,Saltabarranca,Sureste,-95.52227,18.56279
+30140,30,140,San Andrés Tenejapan,Sureste,-97.09343,18.77367
+30141,30,141,San Andrés Tuxtla,Sureste,-95.22422,18.36093
+30142,30,142,San Juan Evangelista,Sureste,-95.16049,17.78535
+30143,30,143,Santiago Tuxtla,Sureste,-95.41178,18.40208
+30144,30,144,Sayula de Alemán,Sureste,-94.94776,17.77308
+30145,30,145,Soconusco,Sureste,-94.82088,18.00738
+30146,30,146,Sochiapa,Sureste,-96.92266,19.173
+30147,30,147,Soledad Atzompa,Sureste,-97.18334,18.71514
+30148,30,148,Soledad de Doblado,Sureste,-96.4483,19.08025
+30149,30,149,Soteapan,Sureste,-94.91442,18.27423
+30150,30,150,Tamalín,Sureste,-97.63419,21.547
+30151,30,151,Tamiahua,Sureste,-97.51025,21.2669
+30152,30,152,Tampico Alto,Sureste,-97.81582,22.01571
+30153,30,153,Tancoco,Sureste,-97.78575,21.27402
+30154,30,154,Tantima,Sureste,-97.70393,21.43449
+30155,30,155,Tantoyuca,Sureste,-98.16907,21.38716
+30156,30,156,Tatatila,Sureste,-97.08217,19.71263
+30157,30,157,Castillo de Teayo,Sureste,-97.66913,20.73228
+30158,30,158,Tecolutla,Sureste,-97.01105,20.35738
+30159,30,159,Tehuipango,Sureste,-97.05378,18.53245
+30160,30,160,Álamo Temapache,Sureste,-97.71393,20.96985
+30161,30,161,Tempoal,Sureste,-98.39608,21.55543
+30162,30,162,Tenampa,Sureste,-96.84268,19.2628
+30163,30,163,Tenochtitlán,Sureste,-96.93042,19.80563
+30164,30,164,Teocelo,Sureste,-96.96899,19.37876
+30165,30,165,Tepatlaxco,Sureste,-96.84898,19.04344
+30166,30,166,Tepetlán,Sureste,-96.77411,19.66905
+30167,30,167,Tepetzintla,Sureste,-97.87788,21.14931
+30168,30,168,Tequila,Sureste,-97.02126,18.72995
+30169,30,169,José Azueta,Sureste,-95.72051,18.07124
+30170,30,170,Texcatepec,Sureste,-98.30854,20.62743
+30171,30,171,Texhuacán,Sureste,-97.03956,18.6215
+30172,30,172,Texistepec,Sureste,-94.82233,17.822
+30173,30,173,Tezonapa,Sureste,-96.7717,18.60434
+30174,30,174,Tierra Blanca,Sureste,-96.2882,18.54223
+30175,30,175,Tihuatlán,Sureste,-97.51984,20.65817
+30176,30,176,Tlacojalpan,Sureste,-95.94683,18.19611
+30177,30,177,Tlacolulan,Sureste,-97.00899,19.69275
+30178,30,178,Tlacotalpan,Sureste,-95.64228,18.55222
+30179,30,179,Tlacotepec de Mejía,Sureste,-96.78438,19.18184
+30180,30,180,Tlachichilco,Sureste,-98.1785,20.60676
+30181,30,181,Tlalixcoyan,Sureste,-96.16888,18.75108
+30182,30,182,Tlalnelhuayocan,Sureste,-96.98653,19.54169
+30183,30,183,Tlapacoyan,Sureste,-97.15341,20.04908
+30184,30,184,Tlaquilpa,Sureste,-97.10533,18.60904
+30185,30,185,Tlilapan,Sureste,-97.07854,18.79951
+30186,30,186,Tomatlán,Sureste,-96.98971,19.01152
+30187,30,187,Tonayán,Sureste,-96.93299,19.72882
+30188,30,188,Totutla,Sureste,-96.93565,19.22146
+30189,30,189,Tuxpan,Sureste,-97.4102,20.93488
+30190,30,190,Tuxtilla,Sureste,-95.88833,18.1708
+30191,30,191,Ursulo Galván,Sureste,-96.36765,19.43403
+30192,30,192,Vega de Alatorre,Sureste,-96.59401,19.92901
+30193,30,193,Veracruz,Sureste,-96.20719,19.17663
+30194,30,194,Villa Aldama,Sureste,-97.20219,19.65134
+30195,30,195,Xoxocotla,Sureste,-97.16288,18.63233
+30196,30,196,Yanga,Sureste,-96.79201,18.82662
+30197,30,197,Yecuatla,Sureste,-96.77353,19.84801
+30198,30,198,Zacualpan,Sureste,-98.34427,20.49515
+30199,30,199,Zaragoza,Sureste,-94.63882,17.9505
+30200,30,200,Zentla,Sureste,-96.76597,19.05289
+30201,30,201,Zongolica,Sureste,-96.92628,18.68441
+30202,30,202,Zontecomatlán de López y Fuentes,Sureste,-98.28582,20.74066
+30203,30,203,Zozocolco de Hidalgo,Sureste,-97.56003,20.13537
+30204,30,204,Agua Dulce,Sureste,-94.16128,18.08492
+30205,30,205,El Higo,Sureste,-98.3969,21.73825
+30206,30,206,Nanchital de Lázaro Cárdenas del Río,Sureste,-94.39417,18.05658
+30207,30,207,Tres Valles,Sureste,-96.17427,18.30087
+30208,30,208,Carlos A. Carrillo,Sureste,-95.71565,18.3272
+30209,30,209,Tatahuicapan de Juárez,Sureste,-94.77517,18.36495
+30210,30,210,Uxpanapa,Sureste,-94.39528,17.28643
+30211,30,211,San Rafael,Sureste,-96.92395,20.21876
+30212,30,212,Santiago Sochiapan,Sureste,-95.66474,17.62442
+31000,31,000,Yucatán (sin municipio),Sureste,-88.92236,20.73118
+31001,31,001,Abalá,Sureste,-89.63357,20.65327
+31002,31,002,Acanceh,Sureste,-89.46197,20.83373
+31003,31,003,Akil,Sureste,-89.34813,20.26171
+31004,31,004,Baca,Sureste,-89.39132,21.12324
+31005,31,005,Bokobá,Sureste,-89.17479,21.00722
+31006,31,006,Buctzotz,Sureste,-88.66425,21.21956
+31007,31,007,Cacalchén,Sureste,-89.24304,20.97835
+31008,31,008,Calotmul,Sureste,-88.12461,21.01435
+31009,31,009,Cansahcab,Sureste,-89.07254,21.1663
+31010,31,010,Cantamayec,Sureste,-89.04883,20.4271
+31011,31,011,Celestún,Sureste,-90.28849,20.86274
+31012,31,012,Cenotillo,Sureste,-88.58116,21.03062
+31013,31,013,Conkal,Sureste,-89.51822,21.08607
+31014,31,014,Cuncunul,Sureste,-88.33725,20.64909
+31015,31,015,Cuzamá,Sureste,-89.34311,20.73107
+31016,31,016,Chacsinkín,Sureste,-89.02105,20.19383
+31017,31,017,Chankom,Sureste,-88.57085,20.57803
+31018,31,018,Chapab,Sureste,-89.48056,20.50639
+31019,31,019,Chemax,Sureste,-87.82444,20.76029
+31020,31,020,Chicxulub Pueblo,Sureste,-89.52705,21.15153
+31021,31,021,Chichimilá,Sureste,-88.19171,20.40661
+31022,31,022,Chikindzonot,Sureste,-88.51265,20.27313
+31023,31,023,Chocholá,Sureste,-89.84819,20.73115
+31024,31,024,Chumayel,Sureste,-89.28084,20.47087
+31025,31,025,Dzan,Sureste,-89.46316,20.40203
+31026,31,026,Dzemul,Sureste,-89.33581,21.24626
+31027,31,027,Dzidzantún,Sureste,-89.03714,21.31519
+31028,31,028,Dzilam de Bravo,Sureste,-88.60312,21.46981
+31029,31,029,Dzilam González,Sureste,-88.58411,21.3756
+31030,31,030,Dzitás,Sureste,-88.53,20.83546
+31031,31,031,Dzoncauich,Sureste,-88.82625,21.07923
+31032,31,032,Espita,Sureste,-88.35738,21.02135
+31033,31,033,Halachó,Sureste,-90.16711,20.52477
+31034,31,034,Hocabá,Sureste,-89.24552,20.81165
+31035,31,035,Hoctún,Sureste,-89.16851,20.87453
+31036,31,036,Homún,Sureste,-89.25068,20.68733
+31037,31,037,Huhí,Sureste,-89.12907,20.69839
+31038,31,038,Hunucmá,Sureste,-89.95287,21.10327
+31039,31,039,Ixil,Sureste,-89.47355,21.23857
+31040,31,040,Izamal,Sureste,-88.98129,20.93867
+31041,31,041,Kanasín,Sureste,-89.53734,20.92122
+31042,31,042,Kantunil,Sureste,-89.00612,20.75475
+31043,31,043,Kaua,Sureste,-88.41797,20.60552
+31044,31,044,Kinchil,Sureste,-90.05694,20.84216
+31045,31,045,Kopomá,Sureste,-89.89036,20.64461
+31046,31,046,Mama,Sureste,-89.37683,20.48974
+31047,31,047,Maní,Sureste,-89.36285,20.37754
+31048,31,048,Maxcanú,Sureste,-90.09947,20.66338
+31049,31,049,Mayapán,Sureste,-89.20316,20.47947
+31050,31,050,Mérida,Sureste,-89.64367,20.98328
+31051,31,051,Mocochá,Sureste,-89.45674,21.11676
+31052,31,052,Motul,Sureste,-89.275,21.12129
+31053,31,053,Muna,Sureste,-89.73393,20.45392
+31054,31,054,Muxupip,Sureste,-89.32489,21.04663
+31055,31,055,Opichén,Sureste,-89.84621,20.5434
+31056,31,056,Oxkutzcab,Sureste,-89.52253,20.1473
+31057,31,057,Panabá,Sureste,-88.3092,21.35387
+31058,31,058,Peto,Sureste,-88.83284,20.08569
+31059,31,059,Progreso,Sureste,-89.66934,21.22816
+31060,31,060,Quintana Roo,Sureste,-88.6342,20.84755
+31061,31,061,Río Lagartos,Sureste,-88.11971,21.57539
+31062,31,062,Sacalum,Sureste,-89.60248,20.54091
+31063,31,063,Samahil,Sureste,-89.94085,20.81774
+31064,31,064,Sanahcat,Sureste,-89.20993,20.76581
+31065,31,065,San Felipe,Sureste,-88.31436,21.4931
+31066,31,066,Santa Elena,Sureste,-89.72679,20.26792
+31067,31,067,Seyé,Sureste,-89.37275,20.83189
+31068,31,068,Sinanché,Sureste,-89.19481,21.2432
+31069,31,069,Sotuta,Sureste,-88.98701,20.60226
+31070,31,070,Sucilá,Sureste,-88.37994,21.21291
+31071,31,071,Sudzal,Sureste,-88.85432,20.76293
+31072,31,072,Suma,Sureste,-89.14792,21.09942
+31073,31,073,Tahdziú,Sureste,-88.9034,20.25564
+31074,31,074,Tahmek,Sureste,-89.28078,20.89637
+31075,31,075,Teabo,Sureste,-89.2335,20.38486
+31076,31,076,Tecoh,Sureste,-89.4534,20.65015
+31077,31,077,Tekal de Venegas,Sureste,-88.84161,21.00335
+31078,31,078,Tekantó,Sureste,-89.10242,21.00853
+31079,31,079,Tekax,Sureste,-89.30126,19.886
+31080,31,080,Tekit,Sureste,-89.2689,20.5784
+31081,31,081,Tekom,Sureste,-88.42374,20.4571
+31082,31,082,Telchac Pueblo,Sureste,-89.25429,21.2018
+31083,31,083,Telchac Puerto,Sureste,-89.2868,21.31528
+31084,31,084,Temax,Sureste,-88.87014,21.18052
+31085,31,085,Temozón,Sureste,-88.14737,20.86586
+31086,31,086,Tepakán,Sureste,-89.0106,21.0673
+31087,31,087,Tetiz,Sureste,-90.06855,20.95474
+31088,31,088,Teya,Sureste,-89.07809,21.06494
+31089,31,089,Ticul,Sureste,-89.55975,20.36079
+31090,31,090,Timucuy,Sureste,-89.52794,20.8018
+31091,31,091,Tinum,Sureste,-88.51403,20.6957
+31092,31,092,Tixcacalcupul,Sureste,-88.32504,20.36248
+31093,31,093,Tixkokob,Sureste,-89.37931,20.97695
+31094,31,094,Tixméhuac,Sureste,-89.09682,20.21443
+31095,31,095,Tixpéhual,Sureste,-89.45702,20.98094
+31096,31,096,Tizimín,Sureste,-87.83955,21.26788
+31097,31,097,Tunkás,Sureste,-88.747,20.8858
+31098,31,098,Tzucacab,Sureste,-89.03694,19.9382
+31099,31,099,Uayma,Sureste,-88.37402,20.86617
+31100,31,100,Ucú,Sureste,-89.76947,21.04539
+31101,31,101,Umán,Sureste,-89.76571,20.85333
+31102,31,102,Valladolid,Sureste,-88.10195,20.6566
+31103,31,103,Xocchel,Sureste,-89.12224,20.80556
+31104,31,104,Yaxcabá,Sureste,-88.77398,20.48248
+31105,31,105,Yaxkukul,Sureste,-89.44473,21.05725
+31106,31,106,Yobaín,Sureste,-89.11689,21.28257
+32000,32,000,Zacatecas (sin municipio),Bajío,-103.02047,23.25303
+32001,32,001,Apozol,Bajío,-103.0735,21.47238
+32002,32,002,Apulco,Bajío,-102.68835,21.48982
+32003,32,003,Atolinga,Bajío,-103.45069,21.77526
+32004,32,004,Benito Juárez,Bajío,-103.5818,21.4975
+32005,32,005,Calera,Bajío,-102.80103,22.92059
+32006,32,006,Cañitas de Felipe Pescador,Bajío,-102.72565,23.59891
+32007,32,007,Concepción del Oro,Bajío,-101.21137,24.44798
+32008,32,008,Cuauhtémoc,Bajío,-102.36055,22.43356
+32009,32,009,Chalchihuites,Bajío,-103.9147,23.41557
+32010,32,010,Fresnillo,Bajío,-102.99591,23.23687
+32011,32,011,Trinidad García de la Cadena,Bajío,-103.50321,21.21703
+32012,32,012,Genaro Codina,Bajío,-102.56327,22.47573
+32013,32,013,General Enrique Estrada,Bajío,-102.78777,23.01529
+32014,32,014,General Francisco R. Murguía,Bajío,-102.81175,24.13748
+32015,32,015,El Plateado de Joaquín Amaro,Bajío,-103.06526,21.98828
+32016,32,016,General Pánfilo Natera,Bajío,-102.09838,22.67468
+32017,32,017,Guadalupe,Bajío,-102.46908,22.72057
+32018,32,018,Huanusco,Bajío,-102.92759,21.768
+32019,32,019,Jalpa,Bajío,-102.99808,21.62261
+32020,32,020,Jerez,Bajío,-102.98646,22.73142
+32021,32,021,Jiménez del Teul,Bajío,-103.9526,23.1747
+32022,32,022,Juan Aldama,Bajío,-103.31676,24.29152
+32023,32,023,Juchipila,Bajío,-103.12327,21.38035
+32024,32,024,Loreto,Bajío,-101.95888,22.28506
+32025,32,025,Luis Moya,Bajío,-102.25337,22.44826
+32026,32,026,Mazapil,Bajío,-101.93134,24.33239
+32027,32,027,Melchor Ocampo,Bajío,-102.0001,24.91544
+32028,32,028,Mezquital del Oro,Bajío,-103.35452,21.19514
+32029,32,029,Miguel Auza,Bajío,-103.47965,24.11356
+32030,32,030,Momax,Bajío,-103.26831,21.94268
+32031,32,031,Monte Escobedo,Bajío,-103.47573,22.3546
+32032,32,032,Morelos,Bajío,-102.67335,22.85707
+32033,32,033,Moyahua de Estrada,Bajío,-103.1643,21.19883
+32034,32,034,Nochistlán de Mejía,Bajío,-102.85038,21.41788
+32035,32,035,Noria de Ángeles,Bajío,-101.91336,22.40087
+32036,32,036,Ojocaliente,Bajío,-102.24468,22.61628
+32037,32,037,Pánuco,Bajío,-102.51486,22.98401
+32038,32,038,Pinos,Bajío,-101.55605,22.14923
+32039,32,039,Río Grande,Bajío,-102.97428,23.73776
+32040,32,040,Sain Alto,Bajío,-103.23982,23.56325
+32041,32,041,El Salvador,Bajío,-100.89523,24.45105
+32042,32,042,Sombrerete,Bajío,-103.60964,23.74109
+32043,32,043,Susticacán,Bajío,-103.20065,22.64444
+32044,32,044,Tabasco,Bajío,-102.93321,21.93405
+32045,32,045,Tepechitlán,Bajío,-103.34403,21.6307
+32046,32,046,Tepetongo,Bajío,-103.12724,22.45704
+32047,32,047,Teúl de González Ortega,Bajío,-103.4186,21.40107
+32048,32,048,Tlaltenango de Sánchez Román,Bajío,-103.21863,21.78071
+32049,32,049,Valparaíso,Bajío,-103.60202,22.88258
+32050,32,050,Vetagrande,Bajío,-102.48183,22.83984
+32051,32,051,Villa de Cos,Bajío,-102.25861,23.68813
+32052,32,052,Villa García,Bajío,-101.89362,22.12617
+32053,32,053,Villa González Ortega,Bajío,-101.9536,22.55213
+32054,32,054,Villa Hidalgo,Bajío,-101.71415,22.40758
+32055,32,055,Villanueva,Bajío,-102.85165,22.29797
+32056,32,056,Zacatecas,Bajío,-102.67783,22.73547
+32057,32,057,Trancoso,Bajío,-102.31208,22.75553
+32058,32,058,Santa María de la Paz,Bajío,-103.37732,21.52394

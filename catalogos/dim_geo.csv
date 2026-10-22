@@ -1,0 +1,33 @@
+CVE_ENT,NOM_ENT,NOMBRE_CORTO,ABREV,ISO_3166_2,REGION_NIELSEN,REGION_DIVIDIDA,POBLACION_2020,LON,LAT
+01,Aguascalientes,Aguascalientes,AGS,MX-AGU,Bajío,0,1425607,-102.36153,22.00674
+02,Baja California,Baja California,BC,MX-BCN,Noroeste,0,3769020,-115.61516,31.39844
+03,Baja California Sur,Baja California Sur,BCS,MX-BCS,Noroeste,0,798447,-111.56818,25.26558
+04,Campeche,Campeche,CAMP,MX-CAM,Sureste,0,928363,-90.21311,18.69639
+05,Coahuila de Zaragoza,Coahuila,COAH,MX-COA,Norte,0,3146771,-102.20387,27.34687
+06,Colima,Colima,COL,MX-COL,Occidente,0,731391,-103.9129,19.1408
+07,Chiapas,Chiapas,CHIS,MX-CHP,Sureste,0,5543828,-92.52337,16.48321
+08,Chihuahua,Chihuahua,CHIH,MX-CHH,Norte,0,3741869,-106.46916,28.80845
+09,Ciudad de México,Ciudad de México,CDMX,MX-CMX,Valle de México,0,9209944,-99.14145,19.2753
+10,Durango,Durango,DGO,MX-DUR,Norte,0,1832650,-104.91322,24.9236
+11,Guanajuato,Guanajuato,GTO,MX-GUA,Bajío,0,6166934,-101.11869,20.93057
+12,Guerrero,Guerrero,GRO,MX-GRO,Centro-Sur,0,3540685,-99.91837,17.68552
+13,Hidalgo,Hidalgo,HGO,MX-HID,Centro-Sur,0,3082841,-99.01285,20.48441
+14,Jalisco,Jalisco,JAL,MX-JAL,Occidente,0,8348151,-103.6418,20.5009
+15,México,Estado de México,MEX,MX-MEX,Valle de México,0,16992418,-99.7497,19.38252
+16,Michoacán de Ocampo,Michoacán,MICH,MX-MIC,Occidente,0,4748846,-101.87366,19.28496
+17,Morelos,Morelos,MOR,MX-MOR,Centro-Sur,0,1971520,-99.07514,18.74227
+18,Nayarit,Nayarit,NAY,MX-NAY,Occidente,0,1235456,-104.83118,21.81357
+19,Nuevo León,Nuevo León,NL,MX-NLE,Norte,0,5784442,-99.76436,25.72994
+20,Oaxaca,Oaxaca,OAX,MX-OAX,Centro-Sur,0,4132148,-96.53035,16.8796
+21,Puebla,Puebla,PUE,MX-PUE,Centro-Sur,0,6583278,-98.0576,18.66095
+22,Querétaro,Querétaro,QRO,MX-QUE,Bajío,0,2368467,-100.11476,20.62513
+23,Quintana Roo,Quintana Roo,QROO,MX-ROO,Sureste,0,1857985,-88.37403,19.40793
+24,San Luis Potosí,San Luis Potosí,SLP,MX-SLP,Bajío,0,2822255,-100.63861,22.47884
+25,Sinaloa,Sinaloa,SIN,MX-SIN,Noroeste,0,3026943,-107.7826,25.38247
+26,Sonora,Sonora,SON,MX-SON,Noroeste,0,2944840,-110.71909,29.78062
+27,Tabasco,Tabasco,TAB,MX-TAB,Sureste,0,2402598,-92.64314,17.98929
+28,Tamaulipas,Tamaulipas,TAMPS,MX-TAM,Norte,0,3527735,-98.57249,24.21895
+29,Tlaxcala,Tlaxcala,TLAX,MX-TLA,Centro-Sur,0,1342977,-98.16838,19.42831
+30,Veracruz de Ignacio de la Llave,Veracruz,VER,MX-VER,Sureste,0,8062579,-95.41277,18.27009
+31,Yucatán,Yucatán,YUC,MX-YUC,Sureste,0,2320898,-88.92236,20.73118
+32,Zacatecas,Zacatecas,ZAC,MX-ZAC,Bajío,0,1622138,-103.02047,23.25303

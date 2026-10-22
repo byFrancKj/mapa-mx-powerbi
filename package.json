@@ -1,0 +1,22 @@
+{
+  "name": "mapa-ventas-mx-powerbi",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Mapa de ventas de México por estado y municipio para Power BI con Deneb (Vega-Lite), geometría INEGI y comparación cadenas vs Nielsen.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "geo": "node scripts/construir_geo.mjs",
+    "deneb": "node scripts/construir_deneb.mjs",
+    "vistas": "node scripts/previsualizar_deneb.mjs"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "mapshaper": "^0.7.95",
+    "vega": "6.4.0",
+    "vega-lite": "6.4.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,10 @@
+* text=auto eol=lf
+
+*.png binary
+
+# Archivos generados: GitHub los colapsa en los diffs y no cuentan en las estadísticas de lenguaje
+geo/** linguist-generated=true
+catalogos/** linguist-generated=true
+deneb/**/*.json linguist-generated=true
+docs/valores_esperados_ejemplo.csv linguist-generated=true
+ejemplo/** linguist-generated=true

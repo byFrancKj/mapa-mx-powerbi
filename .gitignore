@@ -1,0 +1,20 @@
+# Dependencias y cachés
+node_modules/
+.cache/
+__pycache__/
+*.pyc
+
+# Capas de origen de INEGI (pesadas; se descargan aparte)
+fuentes/
+
+# Power BI: caché local de proyectos .pbip
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+
+# Reportes binarios: preferimos .pbip; quita estas líneas si quieres subir .pbix/.pbit
+*.pbix
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
