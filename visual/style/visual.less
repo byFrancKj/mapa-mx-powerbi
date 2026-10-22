@@ -13,12 +13,25 @@
             cursor: pointer;
         }
 
-        &.activa,
         &:focus-visible {
             stroke: @texto;
             stroke-width: 1.6px;
             outline: none;
         }
+    }
+
+    // Capas de líneas sobre las áreas: no reciben eventos.
+    .limites-estatales,
+    .contorno-grupos,
+    .resaltado {
+        fill: none;
+        pointer-events: none;
+        stroke-linejoin: round;
+    }
+
+    .resaltado {
+        stroke: @texto;
+        stroke-width: 1.6px;
     }
 
     .leyenda {

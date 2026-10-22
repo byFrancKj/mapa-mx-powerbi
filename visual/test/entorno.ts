@@ -49,8 +49,9 @@ export function crearHost(opciones: { altoContraste?: boolean } = {}) {
         createSelectionIdBuilder: () => {
             let clave = "";
             const constructor = {
+                // Como en Power BI, la identidad combina todas las columnas de categoría.
                 withCategory: (categoria: powerbi.DataViewCategoryColumn, i: number) => {
-                    clave = String(categoria.values[i]);
+                    clave = clave ? `${clave}|${String(categoria.values[i])}` : String(categoria.values[i]);
                     return constructor;
                 },
                 createSelectionId: (): IdFalso => ({ clave, equals: (o) => o.clave === clave, getKey: () => clave }),
@@ -89,6 +90,9 @@ export function crearHost(opciones: { altoContraste?: boolean } = {}) {
 
 export interface OpcionesDataView {
     claves: unknown[];
+    /** Niveles superiores de una jerarquía en Ubicación (drill-down "expandir todo"). */
+    nivelesSuperiores?: Array<{ nombre: string; valores: unknown[] }>;
+    grupo?: { nombre: string; valores: unknown[] };
     valores?: Array<number | null>;
     nombre?: string;
     formato?: string;
@@ -98,17 +102,18 @@ export interface OpcionesDataView {
 }
 
 export function crearDataView(o: OpcionesDataView): powerbi.DataView {
-    const categoria = {
-        source: { displayName: "CVE_ENT", roles: { ubicacion: true }, queryName: "Dim_Geo.CVE_ENT" },
-        values: o.claves,
-    };
+    const categorias = [
+        ...(o.nivelesSuperiores ?? []).map((n) => ({ source: { displayName: n.nombre, roles: { ubicacion: true } }, values: n.valores })),
+        { source: { displayName: "Clave", roles: { ubicacion: true } }, values: o.claves },
+        ...(o.grupo ? [{ source: { displayName: o.grupo.nombre, roles: { grupo: true } }, values: o.grupo.valores }] : []),
+    ];
     const valores = [
         ...(o.valores ? [{ source: { displayName: o.nombre ?? "Ventas", roles: { valor: true }, format: o.formato }, values: o.valores }] : []),
         ...(o.tooltips ?? []).map((t) => ({ source: { displayName: t.nombre, roles: { tooltips: true }, format: t.formato }, values: t.valores })),
     ];
     return {
-        metadata: { columns: [categoria.source, ...valores.map((v) => v.source)], objects: o.objetos ?? {} },
-        categorical: { categories: [categoria], values: valores },
+        metadata: { columns: [...categorias.map((c) => c.source), ...valores.map((v) => v.source)], objects: o.objetos ?? {} },
+        categorical: { categories: categorias, values: valores },
     } as unknown as powerbi.DataView;
 }
 

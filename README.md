@@ -1,6 +1,6 @@
 # Mapa México (INEGI) para Power BI
 
-Objeto visual de Power BI que dibuja México por estado a partir de la **clave INEGI**. Tú pones el modelo, las relaciones y las medidas; el visual solo trae la geometría de INEGI y colorea cada estado con la medida que elijas.
+Objeto visual de Power BI que dibuja México por estado o municipio a partir de la **clave INEGI**. Tú pones el modelo, las relaciones y las medidas; el visual solo trae la geometría de INEGI y colorea cada estado o municipio con la medida que elijas.
 
 ![Índice por estado con escala divergente](docs/img/mapa_indice.png)
 
@@ -24,17 +24,19 @@ En el visual arrastras:
 ```
 
 - **Cualquier medida**, con su propio formato. Los parámetros de campo funcionan para cambiar de métrica.
+- **Estados y municipios**, con drill-down de estado a municipio en el mismo visual.
+- **Regiones dinámicas**: pon tu columna de región en *Grupo* y el visual dibuja su contorno. Si cambias las regiones en el modelo, el mapa cambia solo.
 - **Clasificación** por cuantiles, intervalos iguales o escala divergente alrededor de un centro (100 en índices, 0 en crecimientos).
 - **Interacción nativa**: filtro cruzado, tooltips (incluidos los de página), menú contextual, teclado y alto contraste.
 - **Seguro**: no se conecta a internet ni guarda nada. Detalle en [SECURITY.md](SECURITY.md).
 
-![Ventas por estado en cuantiles](docs/img/mapa_ventas.png)
+![Regiones del modelo dibujadas con el campo Grupo](docs/img/mapa_regiones.png)
 
 ## Inicio rápido
 
 1. Descarga el `.pbiviz` del último *release* (o compílalo: [docs/04](docs/04-desarrollo.md)).
 2. En Power BI: panel *Visualizaciones* › *…* › **Importar un objeto visual desde un archivo**.
-3. Arrastra a **Ubicación** una columna con la clave del estado (`CVE_ENT`, texto o número) y a **Valor** tu medida.
+3. Arrastra a **Ubicación** una columna con la clave INEGI (`CVE_ENT` de estado o `CVEGEO` de municipio, texto o número) y a **Valor** tu medida. Opcional: tu región en **Grupo**.
 4. Ajusta método, paleta y leyenda en *Formato*.
 
 ¿Tus datos no traen la clave INEGI (vienen por tienda o con el nombre del estado)? Usa el [puente INEGI](docs/02-puente-inegi.md).
@@ -63,7 +65,7 @@ privado/       Tus archivos reales: git lo ignora
 ## Hoja de ruta
 
 - [x] **0.1** Estados: cuantiles, intervalos y divergente; leyenda, tooltips, selección y avisos de claves.
-- [ ] **0.2** Campo *Grupo* con regiones dinámicas (sin regenerar geometría) y municipios con drill-down.
+- [x] **0.2** Municipios con drill-down y campo *Grupo* con regiones dinámicas (sin regenerar geometría).
 - [ ] **0.3** Mapa bivariado, etiquetas, localización y certificación opcional en AppSource.
 
 ## Fuentes, licencia y seguridad

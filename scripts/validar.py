@@ -114,6 +114,8 @@ if mun_geo != {c for c in cvegeo if not c.endswith("000")}:
 # ------------------------------------------- geometría empaquetada en el visual
 if topo("visual/src/geo/estados.json") != est_topo:
     error("visual/src/geo/estados.json no es igual a geo/estados/mx_estados.topojson: ejecuta npm run geo.")
+if topo("visual/src/geo/municipios.json") != topo("geo/municipios/mx_municipios.topojson"):
+    error("visual/src/geo/municipios.json no es igual a geo/municipios/mx_municipios.topojson: ejecuta npm run geo.")
 
 
 # ------------------------------------------------------------- mapeos

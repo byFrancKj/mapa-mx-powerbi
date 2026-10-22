@@ -95,6 +95,21 @@ class MapaCard extends Card {
     slices: Slice[] = [this.proyeccion, this.borde, this.grosor];
 }
 
+class GruposCard extends Card {
+    contorno = new formattingSettings.ToggleSwitch({ name: "contorno", displayName: "Contorno de cada grupo", value: true });
+    color = new formattingSettings.ColorPicker({ name: "color", displayName: "Color del contorno", value: { value: "#3b3a39" } });
+    grosor = new formattingSettings.NumUpDown({ name: "grosor", displayName: "Grosor del contorno", value: 1.6 });
+    limitesInternos = new formattingSettings.ToggleSwitch({
+        name: "limitesInternos", displayName: "Límites dentro de cada grupo",
+        description: "Apágalo para que cada grupo se vea como una sola área (útil si la medida da el valor del grupo).",
+        value: true,
+    });
+
+    name = "grupos";
+    displayName = "Grupos";
+    slices: Slice[] = [this.contorno, this.color, this.grosor, this.limitesInternos];
+}
+
 class LeyendaCard extends Card {
     mostrar = new formattingSettings.ToggleSwitch({ name: "mostrar", displayName: "Mostrar", value: true });
     posicion = new formattingSettings.ItemDropdown({ name: "posicion", displayName: "Posición", items: POSICIONES, value: POSICIONES[0] });
@@ -112,6 +127,7 @@ class LeyendaCard extends Card {
 export class Ajustes extends Model {
     colores = new ColoresCard();
     mapa = new MapaCard();
+    grupos = new GruposCard();
     leyenda = new LeyendaCard();
-    cards = [this.colores, this.mapa, this.leyenda];
+    cards = [this.colores, this.mapa, this.grupos, this.leyenda];
 }

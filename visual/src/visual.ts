@@ -9,9 +9,9 @@ import "./../style/visual.less";
 
 import { Ajustes } from "./ajustes";
 import { clasificar, Clasificacion, Metodo } from "./clasificacion";
-import { normalizarClave, nivelDeClave } from "./claves";
+import { Nivel, normalizarClave, nivelDeClave } from "./claves";
 import { formatoCompacto } from "./formato";
-import { estados, Area } from "./geometria";
+import { Area, bordes, capa } from "./geometria";
 import { coloresDivergentes, coloresSecuenciales } from "./paletas";
 
 import DataView = powerbi.DataView;
@@ -27,24 +27,32 @@ import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
 const FORMATO_GENERAL = "#,0.##";
 const MARGEN = 8;
 const OPACIDAD_NO_SELECCIONADO = 0.35;
+const COLOR_LIMITE_ESTATAL = "#8a8886";
 
-/** Un estado con datos: lo que Power BI mandó para su clave. */
+/** Un área con datos: lo que Power BI mandó para su clave. */
 interface Fila {
     clave: string;
     valor: number | null;
     texto: string;
+    grupo: string | null;
     extras: VisualTooltipDataItem[];
     id: ISelectionId;
 }
 
 interface Datos {
+    nivel: Nivel;
     filas: Map<string, Fila>;
+    /** Estados con datos; en el nivel municipal son los que se dibujan. */
+    estadosCubiertos: Set<string>;
     nombreValor: string | null;
     formatoValor: string | undefined;
-    /** Valores de Ubicación que no son una clave de estado (se reportan en el mapa). */
+    nombreGrupo: string | null;
+    /** Valores de Ubicación que no son una clave INEGI (se reportan en el mapa). */
     desconocidas: string[];
-    /** Claves de 5 dígitos: el nivel municipal llega en la siguiente versión. */
-    municipales: number;
+    /** Claves del otro nivel (estado entre municipios o al revés). */
+    otroNivel: number;
+    /** Claves XX000: datos que solo llegan a nivel estatal. */
+    sinMunicipio: number;
     repetidas: string[];
 }
 
@@ -55,6 +63,8 @@ interface EntradaLeyenda {
 
 type Sel<E extends Element> = Selection<E, unknown, null, undefined>;
 
+const esSinMunicipio = (clave: string): boolean => clave.length === 5 && clave.endsWith("000");
+
 export class Visual implements IVisual {
     private readonly host: IVisualHost;
     private readonly raiz: HTMLElement;
@@ -62,11 +72,15 @@ export class Visual implements IVisual {
     private readonly servicioFormato = new FormattingSettingsService();
     private readonly svg: Sel<SVGSVGElement>;
     private readonly capaAreas: Sel<SVGGElement>;
+    private readonly limitesEstatales: Sel<SVGPathElement>;
+    private readonly contornoGrupos: Sel<SVGPathElement>;
+    private readonly resaltado: Sel<SVGPathElement>;
     private readonly capaLeyenda: Sel<SVGGElement>;
     private readonly aviso: Sel<SVGTextElement>;
     private readonly mensaje: Sel<HTMLDivElement>;
     private ajustes = new Ajustes();
     private datos: Datos | null = null;
+    private firmaGeometria = "";
 
     constructor(options: VisualConstructorOptions) {
         this.host = options.host;
@@ -77,6 +91,10 @@ export class Visual implements IVisual {
         const raiz = select(this.raiz);
         this.svg = raiz.append("svg").classed("mapa-mx", true);
         this.capaAreas = this.svg.append("g").classed("areas", true);
+        // Capas de líneas (fill="none" también como atributo, por si la hoja de estilos no carga)
+        this.limitesEstatales = this.svg.append("path").classed("limites-estatales", true).attr("fill", "none");
+        this.contornoGrupos = this.svg.append("path").classed("contorno-grupos", true).attr("fill", "none");
+        this.resaltado = this.svg.append("path").classed("resaltado", true).attr("fill", "none").style("display", "none");
         this.capaLeyenda = this.svg.append("g").classed("leyenda", true);
         this.aviso = this.svg.append("text").classed("aviso", true);
         this.mensaje = raiz.append("div").classed("mensaje", true);
@@ -89,6 +107,50 @@ export class Visual implements IVisual {
             this.seleccion.showContextMenu({} as ISelectionId, { x: evento.clientX, y: evento.clientY });
             evento.preventDefault();
         });
+
+        // Eventos de las áreas, delegados en su capa: un manejador para miles de municipios.
+        this.capaAreas
+            .on("click", (evento: MouseEvent) => {
+                const area = this.areaDe(evento.target);
+                if (!area) {
+                    return;
+                }
+                evento.stopPropagation();
+                if (this.interactivo()) {
+                    this.seleccionar(area, evento.ctrlKey || evento.metaKey || evento.shiftKey);
+                }
+            })
+            .on("keydown", (evento: KeyboardEvent) => {
+                const area = this.areaDe(evento.target);
+                if (area && (evento.key === "Enter" || evento.key === " ")) {
+                    this.seleccionar(area, evento.ctrlKey || evento.metaKey);
+                    evento.preventDefault();
+                }
+            })
+            .on("contextmenu", (evento: MouseEvent) => {
+                const area = this.areaDe(evento.target);
+                const fila = area ? this.datos?.filas.get(area.clave) : undefined;
+                this.seleccion.showContextMenu(fila ? fila.id : ({} as ISelectionId), { x: evento.clientX, y: evento.clientY });
+                evento.preventDefault();
+                evento.stopPropagation();
+            })
+            .on("pointerover", (evento: PointerEvent) => {
+                const area = this.areaDe(evento.target);
+                if (area) {
+                    this.mostrarTooltip(evento, area, false);
+                }
+            })
+            .on("pointermove", (evento: PointerEvent) => {
+                const area = this.areaDe(evento.target);
+                if (area) {
+                    this.mostrarTooltip(evento, area, true);
+                }
+            })
+            .on("pointerout", (evento: PointerEvent) => {
+                if (!this.areaDe(evento.relatedTarget)) {
+                    this.ocultarTooltip(evento);
+                }
+            });
     }
 
     public update(options: VisualUpdateOptions): void {
@@ -98,6 +160,7 @@ export class Visual implements IVisual {
             const dataView = options.dataViews?.[0];
             this.ajustes = this.servicioFormato.populateFormattingSettingsModel(Ajustes, dataView);
             this.datos = this.leerDatos(dataView);
+            this.ajustes.grupos.visible = Boolean(this.datos?.nombreGrupo);
             this.dibujar(options.viewport.width, options.viewport.height);
             eventos.renderingFinished(options);
         } catch (error) {
@@ -111,32 +174,59 @@ export class Visual implements IVisual {
 
     // ------------------------------------------------------------------ datos
 
-    /** Lee los campos por rol (Ubicación, Valor, Tooltips), nunca por nombre. */
+    /**
+     * Lee los campos por rol (Ubicación, Grupo, Valor, Tooltips), nunca por nombre.
+     * Si Ubicación es una jerarquía (drill-down), usa el nivel más profundo recibido.
+     */
     private leerDatos(dataView: DataView | undefined): Datos | null {
-        const ubicacion = dataView?.categorical?.categories?.find((c) => c.source.roles?.ubicacion);
-        if (!ubicacion) {
+        const categorias = dataView?.categorical?.categories ?? [];
+        const niveles = categorias.filter((c) => c.source.roles?.ubicacion);
+        if (niveles.length === 0) {
             return null;
         }
+        const ubicacion = niveles[niveles.length - 1];
+        const colGrupo = categorias.find((c) => c.source.roles?.grupo);
         const columnas = dataView?.categorical?.values ?? [];
         const colValor = columnas.find((c) => c.source.roles?.valor);
         const colTooltips = columnas.filter((c) => c.source.roles?.tooltips);
-        const formatoValor = colValor?.source.format;
-        const exacto = this.formateador(formatoValor);
+        const exacto = this.formateador(colValor?.source.format);
         const formatosExtra = colTooltips.map((c) => this.formateador(c.source.format));
-        const validas = new Set(estados().map((e) => e.clave));
+
+        // El nivel lo decide la mayoría de claves válidas: 2 dígitos = estado, 5 = municipio.
+        const claves = ubicacion.values.map(normalizarClave);
+        let votosEstado = 0;
+        let votosMunicipio = 0;
+        for (const c of claves) {
+            if (c && nivelDeClave(c) === "estado" && capa("estado").porClave.has(c)) {
+                votosEstado++;
+            } else if (c && nivelDeClave(c) === "municipio" && (capa("municipio").porClave.has(c) || esSinMunicipio(c))) {
+                votosMunicipio++;
+            }
+        }
+        const nivel: Nivel = votosMunicipio > votosEstado ? "municipio" : "estado";
+        const validas = capa(nivel).porClave;
 
         const datos: Datos = {
+            nivel,
             filas: new Map(),
+            estadosCubiertos: new Set(),
             nombreValor: colValor?.source.displayName ?? null,
-            formatoValor,
+            formatoValor: colValor?.source.format,
+            nombreGrupo: colGrupo?.source.displayName ?? null,
             desconocidas: [],
-            municipales: 0,
+            otroNivel: 0,
+            sinMunicipio: 0,
             repetidas: [],
         };
-        ubicacion.values.forEach((bruto, i) => {
-            const clave = normalizarClave(bruto);
-            if (clave && nivelDeClave(clave) === "municipio") {
-                datos.municipales++;
+        claves.forEach((clave, i) => {
+            const bruto = ubicacion.values[i];
+            if (clave && nivelDeClave(clave) !== nivel) {
+                datos.otroNivel++;
+                return;
+            }
+            if (clave && esSinMunicipio(clave)) {
+                datos.sinMunicipio++;
+                datos.estadosCubiertos.add(clave.slice(0, 2));
                 return;
             }
             if (!clave || !validas.has(clave)) {
@@ -149,13 +239,17 @@ export class Visual implements IVisual {
             }
             const v = colValor?.values[i];
             const valor = typeof v === "number" && Number.isFinite(v) ? v : null;
+            const grupo = colGrupo?.values[i];
+            const constructor = categorias.reduce((b, c) => b.withCategory(c, i), this.host.createSelectionIdBuilder());
             datos.filas.set(clave, {
                 clave,
                 valor,
                 texto: valor === null ? "Sin dato" : exacto(valor),
+                grupo: grupo === null || grupo === undefined || grupo === "" ? null : String(grupo),
                 extras: colTooltips.map((c, j) => ({ displayName: c.source.displayName, value: this.texto(c.values[i], formatosExtra[j]) })),
-                id: this.host.createSelectionIdBuilder().withCategory(ubicacion, i).createSelectionId(),
+                id: constructor.createSelectionId(),
             });
+            datos.estadosCubiertos.add(clave.slice(0, 2));
         });
         return datos;
     }
@@ -178,7 +272,11 @@ export class Visual implements IVisual {
     private dibujar(ancho: number, alto: number): void {
         this.svg.attr("width", ancho).attr("height", alto);
         const datos = this.datos;
-        const areas = estados();
+        const nivel: Nivel = datos?.nivel ?? "estado";
+        const geo = capa(nivel);
+        // En municipios solo se dibujan los estados que traen datos (al hacer
+        // drill-down a un estado, el mapa se acerca a él).
+        const visibles = nivel === "municipio" && datos ? geo.areas.filter((a) => datos.estadosCubiertos.has(a.estado)) : geo.areas;
         const ajustes = this.ajustes;
         const paleta = this.host.colorPalette;
         const altoContraste = paleta.isHighContrast;
@@ -197,63 +295,93 @@ export class Visual implements IVisual {
             : coloresSecuenciales(String(ajustes.colores.paleta.value?.value), clasif.numClases, ajustes.colores.invertir.value);
         const sinDato = altoContraste ? paleta.background.value : ajustes.colores.sinDato.value.value;
         const borde = altoContraste ? paleta.foreground.value : ajustes.mapa.borde.value.value;
-
-        const proyeccion = ajustes.mapa.proyeccion.value?.value === "mercator"
-            ? geoMercator()
-            : geoConicConformal().parallels([17.5, 29.5]).rotate([102, 0]); // la misma que usa INEGI
-        proyeccion.fitExtent(
-            [[MARGEN, MARGEN], [Math.max(MARGEN + 1, ancho - MARGEN), Math.max(MARGEN + 1, alto - MARGEN)]],
-            { type: "FeatureCollection", features: areas.map((e) => e.forma) },
-        );
-        const camino = geoPath(proyeccion);
-        const colorDe = (e: Area): string => {
-            const fila = datos?.filas.get(e.clave);
+        const colorDe = (a: Area): string => {
+            const fila = datos?.filas.get(a.clave);
             return fila && fila.valor !== null ? colores[clasif.claseDe(fila.valor)] : sinDato;
         };
-        const interactivo = this.host.hostCapabilities?.allowInteractions !== false;
 
-        this.capaAreas.selectAll<SVGPathElement, Area>("path.area")
-            .data(areas, (e) => e.clave)
-            .join("path")
-            .classed("area", true)
-            .classed("con-dato", (e) => datos?.filas.has(e.clave) ?? false)
-            .attr("d", (e) => camino(e.forma) ?? "")
+        const nombreProyeccion = String(ajustes.mapa.proyeccion.value?.value ?? "lambert");
+        const proyeccion = nombreProyeccion === "mercator"
+            ? geoMercator()
+            : geoConicConformal().parallels([17.5, 29.5]).rotate([102, 0]); // la misma que usa INEGI
+        const encuadre = visibles.length ? visibles : capa("estado").areas;
+        proyeccion.fitExtent(
+            [[MARGEN, MARGEN], [Math.max(MARGEN + 1, ancho - MARGEN), Math.max(MARGEN + 1, alto - MARGEN)]],
+            { type: "FeatureCollection", features: encuadre.map((a) => a.forma) },
+        );
+        const camino = geoPath(proyeccion);
+
+        // El trazo de las áreas solo se recalcula si cambia la geometría.
+        const firma = [nivel, ancho, alto, nombreProyeccion, [...(datos?.estadosCubiertos ?? [])].sort().join(",")].join("|");
+        const geometriaNueva = firma !== this.firmaGeometria;
+        this.firmaGeometria = firma;
+
+        const conGrupo = Boolean(datos?.nombreGrupo);
+        const sinLimitesInternos = conGrupo && !ajustes.grupos.limitesInternos.value;
+        const grosor = Math.max(0, ajustes.mapa.grosor.value) * (nivel === "municipio" ? 0.5 : 1);
+        const interactivo = this.interactivo();
+
+        const seleccionAreas = this.capaAreas.selectAll<SVGPathElement, Area>("path.area").data(visibles, (a) => a.clave);
+        seleccionAreas.exit().remove();
+        const nuevas = seleccionAreas.enter().append("path").classed("area", true);
+        (geometriaNueva ? nuevas.merge(seleccionAreas) : nuevas).attr("d", (a) => camino(a.forma) ?? "");
+        nuevas.merge(seleccionAreas)
+            .classed("con-dato", (a) => datos?.filas.has(a.clave) ?? false)
             .attr("fill", colorDe)
-            .attr("stroke", borde)
-            .attr("stroke-width", Math.max(0, ajustes.mapa.grosor.value))
-            .attr("tabindex", (e) => (interactivo && datos?.filas.has(e.clave) ? 0 : -1))
-            .attr("aria-label", (e) => `${e.nombre}: ${datos?.filas.get(e.clave)?.texto ?? "Sin dato"}`)
-            .on("click", (evento: MouseEvent, e) => {
-                evento.stopPropagation();
-                if (interactivo) {
-                    this.seleccionar(e, evento.ctrlKey || evento.metaKey || evento.shiftKey);
-                }
-            })
-            .on("keydown", (evento: KeyboardEvent, e) => {
-                if (evento.key === "Enter" || evento.key === " ") {
-                    this.seleccionar(e, evento.ctrlKey || evento.metaKey);
-                    evento.preventDefault();
-                }
-            })
-            .on("contextmenu", (evento: MouseEvent, e) => {
-                const fila = datos?.filas.get(e.clave);
-                this.seleccion.showContextMenu(fila ? fila.id : ({} as ISelectionId), { x: evento.clientX, y: evento.clientY });
-                evento.preventDefault();
-                evento.stopPropagation();
-            })
-            .on("pointerenter", (evento: PointerEvent, e) => this.mostrarTooltip(evento, e, false))
-            .on("pointermove", (evento: PointerEvent, e) => this.mostrarTooltip(evento, e, true))
-            .on("pointerleave", (evento: PointerEvent) => this.ocultarTooltip(evento));
+            // Sin límites internos, el trazo del mismo color tapa las rendijas entre áreas.
+            .attr("stroke", (a) => (sinLimitesInternos ? colorDe(a) : borde))
+            .attr("stroke-width", sinLimitesInternos ? 0.6 : grosor)
+            .attr("tabindex", (a) => (interactivo && datos?.filas.has(a.clave) ? 0 : -1))
+            .attr("aria-label", (a) => this.etiquetaDe(a));
 
+        if (nivel === "municipio" && visibles.length > 0) {
+            if (geometriaNueva) {
+                const lineas = bordes(geo, (a, b) => b === null || a.slice(0, 2) !== b.slice(0, 2));
+                this.limitesEstatales.attr("d", camino(lineas) ?? "");
+            }
+            this.limitesEstatales
+                .attr("stroke", altoContraste ? paleta.foreground.value : COLOR_LIMITE_ESTATAL)
+                .attr("stroke-width", Math.max(0.8, ajustes.mapa.grosor.value * 1.2))
+                .style("display", null);
+        } else {
+            this.limitesEstatales.style("display", "none");
+        }
+
+        if (datos && conGrupo && ajustes.grupos.contorno.value) {
+            // Contorno donde cambia el grupo, calculado con los datos de este momento.
+            const grupoDe = (k: string): string | null => datos.filas.get(k)?.grupo ?? null;
+            const lineas = bordes(geo, (a, b) => {
+                const ga = grupoDe(a);
+                if (b === null) {
+                    return ga !== null;
+                }
+                const gb = grupoDe(b);
+                return ga !== gb && (ga !== null || gb !== null);
+            });
+            this.contornoGrupos
+                .attr("d", camino(lineas) ?? "")
+                .attr("stroke", altoContraste ? paleta.foreground.value : ajustes.grupos.color.value.value)
+                .attr("stroke-width", Math.max(0, ajustes.grupos.grosor.value))
+                .style("display", null);
+        } else {
+            this.contornoGrupos.style("display", "none");
+        }
+
+        this.resaltado.style("display", "none");
         this.aplicarSeleccion();
-        this.dibujarLeyenda(clasif, colores, sinDato, borde, ancho, alto, altoContraste ? paleta.foreground.value : null);
+        this.dibujarLeyenda(clasif, colores, sinDato, borde, visibles.length, ancho, alto, altoContraste ? paleta.foreground.value : null);
         this.dibujarAviso(ancho, altoContraste ? paleta.foreground.value : null);
         this.dibujarMensaje();
     }
 
+    private etiquetaDe(a: Area): string {
+        const estado = this.datos?.nivel === "municipio" ? `, ${capa("estado").porClave.get(a.estado)?.nombre ?? a.estado}` : "";
+        return `${a.nombre}${estado}: ${this.datos?.filas.get(a.clave)?.texto ?? "Sin dato"}`;
+    }
+
     private dibujarLeyenda(
         clasif: Clasificacion, colores: string[], sinDato: string, borde: string,
-        ancho: number, alto: number, colorTexto: string | null,
+        visibles: number, ancho: number, alto: number, colorTexto: string | null,
     ): void {
         const ajustes = this.ajustes.leyenda;
         const datos = this.datos;
@@ -279,7 +407,7 @@ export class Visual implements IVisual {
             }
         }
         const conValor = [...datos.filas.values()].filter((f) => f.valor !== null).length;
-        if (conValor < estados().length) {
+        if (conValor < visibles) {
             entradas.push({ color: sinDato, texto: "Sin dato" });
         }
 
@@ -324,8 +452,11 @@ export class Visual implements IVisual {
         if (d?.desconocidas.length) {
             partes.push(`${d.desconocidas.length} ${d.desconocidas.length === 1 ? "clave no reconocida" : "claves no reconocidas"}`);
         }
-        if (d?.municipales && d.filas.size > 0) {
-            partes.push(`${d.municipales} claves municipales (aún no se dibujan)`);
+        if (d?.otroNivel) {
+            partes.push(`${d.otroNivel} de otro nivel`);
+        }
+        if (d?.sinMunicipio && d.nivel === "municipio") {
+            partes.push(`${d.sinMunicipio} sin municipio (no se dibujan)`);
         }
         if (d?.repetidas.length) {
             partes.push(`${d.repetidas.length} repetidas`);
@@ -348,9 +479,9 @@ export class Visual implements IVisual {
         const d = this.datos;
         let texto = "";
         if (!d) {
-            texto = "Arrastra a Ubicación una columna con claves INEGI de estado (CVE_ENT) y a Valor la medida que quieras ver.";
-        } else if (d.filas.size === 0 && d.municipales > 0) {
-            texto = "Esta versión dibuja estados: usa claves de 2 dígitos (CVE_ENT). El nivel municipal (CVEGEO) llega en la siguiente versión.";
+            texto = "Arrastra a Ubicación una columna con claves INEGI (CVE_ENT de estado o CVEGEO de municipio) y a Valor la medida que quieras ver.";
+        } else if (d.filas.size === 0 && d.desconocidas.length > 0 && d.desconocidas.every((v) => !/^\s*\d+\s*$/.test(v))) {
+            texto = "Ubicación necesita claves INEGI (CVE_ENT o CVEGEO), no nombres. Para regiones usa el campo Grupo; para obtener las claves, el puente INEGI.";
         } else if (d.nombreValor === null) {
             texto = "Agrega una medida en Valor.";
         }
@@ -358,6 +489,19 @@ export class Visual implements IVisual {
     }
 
     // ------------------------------------------------------------ interacción
+
+    private interactivo(): boolean {
+        return this.host.hostCapabilities?.allowInteractions !== false;
+    }
+
+    /** El área bajo un evento (los eventos se delegan en la capa de áreas). */
+    private areaDe(objetivo: EventTarget | null): Area | null {
+        const e = objetivo as Element | null;
+        if (!e || typeof e.getAttribute !== "function" || e.tagName.toLowerCase() !== "path" || !e.classList.contains("area")) {
+            return null;
+        }
+        return select<Element, Area>(e).datum() ?? null;
+    }
 
     private seleccionar(area: Area, multiple: boolean): void {
         const fila = this.datos?.filas.get(area.clave);
@@ -370,8 +514,8 @@ export class Visual implements IVisual {
     private aplicarSeleccion(): void {
         const ids = this.seleccion.getSelectionIds() as ISelectionId[];
         this.capaAreas.selectAll<SVGPathElement, Area>("path.area")
-            .attr("aria-selected", (e) => {
-                const fila = this.datos?.filas.get(e.clave);
+            .attr("aria-selected", (a) => {
+                const fila = this.datos?.filas.get(a.clave);
                 return String(Boolean(fila && ids.some((id) => id.equals(fila.id))));
             })
             .style("opacity", function () {
@@ -380,14 +524,24 @@ export class Visual implements IVisual {
     }
 
     private mostrarTooltip(evento: PointerEvent, area: Area, mover: boolean): void {
-        select(evento.currentTarget as SVGPathElement).raise().classed("activa", true);
+        const objetivo = evento.target as SVGPathElement;
+        this.resaltado.attr("d", objetivo.getAttribute("d")).style("display", null);
         if (!this.host.tooltipService.enabled()) {
             return;
         }
-        const fila = this.datos?.filas.get(area.clave);
-        const items: VisualTooltipDataItem[] = [{ displayName: "Estado", value: area.nombre }];
-        if (this.datos?.nombreValor) {
-            items.push({ displayName: this.datos.nombreValor, value: fila?.texto ?? "Sin dato" });
+        const datos = this.datos;
+        const fila = datos?.filas.get(area.clave);
+        const items: VisualTooltipDataItem[] = datos?.nivel === "municipio"
+            ? [
+                { displayName: "Municipio", value: area.nombre },
+                { displayName: "Estado", value: capa("estado").porClave.get(area.estado)?.nombre ?? area.estado },
+            ]
+            : [{ displayName: "Estado", value: area.nombre }];
+        if (datos?.nombreGrupo && fila?.grupo) {
+            items.push({ displayName: datos.nombreGrupo, value: fila.grupo });
+        }
+        if (datos?.nombreValor) {
+            items.push({ displayName: datos.nombreValor, value: fila?.texto ?? "Sin dato" });
         }
         if (fila) {
             items.push(...fila.extras);
@@ -407,7 +561,7 @@ export class Visual implements IVisual {
     }
 
     private ocultarTooltip(evento: PointerEvent): void {
-        select(evento.currentTarget as SVGPathElement).classed("activa", false);
+        this.resaltado.style("display", "none");
         this.host.tooltipService.hide({ immediately: true, isTouchEvent: evento.pointerType === "touch" });
     }
 }

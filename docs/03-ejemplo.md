@@ -49,7 +49,8 @@ Octubre 2024 a septiembre 2026. Se regeneran igual con `python scripts/generar_d
 
 ## El visual con las medidas del ejemplo
 
-- **Ubicación**: `Dim_Geo[CVE_ENT]`. Filtra la página por `Dim_Calendario[Año]` para que funcionen los crecimientos.
+- **Ubicación**: `Dim_Geo[CVE_ENT]` y, debajo, `Dim_Municipio[CVEGEO]` para hacer drill-down a municipios. Filtra la página por `Dim_Calendario[Año]` para que funcionen los crecimientos.
+- **Grupo**: `Dim_Geo[REGION_NIELSEN]` para ver el contorno de las regiones.
 - **Valor**, según la pregunta:
 
 | Medida | Método sugerido |
@@ -60,6 +61,8 @@ Octubre 2024 a septiembre 2026. Se regeneran igual con `python scripts/generar_d
 | `Brecha Mix vs Nielsen (pp)` | Divergente, centro 0, umbrales 0.25 y 1 |
 
 Para cambiar de métrica con una segmentación, crea un parámetro de campo con estas medidas ([guía 01](01-usar-el-visual.md#cambiar-de-métrica)).
+
+En el nivel municipal solo tienen dato las medidas que usan venta de las cadenas (ventas, unidades, mix, crecimiento y precio): las que dependen de población o de Nielsen devuelven vacío, porque esas fuentes no existen por municipio. Las cadenas que reportan por estado van al municipio `XX000` y el visual las cuenta como "sin municipio".
 
 ## Cómo se comparan las fuentes
 

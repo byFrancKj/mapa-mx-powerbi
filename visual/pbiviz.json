@@ -4,8 +4,8 @@
         "displayName": "Mapa México (INEGI)",
         "guid": "mapaMexicoInegiA311255EF446450EB27A6DB3EE2E78B7",
         "visualClassName": "Visual",
-        "version": "0.1.0.0",
-        "description": "Mapa de México por estado con claves INEGI. Los datos, las relaciones y las medidas vienen de tu modelo; el visual solo trae la geometría de INEGI y no se conecta a internet.",
+        "version": "0.2.0.0",
+        "description": "Mapa de México por estado o municipio con claves INEGI, con drill-down y regiones dinámicas. Los datos, las relaciones y las medidas vienen de tu modelo; el visual solo trae la geometría de INEGI y no se conecta a internet.",
         "supportUrl": "https://github.com/PENDIENTE/mapa-mx-powerbi",
         "gitHubUrl": "https://github.com/PENDIENTE/mapa-mx-powerbi"
     },
@@ -22,5 +22,5 @@
     "capabilities": "capabilities.json",
     "dependencies": null,
     "stringResources": [],
-    "version": "0.1.0.0"
+    "version": "0.2.0.0"
 }

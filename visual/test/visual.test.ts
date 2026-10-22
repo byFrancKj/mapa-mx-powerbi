@@ -76,12 +76,6 @@ test("sin campos muestra cómo empezar; sin medida pide una", () => {
     assert.equal(mensaje()?.textContent, "Agrega una medida en Valor.");
 });
 
-test("con claves municipales explica que esta versión dibuja estados", () => {
-    const { elemento, visual } = montar();
-    visual.update(opcionesUpdate(crearDataView({ claves: ["14039", 1001], valores: [1, 2] })));
-    assert.match(elemento.querySelector(".mensaje")?.textContent ?? "", /dibuja estados/);
-});
-
 test("clic selecciona y atenúa los demás; clic en el fondo limpia", async () => {
     const { elemento, visual } = montar();
     visual.update(opcionesUpdate(crearDataView({ claves: ["14", "15"], valores: [1, 2] })));
@@ -108,7 +102,7 @@ test("tooltip con el estado, la medida formateada y las medidas extra", () => {
         claves: ["14"], valores: [1234.5], nombre: "Ventas", formato: "#,0.00",
         tooltips: [{ nombre: "Crecimiento", valores: [0.163], formato: "0.0%" }],
     })));
-    area(elemento, "Jalisco")?.dispatchEvent(new ventana.MouseEvent("pointerenter", { clientX: 10, clientY: 20 }));
+    area(elemento, "Jalisco")?.dispatchEvent(new ventana.MouseEvent("pointerover", { bubbles: true, clientX: 10, clientY: 20 }));
     const [tipo, datos] = llamadas.tooltip[0];
     assert.equal(tipo, "show");
     assert.deepEqual(datos.dataItems, [
@@ -116,7 +110,7 @@ test("tooltip con el estado, la medida formateada y las medidas extra", () => {
         { displayName: "Ventas", value: "1,234.50" },
         { displayName: "Crecimiento", value: "16.3%" },
     ]);
-    area(elemento, "Jalisco")?.dispatchEvent(new ventana.MouseEvent("pointerleave"));
+    area(elemento, "Jalisco")?.dispatchEvent(new ventana.MouseEvent("pointerout", { bubbles: true }));
     assert.equal(llamadas.tooltip[llamadas.tooltip.length - 1][0], "hide");
 });
 
@@ -138,5 +132,6 @@ test("el modelo de formato expone las tarjetas Colores, Mapa y Leyenda", () => {
     const { visual } = montar();
     visual.update(opcionesUpdate(crearDataView({ claves: ["14"], valores: [1] })));
     const modelo = visual.getFormattingModel();
-    assert.deepEqual(modelo.cards.map((c) => c.displayName), ["Colores", "Mapa", "Leyenda"]);
+    // "Grupos" solo aparece cuando se usa el campo Grupo.
+    assert.deepEqual(modelo.cards.filter((c) => c.visible !== false).map((c) => c.displayName), ["Colores", "Mapa", "Leyenda"]);
 });

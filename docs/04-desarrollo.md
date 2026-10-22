@@ -39,17 +39,17 @@ O empaqueta (`npm run package`) e importa el `.pbiviz` en Power BI Desktop en un
 
 ```
 visual/
-├── capabilities.json   Campos (Ubicación, Valor, Tooltips), opciones de formato y privilegios (ninguno)
+├── capabilities.json   Campos (Ubicación con drill-down, Grupo, Valor, Tooltips), opciones de formato y privilegios (ninguno)
 ├── pbiviz.json         Nombre, versión y GUID del visual
 ├── src/
-│   ├── visual.ts       Lee los campos por rol, dibuja, tooltips, selección, leyenda y avisos
+│   ├── visual.ts       Lee los campos por rol, decide el nivel, dibuja, grupos, tooltips, selección, leyenda y avisos
 │   ├── ajustes.ts      Panel de formato
 │   ├── claves.ts       Normaliza claves INEGI (completa ceros, detecta nivel)
 │   ├── clasificacion.ts Cuantiles, intervalos y divergente
 │   ├── paletas.ts      Paletas ColorBrewer
 │   ├── formato.ts      Formato compacto en español para la leyenda
-│   ├── geometria.ts    Carga la geometría empaquetada
-│   └── geo/estados.json La geometría (la genera npm run geo en la raíz)
+│   ├── geometria.ts    Carga la geometría empaquetada y calcula límites (topojson mesh)
+│   └── geo/            estados.json y municipios.json (los genera npm run geo en la raíz)
 ├── test/               Pruebas y entorno simulado de Power BI
 └── scripts/            Vista previa y revisión de privilegios
 ```
@@ -71,7 +71,7 @@ npm run geo -- --fuente "C:/INEGI/00mun.shp"  # desde la capa original del Marco
 python scripts/validar.py
 ```
 
-`npm run geo` escribe `geo/`, los catálogos de `puente-inegi/catalogos/` y la copia que va dentro del visual (`visual/src/geo/estados.json`).
+`npm run geo` escribe `geo/`, los catálogos de `puente-inegi/catalogos/` y las copias que van dentro del visual (`visual/src/geo/`). La geometría municipal es la mayor parte del paquete (unos 290 KB de sus 373 KB).
 
 ## Publicar una versión
 

@@ -25,9 +25,8 @@ Gracias por mejorar el proyecto. Algunas reglas para que siga siendo útil y seg
 
 ## Ideas pendientes
 
-- Campo *Grupo*: regiones dinámicas con `topojson.merge` y `topojson.mesh`.
-- Municipios con drill-down estado → municipio.
 - Mapa bivariado (Valor 2).
+- Etiquetas con el valor o el nombre sobre cada área.
 - Localización de textos del visual.
 - Script para asignar `CVEGEO` a tiendas a partir de coordenadas.
 - Población municipal para métricas per cápita a nivel municipio.

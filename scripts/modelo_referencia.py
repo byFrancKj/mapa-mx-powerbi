@@ -5,8 +5,8 @@ Sirve para dos cosas:
   1. Publicar valores esperados (ejemplo/valores_esperados.csv) para que puedas
      comprobar que tu modelo en Power BI da los mismos números con los datos de
      ejemplo.
-  2. Dejar en .cache/vista_previa/estados.json los valores por estado con los que
-     se dibujan las vistas previas del visual (visual/scripts/vista_previa.ts).
+  2. Dejar en .cache/vista_previa/ los valores por estado y por municipio con los
+     que se dibujan las vistas previas del visual (visual/scripts/vista_previa.ts).
 
     python scripts/modelo_referencia.py
 
@@ -139,6 +139,10 @@ df = df.reset_index()
 # ---------------------------------------------- datos para las vistas previas
 filas = json.loads(df.to_json(orient="records", force_ascii=False))
 (SALIDA / "estados.json").write_text(json.dumps(filas, ensure_ascii=False), encoding="utf-8")
+# Venta por municipio (solo las cadenas con detalle municipal; XX000 = sin municipio)
+mun = en(cad, ACTUAL)
+mun = mun[~mun["CVEGEO"].str.endswith("000")].groupby("CVEGEO", as_index=False)["VENTAS"].sum()
+(SALIDA / "municipios.json").write_text(mun.to_json(orient="records", force_ascii=False), encoding="utf-8")
 
 # ------------------------------------------------------ valores esperados
 esperado = df[[
@@ -146,6 +150,6 @@ esperado = df[[
     "% Mix Nielsen", "Índice Cadenas vs Nielsen", "Índice per cápita Cadenas", "Crec % Cadenas", "Crec % Nielsen",
 ]].round(6)
 esperado.to_csv(EJEMPLO / "valores_esperados.csv", index=False, encoding="utf-8", lineterminator="\n")
-print("Vista previa: .cache/vista_previa/estados.json")
+print("Vista previa: .cache/vista_previa/estados.json y municipios.json")
 print("Valores esperados: ejemplo/valores_esperados.csv")
 print(df[["ESTADO", "Ventas Cadenas", "Índice Cadenas vs Nielsen", "Crec % Cadenas"]].head(5).to_string(index=False))

@@ -11,7 +11,7 @@
  *   geo/estados/mx_estados.topojson + .geojson     (objeto "estados")
  *   geo/municipios/mx_municipios.topojson          (objeto "municipios")
  *   puente-inegi/catalogos/dim_geo.csv, dim_municipio.csv
- *   visual/src/geo/estados.json                    (la geometría que va dentro del visual)
+ *   visual/src/geo/estados.json, municipios.json   (la geometría que va dentro del visual)
  *
  * Las regiones ya no se precalculan: el visual las arma con los datos del modelo.
  */
@@ -152,6 +152,8 @@ await run(
     `-filter-fields CVEGEO,CVE_ENT,CVE_MUN,NOMGEO ` +
     `-o ${q(rel('geo/municipios/mx_municipios.topojson'))} format=topojson quantization=20000`
 );
+
+fs.copyFileSync(rel('geo/municipios/mx_municipios.topojson'), rel('visual/src/geo/municipios.json'));
 
 const dimMun = leerJson(tmpMun).map((r) => ({ ...r, MUNICIPIO: r.NOMGEO }));
 // Fila "sin municipio" por estado, para datos que solo llegan a nivel estatal.
