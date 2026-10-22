@@ -39,17 +39,19 @@ O empaqueta (`npm run package`) e importa el `.pbiviz` en Power BI Desktop en un
 
 ```
 visual/
-├── capabilities.json   Campos (Ubicación con drill-down, Grupo, Valor, Tooltips), opciones de formato y privilegios (ninguno)
+├── capabilities.json   Campos (Ubicación con drill-down, Grupo, Valor, Valor 2, Tooltips), opciones de formato y privilegios (ninguno)
 ├── pbiviz.json         Nombre, versión y GUID del visual
 ├── src/
-│   ├── visual.ts       Lee los campos por rol, decide el nivel, dibuja, grupos, tooltips, selección, leyenda y avisos
+│   ├── visual.ts       Lee los campos por rol, decide el nivel, dibuja, bivariado, grupos, etiquetas, tooltips, selección, leyenda y avisos
 │   ├── ajustes.ts      Panel de formato
 │   ├── claves.ts       Normaliza claves INEGI (completa ceros, detecta nivel)
 │   ├── clasificacion.ts Cuantiles, intervalos y divergente
 │   ├── paletas.ts      Paletas ColorBrewer
-│   ├── formato.ts      Formato compacto en español para la leyenda
+│   ├── formato.ts      Formato compacto ($78.4 M, $1.5 mil M) para leyenda y etiquetas
+│   ├── textos.ts       Textos en el idioma de Power BI
 │   ├── geometria.ts    Carga la geometría empaquetada y calcula límites (topojson mesh)
 │   └── geo/            estados.json y municipios.json (los genera npm run geo en la raíz)
+├── stringResources/    Traducciones: es-ES, es-MX (igual a es-ES) y en-US (respaldo)
 ├── test/               Pruebas y entorno simulado de Power BI
 └── scripts/            Vista previa y revisión de privilegios
 ```
@@ -59,6 +61,13 @@ Notas de compatibilidad, por si actualizas dependencias:
 - `powerbi-visuals-utils-formattingutils` está fijado en **6.1.2**: el cargador de idiomas de `powerbi-visuals-tools` 7.2.1 no entiende el formato ESM de la 7.0.0.
 - `tsconfig.json` no es estricto porque pbiviz compila también su propio código generado; `tsconfig.estricto.json` revisa el código del visual en modo estricto.
 - TypeScript se queda en 5.5, la versión con la que pbiviz 7.2.1 está probado.
+
+### Agregar un idioma
+
+1. Copia `stringResources/en-US/` a `stringResources/<código>/` (por ejemplo `pt-BR`) y traduce los textos.
+2. `npm test` revisa que todas las claves usadas en el código existan en todos los idiomas y que no sobre ninguna.
+
+pbiviz solo empaqueta las culturas de formato de los idiomas que tienen carpeta, así que agregar un idioma también corrige el formato de sus cifras.
 
 ## Geometría y catálogos
 

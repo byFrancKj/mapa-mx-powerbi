@@ -25,8 +25,7 @@ Gracias por mejorar el proyecto. Algunas reglas para que siga siendo útil y seg
 
 ## Ideas pendientes
 
-- Mapa bivariado (Valor 2).
-- Etiquetas con el valor o el nombre sobre cada área.
-- Localización de textos del visual.
+- Más idiomas (`stringResources/`).
+- Formato condicional (fx) para colores y umbrales.
 - Script para asignar `CVEGEO` a tiendas a partir de coordenadas.
 - Población municipal para métricas per cápita a nivel municipio.

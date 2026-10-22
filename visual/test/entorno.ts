@@ -3,6 +3,7 @@
  * que registra lo que el visual le pide, y un constructor de dataViews como los
  * que manda Power BI.
  */
+import { readFileSync } from "node:fs";
 import { JSDOM } from "jsdom";
 import type powerbi from "powerbi-visuals-api";
 
@@ -15,6 +16,7 @@ export interface Llamadas {
     render: string[];
     tooltip: Array<[string, { dataItems?: powerbi.extensibility.VisualTooltipDataItem[] }]>;
     menu: number;
+    advertencias: Array<[string, string]>;
 }
 
 interface IdFalso {
@@ -23,18 +25,27 @@ interface IdFalso {
     getKey(): string;
 }
 
-export function crearHost(opciones: { altoContraste?: boolean } = {}) {
-    const llamadas: Llamadas = { render: [], tooltip: [], menu: 0 };
+/** Los textos de stringResources/<idioma>/resources.resjson, como los entrega Power BI. */
+export function recursos(locale: string): Record<string, string> {
+    return JSON.parse(readFileSync(new URL(`../stringResources/${locale}/resources.resjson`, import.meta.url), "utf8"));
+}
+
+export function crearHost(opciones: { altoContraste?: boolean; locale?: string } = {}) {
+    const locale = opciones.locale ?? "es-MX";
+    const textos = recursos(locale);
+    const llamadas: Llamadas = { render: [], tooltip: [], menu: 0, advertencias: [] };
     let seleccionados: IdFalso[] = [];
     let alSeleccionar: (() => void) | null = null;
     const host = {
-        locale: "es-MX",
+        locale,
+        createLocalizationManager: () => ({ getDisplayName: (clave: string) => textos[clave] ?? clave }),
         colorPalette: {
             isHighContrast: Boolean(opciones.altoContraste),
             foreground: { value: "#ffff00" },
             background: { value: "#000000" },
         },
         hostCapabilities: { allowInteractions: true },
+        displayWarningIcon: (titulo: string, detalle: string) => llamadas.advertencias.push([titulo, detalle]),
         eventService: {
             renderingStarted: () => llamadas.render.push("inicio"),
             renderingFinished: () => llamadas.render.push("fin"),
@@ -96,6 +107,12 @@ export interface OpcionesDataView {
     valores?: Array<number | null>;
     nombre?: string;
     formato?: string;
+    /** Parte de Valor que resalta otro visual (null = no resaltado). */
+    resaltes?: Array<number | null>;
+    /** Segunda medida (campo Valor 2: mapa bivariado). */
+    valores2?: Array<number | null>;
+    nombre2?: string;
+    formato2?: string;
     tooltips?: Array<{ nombre: string; valores: unknown[]; formato?: string }>;
     /** Propiedades del panel de formato, como las guarda Power BI. */
     objetos?: Record<string, Record<string, unknown>>;
@@ -108,7 +125,12 @@ export function crearDataView(o: OpcionesDataView): powerbi.DataView {
         ...(o.grupo ? [{ source: { displayName: o.grupo.nombre, roles: { grupo: true } }, values: o.grupo.valores }] : []),
     ];
     const valores = [
-        ...(o.valores ? [{ source: { displayName: o.nombre ?? "Ventas", roles: { valor: true }, format: o.formato }, values: o.valores }] : []),
+        ...(o.valores ? [{
+            source: { displayName: o.nombre ?? "Ventas", roles: { valor: true }, format: o.formato },
+            values: o.valores,
+            ...(o.resaltes ? { highlights: o.resaltes } : {}),
+        }] : []),
+        ...(o.valores2 ? [{ source: { displayName: o.nombre2 ?? "Valor 2", roles: { valor2: true }, format: o.formato2 }, values: o.valores2 }] : []),
         ...(o.tooltips ?? []).map((t) => ({ source: { displayName: t.nombre, roles: { tooltips: true }, format: t.formato }, values: t.valores })),
     ];
     return {

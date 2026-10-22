@@ -128,10 +128,10 @@ test("alto contraste: límites y sin-dato con los colores del tema", () => {
     assert.equal(area(elemento, "Sonora")?.getAttribute("fill"), "#000000");
 });
 
-test("el modelo de formato expone las tarjetas Colores, Mapa y Leyenda", () => {
+test("el modelo de formato expone las tarjetas Colores, Mapa, Etiquetas y Leyenda", () => {
     const { visual } = montar();
     visual.update(opcionesUpdate(crearDataView({ claves: ["14"], valores: [1] })));
     const modelo = visual.getFormattingModel();
-    // "Grupos" solo aparece cuando se usa el campo Grupo.
-    assert.deepEqual(modelo.cards.filter((c) => c.visible !== false).map((c) => c.displayName), ["Colores", "Mapa", "Leyenda"]);
+    // "Bivariado" y "Grupos" solo aparecen cuando se usan Valor 2 y Grupo.
+    assert.deepEqual(modelo.cards.filter((c) => c.visible !== false).map((c) => c.displayName), ["Colores", "Mapa", "Etiquetas", "Leyenda"]);
 });

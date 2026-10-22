@@ -60,6 +60,19 @@ const VISTAS: Array<{ archivo: string; datos: OpcionesDataView; ancho?: number; 
         },
     },
     {
+        archivo: "mapa_bivariado.png",
+        datos: {
+            ...porEstado("Índice per cápita Cadenas", "#,0"),
+            valores2: estados.map((e) => e["Crec % Cadenas"] as number | null),
+            nombre2: "Crec % Cadenas",
+            formato2: "+0.0%;-0.0%;0.0%",
+        },
+    },
+    {
+        archivo: "mapa_etiquetas.png",
+        datos: { ...porEstado("Ventas Cadenas", "\\$#,0"), objetos: { etiquetas: { mostrar: true } } },
+    },
+    {
         archivo: "municipios_jalisco.png",
         datos: { claves: jalisco.map((m) => m.CVEGEO), valores: jalisco.map((m) => m.VENTAS as number), nombre: "Ventas Cadenas", formato: "\\$#,0" },
         ancho: 640,

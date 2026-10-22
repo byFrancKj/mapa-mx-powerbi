@@ -45,3 +45,16 @@ export function coloresDivergentes(nombre: string, invertir = false): string[] {
     const colores = [...esquema[5]];
     return invertir ? colores.reverse() : colores;
 }
+
+// Paletas bivariadas 3×3 de Joshua Stevens. Orden: filas de Valor 2 (Y) de bajo a
+// alto; en cada fila, Valor (X) de bajo a alto. El nombre dice el tono de X y de Y.
+export const BIVARIADAS: Record<string, readonly string[]> = {
+    "turquesa-rosa": ["#e8e8e8", "#ace4e4", "#5ac8c8", "#dfb0d6", "#a5add3", "#5698b9", "#be64ac", "#8c62aa", "#3b4994"],
+    "verde-azul": ["#e8e8e8", "#b8d6be", "#73ae80", "#b5c0da", "#90b2b3", "#5a9178", "#6c83b5", "#567994", "#2a5a5b"],
+    "rojo-azul": ["#e8e8e8", "#e4acac", "#c85a5a", "#b0d5df", "#ad9ea5", "#985356", "#64acbe", "#627f8c", "#574249"],
+};
+
+/** Color de la celda (x, y) con x, y ∈ {0, 1, 2}. */
+export function colorBivariado(nombre: string, x: number, y: number): string {
+    return (BIVARIADAS[nombre] ?? BIVARIADAS["turquesa-rosa"])[y * 3 + x];
+}

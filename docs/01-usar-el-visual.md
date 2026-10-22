@@ -14,6 +14,7 @@ Descarga el archivo del *release* de GitHub y comprueba su huella antes de insta
 | **Ubicación (clave INEGI)** | La clave del estado (`CVE_ENT`, 2 dígitos) o del municipio (`CVEGEO`, 5 dígitos). Admite una jerarquía estado → municipio. | obligatorio |
 | **Grupo (región)** | Una columna con el grupo de cada área: tu región, zona comercial, territorio… | opcional |
 | **Valor** | La medida que colorea el mapa. Cualquiera de tu modelo. | obligatorio |
+| **Valor 2 (bivariado)** | Una segunda medida: el mapa pasa a ser bivariado. | opcional |
 | **Información sobre herramientas** | Medidas extra que aparecen al pasar el cursor. | opcional |
 
 La clave puede ser texto o número: el visual completa los ceros que Excel o Power BI suelen quitar (`9` → `"09"`, `1002` → `"01002"`). Los nombres no sirven en Ubicación; si tus datos solo traen nombres o tiendas, conviértelos a clave con el [puente INEGI](02-puente-inegi.md).
@@ -53,6 +54,26 @@ El grupo debe ser un atributo del área: un solo valor por estado o municipio. S
 
 ![Regiones del modelo dibujadas con el campo Grupo](img/mapa_regiones.png)
 
+## Mapa bivariado
+
+Con una medida en **Valor 2**, cada medida se parte en terciles (bajo, medio, alto) y cada área toma el color de la combinación: Valor crece hacia la derecha de la leyenda y Valor 2 hacia arriba. La esquina oscura es "alto en ambas".
+
+![Mapa bivariado](img/mapa_bivariado.png)
+
+| Valor | Valor 2 | Pregunta |
+|---|---|---|
+| Índice per cápita | Crecimiento | ¿Dónde somos fuertes y además crecemos? |
+| Índice contra el mercado | Brecha de crecimiento | ¿Dónde estamos sub-representados y perdiendo terreno? |
+| % de la venta nacional | Índice de precio | ¿Los estados que más pesan son los más caros? |
+
+En el bivariado no aplican el método ni las clases de la tarjeta Colores; la paleta se elige en la tarjeta **Bivariado**. El tooltip muestra las dos medidas y la clase ("alto en Índice · bajo en Crecimiento").
+
+## Etiquetas
+
+*Formato › Etiquetas* muestra sobre cada área el valor (abreviado: `$212 M`), el nombre o ambos. Solo se dibujan donde caben y sin encimarse: las áreas grandes ponen su etiqueta primero. Con el mapa más grande o el texto más chico aparecen más.
+
+![Etiquetas con el valor de cada estado](img/mapa_etiquetas.png)
+
 ## Panel de formato
 
 **Colores**
@@ -69,7 +90,11 @@ El grupo debe ser un atributo del área: un solo valor por estado o municipio. S
 
 **Mapa:** proyección (Lambert, la que usa INEGI, o Mercator), color y grosor de los límites. En municipios los límites se dibujan a la mitad de grosor.
 
+**Bivariado** (aparece al usar Valor 2): paleta de 3×3.
+
 **Grupos** (aparece al usar el campo Grupo): mostrar el contorno, su color y grosor, y mostrar u ocultar los límites dentro de cada grupo.
+
+**Etiquetas:** mostrar, contenido (valor, nombre o ambos), tamaño y color del texto.
 
 **Leyenda:** mostrar u ocultar, posición, título (por defecto, el nombre de la medida) y tamaño del texto. Las cifras usan el formato de tu medida, abreviadas en español: `$78.4 M`, `$1.5 mil M`.
 
@@ -84,11 +109,18 @@ Si unas métricas necesitan escala divergente y otras no, usa un visual por tipo
 ## Interacción
 
 - **Clic** en un área: filtra el resto de la página. **Ctrl+clic** agrega áreas. **Clic en el fondo**: quita la selección.
+- **Resaltado**: si haces clic en otro visual (una barra, una fila), el mapa atenúa las áreas que no corresponden.
 - **Clic derecho**: menú contextual de Power BI (obtener detalles, incluir, excluir, explorar…).
 - **Teclado**: *Tab* recorre las áreas con datos; *Enter* o *Espacio* selecciona.
 - **Tooltips**: área (y estado, en municipios), grupo, valor con su formato y las medidas extra. También admite tooltips de página.
 
+## Idiomas
+
+Los textos del visual (campos, panel de formato, tooltips, leyenda y avisos) salen en **español** si Power BI está en español y en **inglés** en cualquier otro idioma. Las cifras siguen la configuración regional del reporte.
+
 ## Avisos del visual
+
+Cuando hay un problema con las claves, el visual lo escribe en una esquina del mapa y además muestra el **ícono de advertencia** en su encabezado, con el detalle.
 
 | Aviso o mensaje | Qué significa |
 |---|---|

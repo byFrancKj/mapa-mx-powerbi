@@ -4,25 +4,41 @@
             "name": "ubicacion",
             "kind": "Grouping",
             "displayName": "Ubicación (clave INEGI)",
-            "description": "Clave INEGI: CVE_ENT (estado, 2 dígitos) o CVEGEO (municipio, 5 dígitos), como texto o número. Admite una jerarquía estado → municipio para hacer drill-down."
+            "description": "Clave INEGI: CVE_ENT (estado, 2 dígitos) o CVEGEO (municipio, 5 dígitos), como texto o número. Admite una jerarquía estado → municipio para hacer drill-down.",
+            "displayNameKey": "Rol_Ubicacion",
+            "descriptionKey": "Rol_Ubicacion_Desc"
         },
         {
             "name": "grupo",
             "kind": "Grouping",
             "displayName": "Grupo (región)",
-            "description": "Columna con el grupo de cada área (por ejemplo, tu región). El visual dibuja su contorno."
+            "description": "Columna con el grupo de cada área (por ejemplo, tu región). El visual dibuja su contorno.",
+            "displayNameKey": "Rol_Grupo",
+            "descriptionKey": "Rol_Grupo_Desc"
         },
         {
             "name": "valor",
             "kind": "Measure",
             "displayName": "Valor",
-            "description": "La medida que colorea el mapa. Puede ser cualquiera de tu modelo."
+            "description": "La medida que colorea el mapa. Puede ser cualquiera de tu modelo.",
+            "displayNameKey": "Rol_Valor",
+            "descriptionKey": "Rol_Valor_Desc"
+        },
+        {
+            "name": "valor2",
+            "kind": "Measure",
+            "displayName": "Valor 2 (bivariado)",
+            "displayNameKey": "Rol_Valor2",
+            "descriptionKey": "Rol_Valor2_Desc",
+            "description": "Segunda medida: con ella el mapa es bivariado (terciles de Valor contra terciles de Valor 2)."
         },
         {
             "name": "tooltips",
             "kind": "Measure",
             "displayName": "Información sobre herramientas",
-            "description": "Medidas adicionales que se muestran al pasar el cursor."
+            "description": "Medidas adicionales que se muestran al pasar el cursor.",
+            "displayNameKey": "Rol_Tooltips",
+            "descriptionKey": "Rol_Tooltips_Desc"
         }
     ],
     "dataViewMappings": [
@@ -33,6 +49,9 @@
                         "max": 1
                     },
                     "valor": {
+                        "max": 1
+                    },
+                    "valor2": {
                         "max": 1
                     }
                 }
@@ -62,6 +81,11 @@
                         {
                             "bind": {
                                 "to": "valor"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "valor2"
                             }
                         },
                         {
@@ -133,6 +157,15 @@
                 }
             }
         },
+        "bivariado": {
+            "properties": {
+                "paleta": {
+                    "type": {
+                        "enumeration": []
+                    }
+                }
+            }
+        },
         "mapa": {
             "properties": {
                 "proyeccion": {
@@ -184,6 +217,34 @@
                 }
             }
         },
+        "etiquetas": {
+            "properties": {
+                "mostrar": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "contenido": {
+                    "type": {
+                        "enumeration": []
+                    }
+                },
+                "tamano": {
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "color": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "leyenda": {
             "properties": {
                 "mostrar": {
@@ -219,6 +280,7 @@
         ]
     },
     "supportsLandingPage": true,
+    "supportsHighlight": true,
     "supportsEmptyDataView": true,
     "supportsKeyboardFocus": true,
     "supportsMultiVisualSelection": true,

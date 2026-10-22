@@ -6,128 +6,131 @@ import Card = formattingSettings.SimpleCard;
 import Model = formattingSettings.Model;
 import Slice = formattingSettings.Slice;
 
-const METODOS = [
-    { value: "cuantiles", displayName: "Cuantiles (mismo número de estados por clase)" },
-    { value: "intervalos", displayName: "Intervalos iguales" },
-    { value: "divergente", displayName: "Divergente (alrededor de un centro)" },
-];
+// Los textos del panel salen de stringResources/<idioma>/resources.resjson.
+const opciones = (prefijo: string, valores: string[]) =>
+    valores.map((value) => ({ value, displayNameKey: `${prefijo}_${value}` }));
 
-const PALETAS = [
-    { value: "azules", displayName: "Azules" },
-    { value: "verdes", displayName: "Verdes" },
-    { value: "morados", displayName: "Morados" },
-    { value: "naranjas", displayName: "Naranjas" },
-    { value: "rojos", displayName: "Rojos" },
-    { value: "grises", displayName: "Grises" },
-];
-
-const PALETAS_DIVERGENTES = [
-    { value: "rojo-azul", displayName: "Rojo · gris · azul" },
-    { value: "morado-naranja", displayName: "Morado · gris · naranja" },
-    { value: "cafe-verde", displayName: "Café · gris · verde" },
-    { value: "rosa-verde", displayName: "Rosa · gris · verde" },
-];
-
-const PROYECCIONES = [
-    { value: "lambert", displayName: "Cónica conforme de Lambert (INEGI)" },
-    { value: "mercator", displayName: "Mercator" },
-];
-
-const POSICIONES = [
-    { value: "abajo-izquierda", displayName: "Abajo a la izquierda" },
-    { value: "abajo-derecha", displayName: "Abajo a la derecha" },
-    { value: "arriba-izquierda", displayName: "Arriba a la izquierda" },
-    { value: "arriba-derecha", displayName: "Arriba a la derecha" },
-];
+const METODOS = opciones("Metodo", ["cuantiles", "intervalos", "divergente"]);
+const PALETAS = opciones("Paleta", ["azules", "verdes", "morados", "naranjas", "rojos", "grises"]);
+const PALETAS_DIVERGENTES = opciones("PaletaDiv", ["rojo-azul", "morado-naranja", "cafe-verde", "rosa-verde"]);
+const PALETAS_BIVARIADAS = opciones("PaletaBiv", ["turquesa-rosa", "verde-azul", "rojo-azul"]);
+const PROYECCIONES = opciones("Proyeccion", ["lambert", "mercator"]);
+const POSICIONES = opciones("Posicion", ["abajo-izquierda", "abajo-derecha", "arriba-izquierda", "arriba-derecha"]);
+const CONTENIDOS = opciones("Contenido", ["valor", "nombre", "nombre-valor"]);
 
 class ColoresCard extends Card {
-    metodo = new formattingSettings.ItemDropdown({ name: "metodo", displayName: "Método", items: METODOS, value: METODOS[0] });
-    clases = new formattingSettings.NumUpDown({ name: "clases", displayName: "Número de clases", value: 5 });
-    paleta = new formattingSettings.ItemDropdown({ name: "paleta", displayName: "Paleta", items: PALETAS, value: PALETAS[0] });
+    metodo = new formattingSettings.ItemDropdown({ name: "metodo", displayNameKey: "Colores_Metodo", items: METODOS, value: METODOS[0] });
+    clases = new formattingSettings.NumUpDown({ name: "clases", displayNameKey: "Colores_Clases", value: 5 });
+    paleta = new formattingSettings.ItemDropdown({ name: "paleta", displayNameKey: "Colores_Paleta", items: PALETAS, value: PALETAS[0] });
     paletaDivergente = new formattingSettings.ItemDropdown({
-        name: "paletaDivergente", displayName: "Paleta", items: PALETAS_DIVERGENTES, value: PALETAS_DIVERGENTES[0],
+        name: "paletaDivergente", displayNameKey: "Colores_Paleta", items: PALETAS_DIVERGENTES, value: PALETAS_DIVERGENTES[0],
     });
     centro = new formattingSettings.NumUpDown({
-        name: "centro", displayName: "Centro",
-        description: "Valor neutro, en las unidades de la medida: 100 en índices, 0 en crecimientos o brechas.",
-        value: 0,
+        name: "centro", displayNameKey: "Colores_Centro", descriptionKey: "Colores_Centro_Desc", value: 0,
     });
     umbral1 = new formattingSettings.NumUpDown({
-        name: "umbral1", displayName: "Umbral de \"similar\"",
-        description: "Distancia al centro que todavía cuenta como similar (p. ej. 10 en un índice, 0.02 para ±2 %). 0 = automático.",
-        value: 0,
+        name: "umbral1", displayNameKey: "Colores_Umbral1", descriptionKey: "Colores_Umbral1_Desc", value: 0,
     });
     umbral2 = new formattingSettings.NumUpDown({
-        name: "umbral2", displayName: "Umbral de \"muy\"",
-        description: "Distancia al centro a partir de la cual es muy por encima o muy por debajo. 0 = automático.",
-        value: 0,
+        name: "umbral2", displayNameKey: "Colores_Umbral2", descriptionKey: "Colores_Umbral2_Desc", value: 0,
     });
-    invertir = new formattingSettings.ToggleSwitch({ name: "invertir", displayName: "Invertir colores", value: false });
-    sinDato = new formattingSettings.ColorPicker({ name: "sinDato", displayName: "Sin dato", value: { value: "#ffffff" } });
+    invertir = new formattingSettings.ToggleSwitch({ name: "invertir", displayNameKey: "Colores_Invertir", value: false });
+    sinDato = new formattingSettings.ColorPicker({ name: "sinDato", displayNameKey: "Colores_SinDato", value: { value: "#ffffff" } });
 
     name = "colores";
-    displayName = "Colores";
+    displayNameKey = "Tarjeta_Colores";
     slices: Slice[] = [
         this.metodo, this.clases, this.paleta, this.paletaDivergente,
         this.centro, this.umbral1, this.umbral2, this.invertir, this.sinDato,
     ];
 
+    /** En el mapa bivariado los colores salen de la tarjeta Bivariado. */
+    bivariado = false;
+
     onPreProcess(): void {
         const divergente = this.metodo.value?.value === "divergente";
-        this.clases.visible = !divergente;
-        this.paleta.visible = !divergente;
-        this.paletaDivergente.visible = divergente;
-        this.centro.visible = divergente;
-        this.umbral1.visible = divergente;
-        this.umbral2.visible = divergente;
+        const univariado = !this.bivariado;
+        this.metodo.visible = univariado;
+        this.invertir.visible = univariado;
+        this.clases.visible = univariado && !divergente;
+        this.paleta.visible = univariado && !divergente;
+        this.paletaDivergente.visible = univariado && divergente;
+        this.centro.visible = univariado && divergente;
+        this.umbral1.visible = univariado && divergente;
+        this.umbral2.visible = univariado && divergente;
     }
+}
+
+class BivariadoCard extends Card {
+    paleta = new formattingSettings.ItemDropdown({
+        name: "paleta", displayNameKey: "Bivariado_Paleta", descriptionKey: "Bivariado_Paleta_Desc",
+        items: PALETAS_BIVARIADAS, value: PALETAS_BIVARIADAS[0],
+    });
+
+    name = "bivariado";
+    displayNameKey = "Tarjeta_Bivariado";
+    slices: Slice[] = [this.paleta];
 }
 
 class MapaCard extends Card {
     proyeccion = new formattingSettings.ItemDropdown({
-        name: "proyeccion", displayName: "Proyección", items: PROYECCIONES, value: PROYECCIONES[0],
+        name: "proyeccion", displayNameKey: "Mapa_Proyeccion", items: PROYECCIONES, value: PROYECCIONES[0],
     });
-    borde = new formattingSettings.ColorPicker({ name: "borde", displayName: "Color de los límites", value: { value: "#d6d6d6" } });
-    grosor = new formattingSettings.NumUpDown({ name: "grosor", displayName: "Grosor de los límites", value: 0.8 });
+    borde = new formattingSettings.ColorPicker({ name: "borde", displayNameKey: "Mapa_Borde", value: { value: "#d6d6d6" } });
+    grosor = new formattingSettings.NumUpDown({ name: "grosor", displayNameKey: "Mapa_Grosor", value: 0.8 });
 
     name = "mapa";
-    displayName = "Mapa";
+    displayNameKey = "Tarjeta_Mapa";
     slices: Slice[] = [this.proyeccion, this.borde, this.grosor];
 }
 
 class GruposCard extends Card {
-    contorno = new formattingSettings.ToggleSwitch({ name: "contorno", displayName: "Contorno de cada grupo", value: true });
-    color = new formattingSettings.ColorPicker({ name: "color", displayName: "Color del contorno", value: { value: "#3b3a39" } });
-    grosor = new formattingSettings.NumUpDown({ name: "grosor", displayName: "Grosor del contorno", value: 1.6 });
+    contorno = new formattingSettings.ToggleSwitch({ name: "contorno", displayNameKey: "Grupos_Contorno", value: true });
+    color = new formattingSettings.ColorPicker({ name: "color", displayNameKey: "Grupos_Color", value: { value: "#3b3a39" } });
+    grosor = new formattingSettings.NumUpDown({ name: "grosor", displayNameKey: "Grupos_Grosor", value: 1.6 });
     limitesInternos = new formattingSettings.ToggleSwitch({
-        name: "limitesInternos", displayName: "Límites dentro de cada grupo",
-        description: "Apágalo para que cada grupo se vea como una sola área (útil si la medida da el valor del grupo).",
-        value: true,
+        name: "limitesInternos", displayNameKey: "Grupos_LimitesInternos", descriptionKey: "Grupos_LimitesInternos_Desc", value: true,
     });
 
     name = "grupos";
-    displayName = "Grupos";
+    displayNameKey = "Tarjeta_Grupos";
     slices: Slice[] = [this.contorno, this.color, this.grosor, this.limitesInternos];
 }
 
-class LeyendaCard extends Card {
-    mostrar = new formattingSettings.ToggleSwitch({ name: "mostrar", displayName: "Mostrar", value: true });
-    posicion = new formattingSettings.ItemDropdown({ name: "posicion", displayName: "Posición", items: POSICIONES, value: POSICIONES[0] });
-    titulo = new formattingSettings.TextInput({
-        name: "titulo", displayName: "Título", placeholder: "Nombre de la medida", value: "",
+class EtiquetasCard extends Card {
+    mostrar = new formattingSettings.ToggleSwitch({ name: "mostrar", displayNameKey: "Etiquetas_Mostrar", value: false });
+    contenido = new formattingSettings.ItemDropdown({
+        name: "contenido", displayNameKey: "Etiquetas_Contenido", items: CONTENIDOS, value: CONTENIDOS[0],
     });
-    tamano = new formattingSettings.NumUpDown({ name: "tamano", displayName: "Tamaño del texto", value: 11 });
+    tamano = new formattingSettings.NumUpDown({ name: "tamano", displayNameKey: "Etiquetas_Tamano", value: 10 });
+    color = new formattingSettings.ColorPicker({ name: "color", displayNameKey: "Etiquetas_Color", value: { value: "#252423" } });
+
+    name = "etiquetas";
+    displayNameKey = "Tarjeta_Etiquetas";
+    topLevelSlice = this.mostrar;
+    slices: Slice[] = [this.contenido, this.tamano, this.color];
+}
+
+class LeyendaCard extends Card {
+    mostrar = new formattingSettings.ToggleSwitch({ name: "mostrar", displayNameKey: "Leyenda_Mostrar", value: true });
+    posicion = new formattingSettings.ItemDropdown({ name: "posicion", displayNameKey: "Leyenda_Posicion", items: POSICIONES, value: POSICIONES[0] });
+    titulo = new formattingSettings.TextInput({
+        name: "titulo", displayNameKey: "Leyenda_Titulo", placeholder: "", placeholderKey: "Leyenda_Titulo_Placeholder", value: "",
+    } as ConstructorParameters<typeof formattingSettings.TextInput>[0]);
+    tamano = new formattingSettings.NumUpDown({ name: "tamano", displayNameKey: "Leyenda_Tamano", value: 11 });
 
     name = "leyenda";
-    displayName = "Leyenda";
+    displayNameKey = "Tarjeta_Leyenda";
     topLevelSlice = this.mostrar;
     slices: Slice[] = [this.posicion, this.titulo, this.tamano];
 }
 
 export class Ajustes extends Model {
     colores = new ColoresCard();
+    bivariado = new BivariadoCard();
     mapa = new MapaCard();
     grupos = new GruposCard();
+    etiquetas = new EtiquetasCard();
     leyenda = new LeyendaCard();
-    cards = [this.colores, this.mapa, this.grupos, this.leyenda];
+    cards = [this.colores, this.bivariado, this.mapa, this.grupos, this.etiquetas, this.leyenda];
 }

@@ -27,7 +27,10 @@ En el visual arrastras:
 - **Estados y municipios**, con drill-down de estado a municipio en el mismo visual.
 - **Regiones dinámicas**: pon tu columna de región en *Grupo* y el visual dibuja su contorno. Si cambias las regiones en el modelo, el mapa cambia solo.
 - **Clasificación** por cuantiles, intervalos iguales o escala divergente alrededor de un centro (100 en índices, 0 en crecimientos).
-- **Interacción nativa**: filtro cruzado, tooltips (incluidos los de página), menú contextual, teclado y alto contraste.
+- **Mapa bivariado**: con una segunda medida, terciles de una contra terciles de la otra (¿dónde somos fuertes y además crecemos?).
+- **Etiquetas** con el valor o el nombre, solo donde caben y sin encimarse.
+- **Interacción nativa**: filtro cruzado, resaltado desde otros visuales, tooltips (incluidos los de página), menú contextual, teclado y alto contraste.
+- **En español e inglés**, según el idioma de Power BI.
 - **Seguro**: no se conecta a internet ni guarda nada. Detalle en [SECURITY.md](SECURITY.md).
 
 ![Regiones del modelo dibujadas con el campo Grupo](docs/img/mapa_regiones.png)
@@ -66,7 +69,8 @@ privado/       Tus archivos reales: git lo ignora
 
 - [x] **0.1** Estados: cuantiles, intervalos y divergente; leyenda, tooltips, selección y avisos de claves.
 - [x] **0.2** Municipios con drill-down y campo *Grupo* con regiones dinámicas (sin regenerar geometría).
-- [ ] **0.3** Mapa bivariado, etiquetas, localización y certificación opcional en AppSource.
+- [x] **0.3** Mapa bivariado, etiquetas, resaltado, ícono de advertencia y textos en español e inglés.
+- [ ] Certificación en AppSource (opcional: es un trámite con Microsoft; el visual ya cumple sus requisitos técnicos principales).
 
 ## Fuentes, licencia y seguridad
 
