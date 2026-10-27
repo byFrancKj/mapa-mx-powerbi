@@ -25,8 +25,11 @@ En el visual arrastras:
 
 - **Cualquier medida**, con su propio formato. Los parámetros de campo funcionan para cambiar de métrica.
 - **Estados y municipios**, con drill-down de estado a municipio en el mismo visual.
-- **Regiones dinámicas**: pon tu columna de región en *Grupo* y el visual dibuja su contorno. Si cambias las regiones en el modelo, el mapa cambia solo.
-- **Clasificación** por cuantiles, intervalos iguales o escala divergente alrededor de un centro (100 en índices, 0 en crecimientos).
+- **Regiones dinámicas**: pon tu columna de región en *Grupo* y el visual dibuja su contorno y su nombre, con una franja del color de cada región si quieres, o pinta cada región de un color. Si cambias las regiones en el modelo, el mapa cambia solo.
+- **Panel de detalle**: al seleccionar uno o varios estados se abre junto al mapa con la comparación de tus fuentes (*Bases a comparar*: diferencia, diferencia % e índice) y tarjetas con tus medidas DAX. Un clic en el nombre de una región la selecciona completa.
+- **Zoom** con la rueda, arrastrando, con botones o con el teclado, y "acercar a la selección".
+- **Clasificación** por cuantiles, intervalos iguales o escala divergente alrededor de un centro (100 en índices, 0 en crecimientos), con paletas ColorBrewer y un semáforo rojo · amarillo · verde.
+- **Comparar fuentes en el mapa**: colorea por la diferencia (absoluta o en %) entre dos bases, sin escribir otra medida.
 - **Mapa bivariado**: con una segunda medida, terciles de una contra terciles de la otra (¿dónde somos fuertes y además crecemos?).
 - **Etiquetas** con el valor o el nombre, solo donde caben y sin encimarse.
 - **Interacción nativa**: filtro cruzado, resaltado desde otros visuales, tooltips (incluidos los de página), menú contextual, teclado y alto contraste.
@@ -34,6 +37,8 @@ En el visual arrastras:
 - **Seguro**: no se conecta a internet ni guarda nada. Detalle en [SECURITY.md](SECURITY.md).
 
 ![Regiones del modelo dibujadas con el campo Grupo](docs/img/mapa_regiones.png)
+
+![Panel de detalle de Jalisco: comparación de dos fuentes y tarjetas](docs/img/panel_detalle.png)
 
 ## Inicio rápido
 
@@ -70,6 +75,7 @@ privado/       Tus archivos reales: git lo ignora
 - [x] **0.1** Estados: cuantiles, intervalos y divergente; leyenda, tooltips, selección y avisos de claves.
 - [x] **0.2** Municipios con drill-down y campo *Grupo* con regiones dinámicas (sin regenerar geometría).
 - [x] **0.3** Mapa bivariado, etiquetas, resaltado, ícono de advertencia y textos en español e inglés.
+- [x] **0.4** Panel de detalle con bases a comparar y tarjetas, zoom, nombres y colores de regiones, colorear por la diferencia entre fuentes y paleta semáforo.
 - [ ] Certificación en AppSource (opcional: es un trámite con Microsoft; el visual ya cumple sus requisitos técnicos principales).
 
 ## Fuentes, licencia y seguridad

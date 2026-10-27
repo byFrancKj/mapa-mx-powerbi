@@ -24,7 +24,8 @@ const CSS = `
   .leyenda .titulo { fill: #252423; font-weight: 600; }
   .leyenda .etiqueta { fill: #605e5c; }
   .aviso { fill: #a4262c; font-size: 11px; }
-  .limites-estatales, .contorno-grupos { stroke-linejoin: round; }
+  .limites-estatales, .halo-grupos, .contorno-grupos, .franjas-grupo path { fill: none; stroke-linejoin: round; }
+  .etiqueta-grupo { font-weight: 600; }
   text { font-family: Helvetica, Arial, sans-serif; }
 `;
 
@@ -57,6 +58,19 @@ const VISTAS: Array<{ archivo: string; datos: OpcionesDataView; ancho?: number; 
             ...porEstado("Índice Cadenas vs Nielsen", "#,0"),
             grupo: { nombre: "Región", valores: estados.map((e) => e.REGION_NIELSEN) },
             objetos: { colores: { metodo: "divergente", centro: 100, umbral1: 10, umbral2: 30 } },
+        },
+    },
+    {
+        archivo: "mapa_semaforo.png",
+        datos: { ...porEstado("Ventas Cadenas", "\\$#,0"), objetos: { colores: { paleta: "semaforo" } } },
+    },
+    {
+        // Franja del color de cada región, su nombre y la leyenda que la selecciona.
+        archivo: "mapa_regiones_color.png",
+        datos: {
+            ...porEstado("Ventas Cadenas", "\\$#,0"),
+            grupo: { nombre: "Región", valores: estados.map((e) => e.REGION_NIELSEN) },
+            objetos: { grupos: { estilo: "color" } },
         },
     },
     {

@@ -23,6 +23,7 @@ npm ci
 | `npm run lint` | ESLint con las reglas de seguridad de Microsoft para visuales. |
 | `npm run tipos` | Revisión de tipos en modo estricto. |
 | `npm run vista-previa` | Dibuja el visual con los datos del ejemplo y guarda PNG en `docs/img/` (antes: `python scripts/modelo_referencia.py` en la raíz). |
+| `npm run demo` | Arma `visual/.tmp/demo/index.html`: el visual con los datos del ejemplo en una página que se abre en cualquier navegador, sin Power BI ni red. Sirve para probar el panel, el zoom y los grupos desde Mac. |
 | `npm run package` | Genera `visual/dist/*.pbiviz`. |
 | `npm start` | Servidor local para probar en vivo en el servicio de Power BI. |
 
@@ -35,25 +36,30 @@ npm ci
 
 O empaqueta (`npm run package`) e importa el `.pbiviz` en Power BI Desktop en una PC con Windows.
 
+Para revisar algo rápido sin Power BI, `npm run demo` arma una página con el visual y los datos del ejemplo (escenas de ventas con semáforo, regiones, diferencia de mix y zoom). Usa el mismo código del visual con un host simulado: sirve para ver el dibujo y la interacción, no sustituye la prueba en Power BI.
+
 ## Estructura del visual
 
 ```
 visual/
-├── capabilities.json   Campos (Ubicación con drill-down, Grupo, Valor, Valor 2, Tooltips), opciones de formato y privilegios (ninguno)
+├── capabilities.json   Campos (Ubicación con drill-down, Grupo, Valor, Valor 2, Bases, Tarjetas, Tooltips), opciones de formato y privilegios (ninguno)
 ├── pbiviz.json         Nombre, versión y GUID del visual
 ├── src/
-│   ├── visual.ts       Lee los campos por rol, decide el nivel, dibuja, bivariado, grupos, etiquetas, tooltips, selección, leyenda y avisos
+│   ├── visual.ts       Lee los campos por rol, decide el nivel, distribuye mapa y panel, dibuja, bivariado, grupos, etiquetas, tooltips, selección, leyenda y avisos
+│   ├── panel.ts        Panel de detalle (HTML): silueta, comparación de bases, tarjetas y tabla por área
+│   ├── resumen.ts      Cómo se combinan varias áreas (suma, promedio, rango…) y la comparación entre bases
+│   ├── zoom.ts         Zoom y desplazamiento sin dependencias: rueda, arrastre, pellizco, botones y animaciones
 │   ├── ajustes.ts      Panel de formato
 │   ├── claves.ts       Normaliza claves INEGI (completa ceros, detecta nivel)
 │   ├── clasificacion.ts Cuantiles, intervalos y divergente
 │   ├── paletas.ts      Paletas ColorBrewer
 │   ├── formato.ts      Formato compacto ($78.4 M, $1.5 mil M) para leyenda y etiquetas
 │   ├── textos.ts       Textos en el idioma de Power BI
-│   ├── geometria.ts    Carga la geometría empaquetada y calcula límites (topojson mesh)
+│   ├── geometria.ts    Carga la geometría empaquetada, calcula límites (mesh), une regiones (merge) y quita islas lejanas del encuadre
 │   └── geo/            estados.json y municipios.json (los genera npm run geo en la raíz)
 ├── stringResources/    Traducciones: es-ES, es-MX (igual a es-ES) y en-US (respaldo)
-├── test/               Pruebas y entorno simulado de Power BI
-└── scripts/            Vista previa y revisión de privilegios
+├── test/               Pruebas; host-falso.ts simula Power BI (lo usan también la demo) y entorno.ts le agrega jsdom
+└── scripts/            Vista previa, demo en el navegador y revisión de privilegios
 ```
 
 Notas de compatibilidad, por si actualizas dependencias:

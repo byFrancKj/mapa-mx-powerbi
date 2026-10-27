@@ -1,8 +1,9 @@
 "use strict";
 
-import { feature, mesh } from "topojson-client";
-import type { GeometryCollection, GeometryObject, Topology } from "topojson-specification";
-import type { Feature, FeatureCollection, Geometry, MultiLineString } from "geojson";
+import { geoArea } from "d3-geo";
+import { feature, merge, mesh } from "topojson-client";
+import type { GeometryCollection, GeometryObject, MultiPolygon as TopoMultiPolygon, Polygon as TopoPolygon, Topology } from "topojson-specification";
+import type { Feature, FeatureCollection, Geometry, MultiLineString, MultiPolygon } from "geojson";
 
 import type { Nivel } from "./claves";
 
@@ -79,4 +80,33 @@ export function estados(): Area[] {
  */
 export function bordes(c: Capa, filtro: (a: string, b: string | null) => boolean): MultiLineString {
     return mesh(c.topologia, c.objeto, (a, b) => filtro(c.claveDe(a), a === b ? null : c.claveDe(b)));
+}
+
+/** Contorno de un grupo de áreas (una región) como una sola figura, sin sus límites internos. */
+export function unir(c: Capa, incluir: (clave: string) => boolean): MultiPolygon {
+    const partes = c.objeto.geometries.filter((g) => incluir(c.claveDe(g)));
+    return merge(c.topologia, partes as Array<TopoPolygon<Propiedades> | TopoMultiPolygon<Propiedades>>);
+}
+
+const principales = new WeakMap<Area, Feature<Geometry, Propiedades>>();
+
+/**
+ * El área sin sus islas lejanas (las Revillagigedo en Colima, las Marías en Nayarit):
+ * solo las partes con al menos el 5 % de la superficie de la mayor. Sirve para
+ * encuadrar, porque las islas alejan la vista; el mapa las sigue dibujando.
+ */
+export function principal(a: Area): Feature<Geometry, Propiedades> {
+    let p = principales.get(a);
+    if (!p) {
+        const g = a.forma.geometry;
+        if (g.type === "MultiPolygon") {
+            const superficies = g.coordinates.map((coordinates) => geoArea({ type: "Polygon", coordinates }));
+            const mayor = Math.max(...superficies);
+            p = { ...a.forma, geometry: { type: "MultiPolygon", coordinates: g.coordinates.filter((_, i) => superficies[i] >= mayor * 0.05) } };
+        } else {
+            p = a.forma;
+        }
+        principales.set(a, p);
+    }
+    return p;
 }

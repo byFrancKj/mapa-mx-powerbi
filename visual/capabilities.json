@@ -33,6 +33,22 @@
             "description": "Segunda medida: con ella el mapa es bivariado (terciles de Valor contra terciles de Valor 2)."
         },
         {
+            "name": "bases",
+            "kind": "Measure",
+            "displayName": "Bases a comparar",
+            "description": "Medidas de cada fuente (por ejemplo Ventas Cadenas y Ventas Nielsen). El panel de detalle las compara: diferencia, diferencia % e índice contra la primera.",
+            "displayNameKey": "Rol_Bases",
+            "descriptionKey": "Rol_Bases_Desc"
+        },
+        {
+            "name": "tarjetas",
+            "kind": "Measure",
+            "displayName": "Tarjetas",
+            "description": "Medidas DAX que se muestran como tarjetas en el panel de detalle del estado o los estados seleccionados.",
+            "displayNameKey": "Rol_Tarjetas",
+            "descriptionKey": "Rol_Tarjetas_Desc"
+        },
+        {
             "name": "tooltips",
             "kind": "Measure",
             "displayName": "Información sobre herramientas",
@@ -53,6 +69,12 @@
                     },
                     "valor2": {
                         "max": 1
+                    },
+                    "bases": {
+                        "max": 4
+                    },
+                    "tarjetas": {
+                        "max": 8
                     }
                 }
             ],
@@ -90,6 +112,16 @@
                         },
                         {
                             "for": {
+                                "in": "bases"
+                            }
+                        },
+                        {
+                            "for": {
+                                "in": "tarjetas"
+                            }
+                        },
+                        {
+                            "for": {
                                 "in": "tooltips"
                             }
                         }
@@ -106,6 +138,11 @@
     "objects": {
         "colores": {
             "properties": {
+                "colorearPor": {
+                    "type": {
+                        "enumeration": []
+                    }
+                },
                 "metodo": {
                     "type": {
                         "enumeration": []
@@ -196,6 +233,11 @@
                         "bool": true
                     }
                 },
+                "estilo": {
+                    "type": {
+                        "enumeration": []
+                    }
+                },
                 "color": {
                     "type": {
                         "fill": {
@@ -213,6 +255,16 @@
                 "limitesInternos": {
                     "type": {
                         "bool": true
+                    }
+                },
+                "etiquetas": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "tamanoEtiquetas": {
+                    "type": {
+                        "numeric": true
                     }
                 }
             }
@@ -265,6 +317,93 @@
                 "tamano": {
                     "type": {
                         "numeric": true
+                    }
+                }
+            }
+        },
+        "panel": {
+            "properties": {
+                "mostrar": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "posicion": {
+                    "type": {
+                        "enumeration": []
+                    }
+                },
+                "tamano": {
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "sinSeleccion": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "silueta": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "diferencia": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "indice": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "colorSigno": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "tamanoTexto": {
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        },
+        "agregacion": {
+            "properties": {
+                "tipo": {
+                    "type": {
+                        "enumeration": []
+                    }
+                }
+            }
+        },
+        "zoom": {
+            "properties": {
+                "activo": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "rueda": {
+                    "type": {
+                        "enumeration": []
+                    }
+                },
+                "botones": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "posicion": {
+                    "type": {
+                        "enumeration": []
+                    }
+                },
+                "acercarSeleccion": {
+                    "type": {
+                        "bool": true
                     }
                 }
             }

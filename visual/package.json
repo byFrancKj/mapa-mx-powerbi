@@ -1,7 +1,7 @@
 {
   "name": "mapa-mexico-inegi",
   "description": "Visual de Power BI: mapa de México por clave INEGI. Los datos y las medidas vienen del modelo; el visual solo trae la geometría.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "license": "MIT",
   "type": "module",
@@ -11,7 +11,8 @@
     "lint": "eslint .",
     "tipos": "tsc -p tsconfig.estricto.json",
     "test": "node --import tsx --import ./test/sin-estilos.mjs --test test/*.test.ts",
-    "vista-previa": "node --import tsx --import ./test/sin-estilos.mjs scripts/vista_previa.ts"
+    "vista-previa": "node --import tsx --import ./test/sin-estilos.mjs scripts/vista_previa.ts",
+    "demo": "node --import tsx scripts/demo.ts"
   },
   "dependencies": {
     "d3-geo": "3.1.1",
@@ -32,9 +33,11 @@
     "@types/topojson-client": "^3.1.5",
     "@types/topojson-specification": "^1.0.5",
     "@typescript-eslint/eslint-plugin": "^8.8.0",
+    "esbuild": "^0.28.2",
     "eslint": "^9.11.1",
     "eslint-plugin-powerbi-visuals": "^1.0.0",
     "jsdom": "^26.1.0",
+    "less": "^4.9.1",
     "powerbi-visuals-tools": "7.2.1",
     "tsx": "^4.20.0",
     "typescript": "5.5.4"
