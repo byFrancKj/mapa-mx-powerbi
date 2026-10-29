@@ -4,7 +4,7 @@ import powerbi from "powerbi-visuals-api";
 import { FormattingSettingsService } from "powerbi-visuals-utils-formattingmodel";
 import { valueFormatter } from "powerbi-visuals-utils-formattingutils";
 import { select, Selection } from "d3-selection";
-import { geoConicConformal, geoContains, geoMercator, geoPath, GeoPath, GeoProjection } from "d3-geo";
+import { geoConicConformal, geoContains, geoGraticule, geoMercator, geoPath, GeoPath, GeoProjection } from "d3-geo";
 import type { MultiPolygon } from "geojson";
 import "./../style/visual.less";
 
@@ -12,12 +12,13 @@ import { Ajustes, ModoColor } from "./ajustes";
 import { clasificar, Clasificacion, Metodo } from "./clasificacion";
 import { Nivel, normalizarClave, nivelDeClave } from "./claves";
 import { formatoCompacto, Unidades } from "./formato";
-import { Area, bordes, capa, principal, unir } from "./geometria";
-import { colorBivariado, coloresDivergentes, coloresSecuenciales } from "./paletas";
-import { Cifra, LineaDiferencia, ModeloPanel, Panel, Recuadro } from "./panel";
+import { Area, bordes, capa, fondoDelMapa, principal, unir } from "./geometria";
+import { colorBivariado, coloresDivergentes, coloresSecuenciales, mezclar } from "./paletas";
+import { Cifra, LineaDiferencia, ModeloPanel, MotivoPanel, Panel, Recuadro } from "./panel";
+import { REFERENCIAS } from "./referencias";
 import { Agregacion, AGREGACIONES, comparar, resumir } from "./resumen";
 import { Textos } from "./textos";
-import { Caja, IDENTIDAD, ModoRueda, Transformacion, Zoom } from "./zoom";
+import { Caja, encuadrar, IDENTIDAD, iguales, ModoRueda, Transformacion, Zoom } from "./zoom";
 
 import DataView = powerbi.DataView;
 import DataViewObjects = powerbi.DataViewObjects;
@@ -51,8 +52,29 @@ const MAX_SILUETA = 300;
 const ANCHO_FRANJA = 4;
 const LADO_BOTON = 26;
 const SEPARACION_BOTONES = 4;
-/** Escala máxima: los municipios más chicos necesitan acercarse más. */
+/** Cuánto se puede acercar desde la vista inicial: los municipios más chicos necesitan más. */
 const ZOOM_MAXIMO: Record<Nivel, number> = { estado: 10, municipio: 40 };
+/** Por debajo de esta escala, el encuadre de los datos no acerca (sería casi el país completo). */
+const ESCALA_MINIMA_ENCUADRE = 1.12;
+/** Margen alrededor de las áreas encuadradas (fracción de la vista, por lado). */
+const MARGEN_ENCUADRE = 0.08;
+/**
+ * El mapa muestra "una parte del país" (y el panel puede abrirse solo) si las áreas con
+ * datos son a lo más esta fracción de las que se dibujan, o si, siendo más, su
+ * recuadro ocupa a lo más FRACCION_RECUADRO del recuadro del país.
+ */
+const FRACCION_PARCIAL = 0.6;
+const FRACCION_RECUADRO = 0.45;
+/** Líneas de agua: distancia a la costa (px) y opacidad, de la más lejana a la más cercana. */
+const LINEAS_AGUA = [
+    { distancia: 14, opacidad: 0.2 },
+    { distancia: 8.5, opacidad: 0.36 },
+    { distancia: 4, opacidad: 0.6 },
+];
+/** Hasta dónde llegan la retícula de meridianos y paralelos (la del fondo). */
+const EXTENSION_RETICULA: [[number, number], [number, number]] = [[-150, -15], [-45, 58]];
+const TINTA_MAR = "#16405a";
+const TINTA_TIERRA = "#5f594f";
 // Las claves de texto se escriben completas para que la prueba de traducciones las encuentre.
 const NOTAS: Record<Agregacion, string> = {
     suma: "Panel_Suma",
@@ -82,7 +104,7 @@ interface Fila {
     bases: Array<number | null>;
     tarjetas: Array<number | null>;
     grupo: string | null;
-    /** Resaltado por otro visual (si no hay resaltado, todas lo están). */
+    /** Resaltado por otro visual (si no hay resaltado, todas lo están). Las demás quedan de fondo. */
     resaltado: boolean;
     extras: VisualTooltipDataItem[];
     id: ISelectionId;
@@ -155,6 +177,16 @@ interface Distribucion {
     posicion: "derecha" | "abajo" | "encima";
 }
 
+/** Una etiqueta por colocar (en pantalla): su centro, su tamaño y qué tanto importa. */
+interface Candidata {
+    lineas: string[];
+    x: number;
+    y: number;
+    ancho: number;
+    alto: number;
+    prioridad: number;
+}
+
 /** Caja y punto de un área para su etiqueta, en coordenadas sin zoom. */
 interface Ancla {
     area: Area;
@@ -165,6 +197,16 @@ interface Ancla {
 type Sel<E extends Element> = Selection<E, unknown, null, undefined>;
 
 const esSinMunicipio = (clave: string): boolean => clave.length === 5 && clave.endsWith("000");
+
+/** Recuadro de varias áreas (sin sus islas lejanas), en coordenadas del camino. */
+function cajaDe(areas: Area[], camino: GeoPath): Caja {
+    let caja: Caja | null = null;
+    for (const a of areas) {
+        const [[x0, y0], [x1, y1]] = camino.bounds(principal(a));
+        caja = caja ? [[Math.min(caja[0][0], x0), Math.min(caja[0][1], y0)], [Math.max(caja[1][0], x1), Math.max(caja[1][1], y1)]] : [[x0, y0], [x1, y1]];
+    }
+    return caja ?? [[0, 0], [0, 0]];
+}
 const acotar = (x: number, min: number, max: number): number => Math.max(min, Math.min(max, x));
 const transformar = (t: Transformacion): string => `translate(${t.x},${t.y}) scale(${t.k})`;
 
@@ -194,9 +236,18 @@ export class Visual implements IVisual {
     private readonly lienzo: Sel<HTMLDivElement>;
     private readonly svg: Sel<SVGSVGElement>;
     private readonly defs: Sel<SVGDefsElement>;
+    private readonly mar: Sel<SVGRectElement>;
     private readonly capaMapa: Sel<SVGGElement>;
+    private readonly capaFondo: Sel<SVGGElement>;
+    private readonly reticula: Sel<SVGPathElement>;
+    private readonly lineasAgua: Sel<SVGGElement>;
+    private readonly tierra: Sel<SVGPathElement>;
+    private readonly fronteras: Sel<SVGPathElement>;
+    /** Estados sin datos en el nivel municipal: se dibujan de fondo. */
+    private readonly capaContexto: Sel<SVGGElement>;
     private readonly capaAreas: Sel<SVGGElement>;
     private readonly limitesEstatales: Sel<SVGPathElement>;
+    private readonly costa: Sel<SVGPathElement>;
     private readonly capaFranjas: Sel<SVGGElement>;
     private readonly haloGrupos: Sel<SVGPathElement>;
     private readonly contornoGrupos: Sel<SVGPathElement>;
@@ -221,18 +272,30 @@ export class Visual implements IVisual {
     private firmaGrupos = "";
     private readonly formasGrupo = new Map<string, MultiPolygon>();
     private firmaGeometria = "";
-    /** La geometría sin el tamaño: si solo cambia el tamaño, el zoom conserva la vista. */
-    private tipoGeometria = "";
     private viewport: powerbi.IViewport | null = null;
     private distribucion: Distribucion | null = null;
     private panelAbierto = false;
     /** Las áreas del panel, calculadas una vez por dibujo o por cambio de selección. */
     private focoActual: Fila[] = [];
+    /** Las opciones del panel tal como las guardó Power BI (para la opción anterior "Mostrar sin selección"). */
+    private objetosPanel: DataViewObjects[string] | undefined;
+    /** El mapa muestra solo una parte del país (un filtro dejó pocas áreas con datos). */
+    private parcial = false;
+    /** Firma de los datos con la que se ocultó el panel con su botón (vuelve si cambian). */
+    private panelOculto = "";
     private proyeccion: GeoProjection | null = null;
     private camino: GeoPath | null = null;
     private visibles: Area[] = [];
+    /** Hay áreas dibujadas en color "Sin dato" (para la leyenda). */
+    private haySinDato = false;
     private anclas: Ancla[] = [];
     private firmaAnclas = "";
+    /** Las áreas encuadradas: si cambian (un filtro), el mapa va al encuadre nuevo. */
+    private firmaFoco = "";
+    private firmaProyeccion = "";
+    private firmaFondo = "";
+    /** Recuadro de la leyenda: las etiquetas del mapa no se le encima. */
+    private cajaLeyenda: Recuadro | null = null;
     /** Transformación con la que se colocaron las etiquetas (durante un gesto se estiran). */
     private tEtiquetas: Transformacion = IDENTIDAD;
 
@@ -250,11 +313,21 @@ export class Visual implements IVisual {
         this.lienzo = raiz.append("div").classed("lienzo", true);
         this.svg = this.lienzo.append("svg").classed("mapa-mx", true);
         this.defs = this.svg.append("defs");
+        // El mar cubre la vista entera: el zoom nunca sale del recuadro del país.
+        this.mar = this.svg.append("rect").classed("mar", true).attr("x", 0).attr("y", 0);
         // Todo lo que se acerca con el zoom va en esta capa.
         this.capaMapa = this.svg.append("g").classed("capa-mapa", true);
+        // Fondo, de abajo hacia arriba: retícula, líneas de agua, países vecinos y sus fronteras.
+        this.capaFondo = this.capaMapa.append("g").classed("fondo", true).attr("aria-hidden", "true");
+        this.reticula = this.capaFondo.append("path").classed("reticula", true).attr("fill", "none");
+        this.lineasAgua = this.capaFondo.append("g").classed("lineas-agua", true);
+        this.tierra = this.capaFondo.append("path").classed("tierra", true);
+        this.fronteras = this.capaFondo.append("path").classed("fronteras", true).attr("fill", "none");
+        this.capaContexto = this.capaMapa.append("g").classed("contexto", true).attr("aria-hidden", "true");
         this.capaAreas = this.capaMapa.append("g").classed("areas", true);
         // Capas de líneas (fill="none" también como atributo, por si la hoja de estilos no carga)
         this.limitesEstatales = this.capaMapa.append("path").classed("limites-estatales", true).attr("fill", "none");
+        this.costa = this.capaMapa.append("path").classed("costa", true).attr("fill", "none");
         this.capaFranjas = this.capaMapa.append("g").classed("franjas-grupo", true);
         this.haloGrupos = this.capaMapa.append("path").classed("halo-grupos", true).attr("fill", "none");
         this.contornoGrupos = this.capaMapa.append("path").classed("contorno-grupos", true).attr("fill", "none");
@@ -263,7 +336,16 @@ export class Visual implements IVisual {
         this.capaLeyenda = this.svg.append("g").classed("leyenda", true);
         this.aviso = this.svg.append("text").classed("aviso", true);
         this.botonesZoom = this.lienzo.append("div").classed("zoom-botones", true).attr("role", "group").style("display", "none");
-        this.panel = new Panel(raiz, () => this.limpiarSeleccion());
+        this.panel = new Panel(raiz, {
+            cerrar: () => this.cerrarPanel(),
+            elegir: (clave, multiple) => {
+                const fila = this.datos?.filas.get(clave);
+                if (fila && this.interactivo()) {
+                    this.seleccion.select(fila.id, multiple).then(() => this.aplicarSeleccion(true));
+                }
+            },
+            senalar: (clave) => this.senalar(clave),
+        });
         this.mensaje = raiz.append("div").classed("mensaje", true);
         this.zoom = new Zoom(this.svg.node() as SVGSVGElement, (t, fin) => this.alHacerZoom(t, fin));
         this.crearBotonesZoom();
@@ -280,7 +362,8 @@ export class Visual implements IVisual {
         this.capaAreas
             .on("click", (evento: MouseEvent) => {
                 const area = this.areaDe(evento.target);
-                if (!area) {
+                // Un área de fondo es como el fondo: el clic quita la selección.
+                if (!area || this.esFondo(area)) {
                     return;
                 }
                 evento.stopPropagation();
@@ -304,13 +387,13 @@ export class Visual implements IVisual {
             })
             .on("pointerover", (evento: PointerEvent) => {
                 const area = this.areaDe(evento.target);
-                if (area) {
+                if (area && !this.esFondo(area)) {
                     this.mostrarTooltip(evento, area, false);
                 }
             })
             .on("pointermove", (evento: PointerEvent) => {
                 const area = this.areaDe(evento.target);
-                if (area) {
+                if (area && !this.esFondo(area)) {
                     this.mostrarTooltip(evento, area, true);
                 }
             })
@@ -327,6 +410,7 @@ export class Visual implements IVisual {
         try {
             const dataView = options.dataViews?.[0];
             this.ajustes = this.servicioFormato.populateFormattingSettingsModel(Ajustes, dataView);
+            this.objetosPanel = dataView?.metadata?.objects?.panel;
             this.datos = this.leerDatos(dataView);
             this.prepararAjustes();
             this.viewport = options.viewport;
@@ -362,7 +446,9 @@ export class Visual implements IVisual {
         const colBases = columnas.filter((c) => c.source.roles?.bases);
         const colTarjetas = columnas.filter((c) => c.source.roles?.tarjetas);
         const colTooltips = columnas.filter((c) => c.source.roles?.tooltips);
-        const resaltes = (colValor ?? colBases[0])?.highlights;
+        // Otro visual resalta una parte (un clic en una tabla, por ejemplo): Power BI manda,
+        // junto a cada medida, su valor con ese resaltado.
+        const hayResaltado = columnas.some((c) => Array.isArray(c.highlights));
         const exacto = this.formateador(colValor?.source.format);
         const exacto2 = this.formateador(colValor2?.source.format);
         const formatosExtra = colTooltips.map((c) => this.formateador(c.source.format));
@@ -408,7 +494,7 @@ export class Visual implements IVisual {
                 bases: colBases.map(medida),
                 tarjetas: colTarjetas.map(medida),
             },
-            hayResaltado: Boolean(resaltes),
+            hayResaltado,
             desconocidas: [],
             otroNivel: 0,
             sinMunicipio: 0,
@@ -433,8 +519,12 @@ export class Visual implements IVisual {
                 datos.repetidas.push(String(bruto));
                 return;
             }
-            const valor = numero(colValor?.values[i]);
-            const valor2 = numero(colValor2?.values[i]);
+            // Las áreas resaltadas usan los valores resaltados; las demás conservan los suyos (quedan de fondo).
+            const resaltado = !hayResaltado || columnas.some((c) => c.highlights?.[i] !== null && c.highlights?.[i] !== undefined);
+            const de = (c: DataViewValueColumn | undefined): PrimitiveValue | undefined =>
+                (c && hayResaltado && resaltado && c.highlights ? c.highlights[i] : c?.values[i]);
+            const valor = numero(de(colValor));
+            const valor2 = numero(de(colValor2));
             const grupo = colGrupo?.values[i];
             const constructor = categorias.reduce((b, c) => b.withCategory(c, i), this.host.createSelectionIdBuilder());
             datos.filas.set(clave, {
@@ -443,11 +533,11 @@ export class Visual implements IVisual {
                 texto: valor === null ? this.textos.t("Texto_SinDato") : exacto(valor),
                 valor2,
                 texto2: valor2 === null ? this.textos.t("Texto_SinDato") : exacto2(valor2),
-                bases: colBases.map((c) => numero(c.values[i])),
-                tarjetas: colTarjetas.map((c) => numero(c.values[i])),
+                bases: colBases.map((c) => numero(de(c))),
+                tarjetas: colTarjetas.map((c) => numero(de(c))),
                 grupo: grupo === null || grupo === undefined || grupo === "" ? null : String(grupo),
-                resaltado: !resaltes || (resaltes[i] !== null && resaltes[i] !== undefined),
-                extras: colTooltips.map((c, j) => ({ displayName: c.source.displayName, value: this.texto(c.values[i], formatosExtra[j]) })),
+                resaltado,
+                extras: colTooltips.map((c, j) => ({ displayName: c.source.displayName, value: this.texto(de(c), formatosExtra[j]) })),
                 id: constructor.createSelectionId(),
             });
             datos.estadosCubiertos.add(clave.slice(0, 2));
@@ -551,7 +641,7 @@ export class Visual implements IVisual {
         return (v: number) => formatoCompacto(v, formato, this.host.locale, exacto, unidades);
     }
 
-    private texto(valor: PrimitiveValue, formatear: (v: number) => string): string {
+    private texto(valor: PrimitiveValue | null | undefined, formatear: (v: number) => string): string {
         if (valor === null || valor === undefined) {
             return "";
         }
@@ -578,7 +668,8 @@ export class Visual implements IVisual {
 
     private colorear(sinDato: string): Coloreado {
         const datos = this.datos;
-        const filas = datos ? [...datos.filas.values()] : [];
+        // Las clases salen de lo que se ve: con un resaltado, de los valores resaltados.
+        const filas = datos ? [...datos.filas.values()].filter((f) => f.resaltado) : [];
         const c = this.ajustes.colores;
         if (this.modo === "bivariado") {
             const ambas = filas.filter((f) => f.valor !== null && f.valor2 !== null);
@@ -663,6 +754,16 @@ export class Visual implements IVisual {
 
     private dibujar(ancho: number, alto: number): void {
         const previo = this.distribucion?.mapa;
+        const datos = this.datos;
+        const nivel: Nivel = datos?.nivel ?? "estado";
+        const geo = capa(nivel);
+        // En municipios solo se dibujan los estados que traen datos (al hacer drill-down a
+        // un estado, el mapa se acerca a él); los demás estados quedan de fondo.
+        const visibles = nivel === "municipio" && datos ? geo.areas.filter((a) => datos.estadosCubiertos.has(a.estado)) : geo.areas;
+        this.visibles = visibles;
+        // Las áreas en foco: las que tienen datos o, si otro visual resalta, las resaltadas.
+        const foco = [...(datos?.filas.values() ?? [])].filter((f) => f.resaltado).map((f) => f.clave);
+        this.parcial = this.esParcial(foco, visibles, nivel);
         this.focoActual = this.foco();
         this.panelAbierto = this.debeAbrirPanel(this.focoActual);
         const distribucion = this.distribuir(ancho, alto, this.panelAbierto);
@@ -675,56 +776,34 @@ export class Visual implements IVisual {
             .style("height", `${altoMapa}px`);
         this.svg.attr("width", anchoMapa).attr("height", altoMapa);
 
-        const datos = this.datos;
-        const nivel: Nivel = datos?.nivel ?? "estado";
-        const geo = capa(nivel);
-        // En municipios solo se dibujan los estados que traen datos (al hacer
-        // drill-down a un estado, el mapa se acerca a él).
-        const visibles = nivel === "municipio" && datos ? geo.areas.filter((a) => datos.estadosCubiertos.has(a.estado)) : geo.areas;
-        this.visibles = visibles;
         const ajustes = this.ajustes;
         const paleta = this.host.colorPalette;
         const altoContraste = paleta.isHighContrast;
         const colorTexto = altoContraste ? paleta.foreground.value : null;
 
         const sinDato = altoContraste ? paleta.background.value : ajustes.colores.sinDato.value.value;
+        const fuera = altoContraste ? paleta.background.value : ajustes.colores.fueraDeFiltro.value.value;
         const borde = altoContraste ? paleta.foreground.value : ajustes.mapa.borde.value.value;
 
+        // La proyección siempre abarca el país entero y el encuadre de los datos lo hace
+        // el zoom: así se puede alejar hasta ver todo el país.
         const nombreProyeccion = String(ajustes.mapa.proyeccion.value?.value ?? "lambert");
         const proyeccion = this.crearProyeccion();
-        const encuadre = visibles.length ? visibles : capa("estado").areas;
         proyeccion.fitExtent(
             [[MARGEN, MARGEN], [Math.max(MARGEN + 1, anchoMapa - MARGEN), Math.max(MARGEN + 1, altoMapa - MARGEN)]],
-            { type: "FeatureCollection", features: encuadre.map((a) => a.forma) },
+            { type: "FeatureCollection", features: capa("estado").areas.map((a) => a.forma) },
         );
         const camino = geoPath(proyeccion);
-
-        // El trazo de las áreas solo se recalcula si cambia la geometría.
-        const tipo = [nivel, nombreProyeccion, [...(datos?.estadosCubiertos ?? [])].sort().join(",")].join("|");
-        const firma = [tipo, anchoMapa, altoMapa].join("|");
-        const geometriaNueva = firma !== this.firmaGeometria;
-        // Zoom: si solo cambió el tamaño (se abrió el panel), se conserva el centro y la escala.
-        let destino: Transformacion | null = null;
-        if (geometriaNueva) {
-            const t = this.zoom.transformacion;
-            const centro = tipo === this.tipoGeometria && previo && t.k > 1 && this.proyeccion?.invert
-                ? this.proyeccion.invert([(previo.ancho / 2 - t.x) / t.k, (previo.alto / 2 - t.y) / t.k])
-                : null;
-            const p = centro ? proyeccion(centro) : null;
-            destino = p ? { k: t.k, x: anchoMapa / 2 - t.k * p[0], y: altoMapa / 2 - t.k * p[1] } : IDENTIDAD;
-        }
-        this.zoom.configurar(anchoMapa, altoMapa, ZOOM_MAXIMO[nivel], {
-            activo: this.zoomActivo(),
-            rueda: String(ajustes.zoom.rueda.value?.value ?? "siempre") as ModoRueda,
-        });
-        if (destino) {
-            this.zoom.fijar(destino);
-        }
-        this.capaMapa.attr("transform", transformar(this.zoom.transformacion));
-        this.firmaGeometria = firma;
-        this.tipoGeometria = tipo;
+        const proyeccionAnterior = this.proyeccion;
         this.proyeccion = proyeccion;
         this.camino = camino;
+
+        // El trazo de las áreas solo se recalcula si cambia la geometría.
+        const firmaProyeccion = [nombreProyeccion, anchoMapa, altoMapa].join("|");
+        const firma = [nivel, firmaProyeccion, nivel === "municipio" ? [...(datos?.estadosCubiertos ?? [])].sort().join(",") : ""].join("|");
+        const geometriaNueva = firma !== this.firmaGeometria;
+        this.firmaGeometria = firma;
+        this.ajustarVista(foco, nivel, proyeccionAnterior, previo, firmaProyeccion);
 
         this.prepararGrupos(altoContraste);
         const coloreado = this.colorear(sinDato);
@@ -734,6 +813,7 @@ export class Visual implements IVisual {
         const sinLimitesInternos = conGrupo && !ajustes.grupos.limitesInternos.value;
         const grosor = Math.max(0, ajustes.mapa.grosor.value) * (nivel === "municipio" ? 0.5 : 1);
         const interactivo = this.interactivo();
+        const relleno = (a: Area): string => (this.esFondo(a) ? fuera : coloreado.color(a));
 
         const seleccionAreas = this.capaAreas.selectAll<SVGPathElement, Area>("path.area").data(visibles, (a) => a.clave);
         seleccionAreas.exit().remove();
@@ -741,12 +821,22 @@ export class Visual implements IVisual {
         (geometriaNueva ? nuevas.merge(seleccionAreas) : nuevas).attr("d", (a) => camino(a.forma) ?? "");
         nuevas.merge(seleccionAreas)
             .classed("con-dato", (a) => datos?.filas.has(a.clave) ?? false)
-            .attr("fill", coloreado.color)
+            .classed("de-fondo", (a) => this.esFondo(a))
+            .attr("fill", relleno)
             // Sin límites internos, el trazo del mismo color tapa las rendijas entre áreas.
-            .attr("stroke", (a) => (sinLimitesInternos ? coloreado.color(a) : borde))
+            .attr("stroke", (a) => (sinLimitesInternos && !this.esFondo(a) ? relleno(a) : borde))
             .attr("stroke-width", sinLimitesInternos ? 0.6 : grosor)
             .attr("tabindex", (a) => (interactivo && datos?.filas.has(a.clave) ? 0 : -1))
             .attr("aria-label", (a) => this.etiquetaDe(a));
+        this.haySinDato = visibles.some((a) => !this.esFondo(a) && this.valorColor(a) === null);
+
+        // Nivel municipal: los estados sin datos, de fondo, para ver dónde está lo que se muestra.
+        const contexto = nivel === "municipio" && datos ? capa("estado").areas.filter((a) => !datos.estadosCubiertos.has(a.clave)) : [];
+        const seleccionContexto = this.capaContexto.selectAll<SVGPathElement, Area>("path").data(contexto, (a) => a.clave);
+        seleccionContexto.exit().remove();
+        const nuevosContexto = seleccionContexto.enter().append("path");
+        (geometriaNueva ? nuevosContexto.merge(seleccionContexto) : nuevosContexto).attr("d", (a) => camino(a.forma) ?? "");
+        nuevosContexto.merge(seleccionContexto).attr("fill", fuera).attr("stroke", borde).attr("stroke-width", Math.max(0, ajustes.mapa.grosor.value));
 
         if (nivel === "municipio" && visibles.length > 0) {
             if (geometriaNueva) {
@@ -761,14 +851,21 @@ export class Visual implements IVisual {
             this.limitesEstatales.style("display", "none");
         }
 
+        this.dibujarFondo(anchoMapa, altoMapa);
         this.dibujarFranjas(altoContraste);
         if (datos && conGrupo && ajustes.grupos.contorno.value) {
-            // Contorno donde cambia el grupo, calculado con los datos de este momento.
-            const grupoDe = (k: string): string | null => datos.filas.get(k)?.grupo ?? null;
+            // Contorno donde cambia el grupo, calculado con los datos de este momento. Lo que
+            // otro visual dejó de fondo cuenta como sin grupo: entre dos áreas de fondo no hay línea.
+            const grupoDe = (k: string): string | null => {
+                const fila = datos.filas.get(k);
+                return fila?.resaltado ? fila.grupo : null;
+            };
+            // Con el mar de fondo la costa ya se ve: el contorno solo separa regiones.
+            const conCosta = !this.conFondo();
             const lineas = bordes(geo, (a, b) => {
                 const ga = grupoDe(a);
                 if (b === null) {
-                    return ga !== null;
+                    return ga !== null && conCosta;
                 }
                 const gb = grupoDe(b);
                 return ga !== gb && (ga !== null || gb !== null);
@@ -793,16 +890,187 @@ export class Visual implements IVisual {
 
         this.resaltado.style("display", "none");
         this.atenuar();
-        this.dibujarEtiquetas();
+        // La leyenda va antes que las etiquetas, que la esquivan.
         if (this.modo === "bivariado") {
-            this.dibujarLeyendaBivariada(sinDato, borde, visibles.length, anchoMapa, altoMapa, colorTexto);
+            this.dibujarLeyendaBivariada(sinDato, borde, anchoMapa, altoMapa, colorTexto);
         } else {
-            this.dibujarLeyenda(coloreado, sinDato, borde, visibles.length, anchoMapa, altoMapa, colorTexto);
+            this.dibujarLeyenda(coloreado, sinDato, borde, anchoMapa, altoMapa, colorTexto);
         }
+        this.dibujarEtiquetas();
         this.dibujarAviso(anchoMapa, colorTexto);
         this.dibujarMensaje();
         this.dibujarPanel();
         this.actualizarBotonesZoom();
+    }
+
+    /**
+     * Vista inicial y zoom: el mapa encuadra las áreas en foco. Si cambian (un filtro o
+     * un resaltado), va de la vista actual al encuadre nuevo; si solo cambia el tamaño
+     * (se abrió el panel), conserva lo que se veía, salvo que estuviera en la vista inicial.
+     */
+    private ajustarVista(foco: string[], nivel: Nivel, proyeccionAnterior: GeoProjection | null, previo: Recuadro | undefined, firmaProyeccion: string): void {
+        const caja = this.distribucion?.mapa;
+        if (!caja) {
+            return;
+        }
+        const ajustes = this.ajustes;
+        const proyeccionNueva = firmaProyeccion !== this.firmaProyeccion;
+        const mismoTipo = this.firmaProyeccion.split("|")[0] === firmaProyeccion.split("|")[0];
+        // Una vista de antes llevada a la proyección nueva: mismo centro y misma escala.
+        const llevar = (t: Transformacion): Transformacion | null => {
+            if (!proyeccionNueva) {
+                return t;
+            }
+            const centro = mismoTipo && previo && proyeccionAnterior?.invert
+                ? proyeccionAnterior.invert([(previo.ancho / 2 - t.x) / t.k, (previo.alto / 2 - t.y) / t.k])
+                : null;
+            const p = centro && this.proyeccion ? this.proyeccion(centro) : null;
+            return p ? { k: t.k, x: caja.ancho / 2 - t.k * p[0], y: caja.alto / 2 - t.k * p[1] } : null;
+        };
+        // Lo que se ve ahora y a dónde iba (si una animación iba a la vista inicial, cuenta como que ya estaba ahí).
+        const actual = llevar(this.zoom.transformacion);
+        const destino = llevar(this.zoom.destino);
+        const estabaEnInicio = iguales(this.zoom.destino, this.zoom.vistaInicial);
+        const inicio = this.encuadre(foco, nivel);
+        this.zoom.configurar(caja.ancho, caja.alto, Math.max(1, inicio.k) * ZOOM_MAXIMO[nivel], {
+            activo: this.zoomActivo(),
+            rueda: String(ajustes.zoom.rueda.value?.value ?? "siempre") as ModoRueda,
+        }, inicio);
+        const firmaFoco = [nivel, String(ajustes.mapa.encuadre.value?.value ?? "datos"), [...foco].sort().join(",")].join("|");
+        if (this.firmaFoco === "" || actual === null || destino === null) {
+            this.zoom.fijar(inicio);
+        } else if (firmaFoco !== this.firmaFoco) {
+            this.zoom.fijar(actual);
+            this.zoom.irA(inicio);
+        } else if (proyeccionNueva) {
+            this.zoom.fijar(estabaEnInicio ? inicio : destino);
+        }
+        this.firmaFoco = firmaFoco;
+        this.firmaProyeccion = firmaProyeccion;
+        this.capaMapa.attr("transform", transformar(this.zoom.transformacion));
+    }
+
+    /**
+     * La vista que encuadra las áreas en foco (con "Ajustar a los datos") o, en
+     * municipios, los estados que se dibujan. Con el panel flotando encima, encuadra en
+     * la parte del mapa que el panel deja libre.
+     */
+    private encuadre(foco: string[], nivel: Nivel): Transformacion {
+        const camino = this.camino;
+        const d = this.distribucion;
+        if (!camino || !d) {
+            return IDENTIDAD;
+        }
+        const geo = capa(nivel);
+        const ajustarADatos = String(this.ajustes.mapa.encuadre.value?.value ?? "datos") === "datos";
+        let areas: Area[];
+        if (ajustarADatos && foco.length > 0) {
+            areas = foco.map((k) => geo.porClave.get(k)).filter((a): a is Area => a !== undefined);
+        } else if (nivel === "municipio") {
+            areas = this.visibles;
+        } else {
+            return IDENTIDAD;
+        }
+        if (areas.length === 0 || (nivel === "estado" && areas.length === geo.areas.length)) {
+            return IDENTIDAD;
+        }
+        const ancho = d.posicion === "encima" && d.panel && d.panel.ancho < d.mapa.ancho ? d.panel.x - MARGEN : d.mapa.ancho;
+        const t = encuadrar(cajaDe(areas, camino), Math.max(1, ancho), d.mapa.alto, Infinity, MARGEN_ENCUADRE);
+        return t.k < ESCALA_MINIMA_ENCUADRE ? IDENTIDAD : t;
+    }
+
+    /**
+     * El mapa muestra solo una parte del país: pocas áreas con datos (un filtro, una
+     * segmentación, un resaltado) o muchas pero juntas (una región grande). En
+     * municipios cuenta cuántos estados hay: una cadena con tiendas en unos cuantos
+     * municipios de todo el país no es un filtro, un drill-down a un estado sí.
+     */
+    private esParcial(foco: string[], visibles: Area[], nivel: Nivel): boolean {
+        const n = foco.length;
+        if (nivel === "municipio") {
+            const estados = new Set(foco.map((k) => k.slice(0, 2))).size;
+            return n > 0 && estados <= capa("estado").areas.length * FRACCION_PARCIAL;
+        }
+        if (n === 0 || n >= visibles.length) {
+            return false;
+        }
+        if (n <= visibles.length * FRACCION_PARCIAL) {
+            return true;
+        }
+        // Proporción de recuadros: no depende de la escala, así que basta la proyección sin ajustar.
+        const camino = geoPath(this.crearProyeccion());
+        const geo = capa("estado");
+        const superficie = ([[x0, y0], [x1, y1]]: Caja): number => (x1 - x0) * (y1 - y0);
+        const enFoco = foco.map((k) => geo.porClave.get(k)).filter((a): a is Area => a !== undefined);
+        return superficie(cajaDe(enFoco, camino)) <= FRACCION_RECUADRO * superficie(cajaDe(geo.areas, camino));
+    }
+
+    /**
+     * Un área de fondo: sin datos mientras el mapa muestra solo una parte del país, o
+     * fuera de lo que resalta otro visual. Se pinta neutra y no responde al ratón.
+     */
+    private esFondo(a: Area): boolean {
+        const fila = this.datos?.filas.get(a.clave);
+        return fila ? !fila.resaltado : this.parcial;
+    }
+
+    /** El valor que colorea un área (null sin dato). */
+    private valorColor(a: Area): number | null {
+        const fila = this.datos?.filas.get(a.clave);
+        if (!fila) {
+            return null;
+        }
+        if (this.modo === "bivariado") {
+            return fila.valor !== null && fila.valor2 !== null ? fila.valor : null;
+        }
+        if (this.modo === "grupo") {
+            return fila.grupo !== null ? 0 : null;
+        }
+        return this.serieColor?.de(fila) ?? null;
+    }
+
+    private conFondo(): boolean {
+        return String(this.ajustes.mapa.fondo.value?.value ?? "mar") === "mar" && !this.host.colorPalette.isHighContrast;
+    }
+
+    /**
+     * El mar con líneas de agua alrededor de la costa, una retícula tenue, los países
+     * vecinos y sus fronteras. Las líneas de agua son trazos anchos del contorno de
+     * México que se recortan con trazos del color del mar: quedan anillos a 3, 8 y 13
+     * px de la costa. Lo que cae en tierra lo tapan los vecinos y México.
+     */
+    private dibujarFondo(ancho: number, alto: number): void {
+        const m = this.ajustes.mapa;
+        const camino = this.camino;
+        const conMar = this.conFondo();
+        const mar = m.colorMar.value.value;
+        const tierra = m.colorTierra.value.value;
+        this.mar.attr("width", ancho).attr("height", alto).attr("fill", conMar ? mar : "none");
+        this.capaFondo.style("display", () => (conMar ? null : "none"));
+        this.costa.style("display", () => (conMar ? null : "none"));
+        if (!conMar || !camino) {
+            return;
+        }
+        if (this.firmaFondo !== this.firmaProyeccion) {
+            const fondo = fondoDelMapa();
+            const costa = camino(fondo.costa) ?? "";
+            this.reticula.attr("d", camino(geoGraticule().extent(EXTENSION_RETICULA).step([5, 5])()) ?? "");
+            this.tierra.attr("d", camino(fondo.tierra) ?? "");
+            this.fronteras.attr("d", camino(fondo.fronteras) ?? "");
+            this.costa.attr("d", costa);
+            this.lineasAgua.selectAll("path").data(LINEAS_AGUA.flatMap((l) => [l, l])).join("path").attr("d", costa).attr("fill", "none");
+            this.firmaFondo = this.firmaProyeccion;
+        }
+        const linea = mezclar(mar, TINTA_MAR, 0.3);
+        this.lineasAgua.selectAll<SVGPathElement, (typeof LINEAS_AGUA)[number]>("path")
+            .attr("stroke", (_, i) => (i % 2 === 0 ? linea : mar))
+            .attr("stroke-opacity", (l, i) => (i % 2 === 0 ? l.opacidad : 1))
+            .attr("stroke-width", (l, i) => 2 * l.distancia + (i % 2 === 0 ? 1.2 : -1.2));
+        this.reticula.attr("stroke", mezclar(mar, "#ffffff", 0.5));
+        // El trazo del color de la tierra cierra las rendijas con la frontera de México.
+        this.tierra.attr("fill", tierra).attr("stroke", tierra);
+        this.fronteras.attr("stroke", mezclar(tierra, TINTA_TIERRA, 0.35));
+        this.costa.attr("stroke", mezclar(mar, TINTA_MAR, 0.45));
     }
 
     /** Grupos con datos: su color del tema y, si se necesitan, su contorno unido y el punto de su nombre. */
@@ -956,7 +1224,8 @@ export class Visual implements IVisual {
         const caja = this.distribucion?.mapa;
         const conAreas = ajustes.mostrar.value;
         const conGrupos = Boolean(datos?.nombreGrupo) && ajustesGrupos.etiquetas.value && this.grupos.length > 0;
-        if (!datos || !caja || (!conAreas && !conGrupos)) {
+        const conReferencias = this.conFondo() && this.ajustes.mapa.referencias.value;
+        if (!caja || (!conAreas && !conGrupos && !conReferencias)) {
             return;
         }
         const paleta = this.host.colorPalette;
@@ -964,10 +1233,14 @@ export class Visual implements IVisual {
         const halo = paleta.isHighContrast ? paleta.background.value : COLOR_HALO;
         const enVista = (x: number, y: number): boolean => x >= 0 && y >= 0 && x <= caja.ancho && y <= caja.alto;
 
-        interface Candidata { lineas: string[]; x: number; y: number; ancho: number; alto: number; prioridad: number }
         const colocadas: Candidata[] = [];
         const choca = (c: Candidata): boolean => colocadas.some((o) =>
             Math.abs(c.x - o.x) * 2 < c.ancho + o.ancho + 4 && Math.abs(c.y - o.y) * 2 < c.alto + o.alto + 2);
+        // Nada se escribe debajo de la leyenda.
+        const l = this.cajaLeyenda;
+        if (l) {
+            colocadas.push({ lineas: [], x: l.x + l.ancho / 2, y: l.y + l.alto / 2, ancho: l.ancho, alto: l.alto, prioridad: Infinity });
+        }
         const texto = (x: number, y: number, tam: number, color: string): Sel<SVGTextElement> => this.capaEtiquetas.append("text")
             .attr("x", x)
             .attr("y", y)
@@ -985,7 +1258,8 @@ export class Visual implements IVisual {
             // Con colores por grupo, un punto del color del grupo antecede a su nombre.
             const conPunto = this.modo === "grupo" || (ajustesGrupos.estilo.value?.value === "color" && !paleta.isHighContrast);
             for (const g of this.grupos) {
-                if (!g.punto) {
+                // Una región que otro visual dejó de fondo no lleva nombre.
+                if (!g.punto || !g.claves.some((k) => datos?.filas.get(k)?.resaltado)) {
                     continue;
                 }
                 const x = g.punto[0] * t.k + t.x;
@@ -1015,9 +1289,24 @@ export class Visual implements IVisual {
             }
         }
 
-        if (!conAreas) {
-            return;
+        if (conAreas && datos) {
+            this.etiquetasDeAreas(datos, colocadas, choca, enVista, texto);
         }
+        if (conReferencias) {
+            this.dibujarReferencias(caja, colocadas, choca);
+        }
+    }
+
+    /** Valor o nombre sobre las áreas grandes primero; se omite la que choque con otra. */
+    private etiquetasDeAreas(
+        datos: Datos,
+        colocadas: Candidata[],
+        choca: (c: Candidata) => boolean,
+        enVista: (x: number, y: number) => boolean,
+        texto: (x: number, y: number, tam: number, color: string) => Sel<SVGTextElement>,
+    ): void {
+        const ajustes = this.ajustes.etiquetas;
+        const t = this.zoom.transformacion;
         const contenido = String(ajustes.contenido.value?.value ?? "valor");
         const tam = acotar(ajustes.tamano.value, 6, 24);
         const interlineado = tam * 1.15;
@@ -1025,6 +1314,9 @@ export class Visual implements IVisual {
         const compacto = this.compacto(serie?.formato);
         const candidatas: Candidata[] = [];
         for (const { area: a, caja: [[x0, y0], [x1, y1]], punto } of this.anclasActuales()) {
+            if (this.esFondo(a)) {
+                continue;
+            }
             const fila = datos.filas.get(a.clave);
             const valor = fila ? (this.modo === "bivariado" ? fila.valor : serie?.de(fila) ?? null) : null;
             const lineas: string[] = [];
@@ -1051,19 +1343,104 @@ export class Visual implements IVisual {
                 continue;
             }
             colocadas.push(c);
-            const etiqueta = texto(c.x, c.y - ((c.lineas.length - 1) * interlineado) / 2, tam, ajustes.color.value.value);
+            const etiqueta = texto(c.x, c.y - ((c.lineas.length - 1) * interlineado) / 2, tam, ajustes.color.value.value).classed("etiqueta-area", true);
             c.lineas.forEach((linea, i) => etiqueta.append("tspan").attr("x", c.x).attr("dy", i === 0 ? 0 : interlineado).text(linea));
         }
     }
 
-    private dibujarLeyenda(
-        coloreado: Coloreado, sinDato: string, borde: string,
-        visibles: number, ancho: number, alto: number, colorTexto: string | null,
+    /**
+     * Nombres de mares (en cursiva, como en los mapas impresos) y de países vecinos,
+     * donde caben completos y sin tapar otras etiquetas ni la leyenda.
+     */
+    private dibujarReferencias(
+        caja: Recuadro,
+        colocadas: Candidata[],
+        choca: (c: Candidata) => boolean,
     ): void {
+        const proyeccion = this.proyeccion;
+        if (!proyeccion) {
+            return;
+        }
+        const t = this.zoom.transformacion;
+        const enPantalla = (lon: number, lat: number): [number, number] | null => {
+            const p = proyeccion([lon, lat]);
+            return p ? [p[0] * t.k + t.x, p[1] * t.k + t.y] : null;
+        };
+        const fondo = fondoDelMapa();
+        // ¿Algún punto del texto cae en tierra? (en México, o en cualquier tierra si es un mar)
+        const tocaTierra = (puntos: Array<[number, number]>, mar: boolean): boolean => puntos.some(([x, y]) => {
+            const lugar = proyeccion.invert?.([(x - t.x) / t.k, (y - t.y) / t.k]);
+            return Boolean(lugar && (geoContains(fondo.mexico, lugar) || (mar && geoContains(fondo.tierra, lugar))));
+        });
+        // Crecen un poco con el visual, sin pasar de 15 px.
+        const tamMar = acotar(Math.round(Math.min(caja.ancho, caja.alto) / 36), 10, 15);
+        const m = this.ajustes.mapa;
+        const colorMar = mezclar(m.colorMar.value.value, TINTA_MAR, 0.62);
+        const colorPais = mezclar(m.colorTierra.value.value, TINTA_TIERRA, 0.5);
+        for (const r of REFERENCIAS) {
+            const mar = r.tipo === "mar";
+            const tam = mar ? tamMar : Math.round(tamMar * 0.8);
+            const nombre = mar ? this.textos.t(r.texto) : this.textos.t(r.texto).toLocaleUpperCase(this.host.locale);
+            // Ancho aproximado: cursiva angosta; mayúsculas con espaciado.
+            const largo = nombre.length * tam * (mar ? 0.5 : 0.74);
+            let elegida: { c: Candidata; angulo: number } | null = null;
+            for (const [lon, lat] of r.lugares) {
+                const p = enPantalla(lon, lat);
+                const q = r.eje ? enPantalla(lon + r.eje[0], lat + r.eje[1]) : null;
+                if (!p) {
+                    continue;
+                }
+                const angulo = q ? Math.atan2(q[1] - p[1], q[0] - p[0]) : 0;
+                const c: Candidata = {
+                    lineas: [nombre],
+                    x: p[0],
+                    y: p[1],
+                    ancho: Math.abs(Math.cos(angulo)) * largo + Math.abs(Math.sin(angulo)) * tam,
+                    alto: Math.abs(Math.sin(angulo)) * largo + Math.abs(Math.cos(angulo)) * tam * 1.2,
+                    prioridad: 0,
+                };
+                const dentro = c.x - c.ancho / 2 >= 2 && c.x + c.ancho / 2 <= caja.ancho - 2 && c.y - c.alto / 2 >= 2 && c.y + c.alto / 2 <= caja.alto - 2;
+                if (!dentro || choca(c)) {
+                    continue;
+                }
+                // Puntos a lo largo del texto, arriba y abajo de su línea.
+                const [cos, sen] = [Math.cos(angulo), Math.sin(angulo)];
+                const puntos: Array<[number, number]> = [];
+                for (let i = 0; i <= 6; i++) {
+                    const d = (i / 6 - 0.5) * largo;
+                    for (const h of [-tam / 2, tam / 2]) {
+                        puntos.push([p[0] + d * cos - h * sen, p[1] + d * sen + h * cos]);
+                    }
+                }
+                if (!tocaTierra(puntos, mar)) {
+                    elegida = { c, angulo };
+                    break;
+                }
+            }
+            if (!elegida) {
+                continue;
+            }
+            const { c, angulo } = elegida;
+            colocadas.push(c);
+            this.capaEtiquetas.append("text")
+                .classed(mar ? "referencia-mar" : "referencia-pais", true)
+                .attr("x", c.x)
+                .attr("y", c.y)
+                .attr("text-anchor", "middle")
+                .attr("dominant-baseline", "central")
+                .attr("transform", angulo ? `rotate(${(angulo * 180) / Math.PI} ${c.x} ${c.y})` : null)
+                .attr("fill", mar ? colorMar : colorPais)
+                .style("font-size", `${tam}px`)
+                .text(nombre);
+        }
+    }
+
+    private dibujarLeyenda(coloreado: Coloreado, sinDato: string, borde: string, ancho: number, alto: number, colorTexto: string | null): void {
         const ajustes = this.ajustes.leyenda;
         const datos = this.datos;
         const t = this.textos;
         this.capaLeyenda.selectAll("*").remove();
+        this.cajaLeyenda = null;
         if (!ajustes.mostrar.value || !datos) {
             return;
         }
@@ -1073,7 +1450,7 @@ export class Visual implements IVisual {
         if (this.modo === "grupo") {
             tituloPorOmision = datos.nombreGrupo ?? "";
             entradas.push(...this.grupos.map((g) => ({ color: g.color, texto: g.nombre, grupo: g.nombre })));
-            if ([...datos.filas.values()].filter((f) => f.grupo !== null).length < visibles) {
+            if (this.haySinDato) {
                 entradas.push({ color: sinDato, texto: t.t("Texto_SinDato") });
             }
         } else {
@@ -1084,6 +1461,10 @@ export class Visual implements IVisual {
             }
             tituloPorOmision = serie.nombre;
             const compacto = this.compacto(serie.formato);
+            if (String(ajustes.estilo.value?.value ?? "lista") === "barra") {
+                this.dibujarLeyendaBarra(clasif, coloreado.colores, compacto, ajustes.titulo.value || tituloPorOmision, sinDato, borde, ancho, alto, colorTexto);
+                return;
+            }
             if (clasif.metodo === "divergente") {
                 const ultima = clasif.numClases - 1;
                 for (const c of clasif.clases) {
@@ -1100,8 +1481,7 @@ export class Visual implements IVisual {
                     });
                 }
             }
-            const conValor = [...datos.filas.values()].filter((f) => serie.de(f) !== null).length;
-            if (conValor < visibles) {
+            if (this.haySinDato) {
                 entradas.push({ color: sinDato, texto: t.t("Texto_SinDato") });
             }
             if (this.hayFranjas) {
@@ -1111,9 +1491,7 @@ export class Visual implements IVisual {
         }
 
         // Medidas aproximadas: el texto se mide por número de caracteres.
-        const tam = acotar(ajustes.tamano.value, 8, 24);
-        const fila = Math.round(tam * 1.7);
-        const cuadro = Math.round(tam * 1.15);
+        const { tam, fila, cuadro, px, py } = this.medidasLeyenda();
         const recortar = this.recortador(ancho, tam);
         const titulo = recortar(ajustes.titulo.value || tituloPorOmision);
         // Con muchos grupos, van en dos columnas para que la leyenda no tape el mapa;
@@ -1123,8 +1501,8 @@ export class Visual implements IVisual {
             const n = entradas.filter(deGrupo).length;
             return entradas.length - n + Math.ceil(n / columnas);
         };
-        const columnas = entradas.filter(deGrupo).length >= 4 && ((titulo ? 1 : 0) + filasCon(1)) * fila + 8 > alto * 0.45 ? 2 : 1;
-        const maxFilas = Math.max(2, Math.floor((alto - 2 * MARGEN - 8) / fila) - (titulo ? 1 : 0));
+        const columnas = entradas.filter(deGrupo).length >= 4 && ((titulo ? 1 : 0) + filasCon(1)) * fila + 2 * py > alto * 0.45 ? 2 : 1;
+        const maxFilas = Math.max(2, Math.floor((alto - 2 * MARGEN - 2 * py) / fila) - (titulo ? 1 : 0));
         let quitados = 0;
         while (filasCon(columnas) + (quitados ? 1 : 0) > maxFilas && entradas.some(deGrupo)) {
             entradas.splice(entradas.map(deGrupo).lastIndexOf(true), 1);
@@ -1135,26 +1513,26 @@ export class Visual implements IVisual {
         }
         const anchoEntrada = (e: EntradaLeyenda): number => (e.texto.length * 0.56 + (e.seccion || !e.color ? 0 : (cuadro + 8) / tam)) * tam;
         const anchoGrupo = Math.max(0, ...entradas.filter(deGrupo).map(anchoEntrada)) + 10;
-        const anchoTexto = Math.max(titulo.length * 0.6 * tam, columnas * anchoGrupo, ...entradas.filter((e) => !deGrupo(e)).map(anchoEntrada));
-        const anchoCaja = Math.min(ancho - 2 * MARGEN, Math.ceil(anchoTexto + 14));
-        const altoCaja = (titulo ? fila : 0) + filasCon(columnas) * fila + 8;
-        const anchoColumna = (anchoCaja - 4) / columnas;
-        const maxGrupo = Math.max(4, Math.floor((anchoColumna - cuadro - 17) / (tam * 0.56)));
+        const anchoTexto = Math.max(titulo.length * 0.62 * tam, columnas * anchoGrupo, ...entradas.filter((e) => !deGrupo(e)).map(anchoEntrada));
+        const anchoCaja = Math.min(ancho - 2 * MARGEN, Math.ceil(anchoTexto + 2 * px));
+        const altoCaja = (titulo ? fila : 0) + filasCon(columnas) * fila + 2 * py;
+        const anchoColumna = (anchoCaja - 2 * px + 6) / columnas;
+        const maxGrupo = Math.max(4, Math.floor((anchoColumna - cuadro - 14) / (tam * 0.56)));
         const recortarGrupo = columnas > 1 ? (texto: string): string => (texto.length > maxGrupo ? `${texto.slice(0, maxGrupo - 1)}…` : texto) : recortar;
         const filasGrupo = Math.ceil(entradas.filter(deGrupo).length / columnas);
 
         const capaLeyenda = this.posicionarLeyenda(anchoCaja, altoCaja, ancho, alto);
-        let yy = 4;
+        let yy = py;
         if (titulo) {
             capaLeyenda.append("text").classed("titulo", true)
-                .attr("x", 7).attr("y", yy + fila / 2).attr("dominant-baseline", "central")
+                .attr("x", px).attr("y", yy + fila / 2).attr("dominant-baseline", "central")
                 .style("font-size", `${tam}px`).style("fill", () => colorTexto).text(titulo);
             yy += fila;
         }
         let j = 0;
         let yGrupos = 0;
         for (const e of entradas) {
-            let x = 7;
+            let x = px;
             let y = yy;
             if (deGrupo(e)) {
                 // Los grupos llenan las columnas de arriba abajo.
@@ -1162,7 +1540,7 @@ export class Visual implements IVisual {
                     yGrupos = yy;
                     yy += filasGrupo * fila;
                 }
-                x = 7 + Math.floor(j / filasGrupo) * anchoColumna;
+                x = px + Math.floor(j / filasGrupo) * anchoColumna;
                 y = yGrupos + (j % filasGrupo) * fila;
                 j++;
             } else {
@@ -1197,46 +1575,117 @@ export class Visual implements IVisual {
                 destino.append("rect").attr("x", x - 5).attr("y", y).attr("width", anchoColumna - 4).attr("height", fila).attr("fill", "transparent");
             }
             const muestra = destino.append("rect").classed("muestra", true)
-                .attr("x", x).attr("y", y + (fila - cuadro) / 2).attr("width", cuadro).attr("height", cuadro).attr("rx", 2);
+                .attr("x", x).attr("y", y + (fila - cuadro) / 2).attr("width", cuadro).attr("height", cuadro).attr("rx", 3);
             if (e.franja) {
                 muestra.attr("fill", sinDato).attr("stroke", e.color).attr("stroke-width", 3);
             } else {
                 muestra.attr("fill", e.color).attr("stroke", borde);
             }
             destino.append("text").classed("etiqueta", true)
-                .attr("x", x + cuadro + 6).attr("y", y + fila / 2).attr("dominant-baseline", "central")
+                .attr("x", x + cuadro + 7).attr("y", y + fila / 2).attr("dominant-baseline", "central")
                 .style("font-size", `${tam}px`).style("fill", () => colorTexto).text((grupo === undefined ? recortar : recortarGrupo)(e.texto));
         }
     }
 
-    /** Leyenda 3×3: Valor crece hacia la derecha y Valor 2 hacia arriba. */
-    private dibujarLeyendaBivariada(
-        sinDato: string, borde: string, visibles: number, ancho: number, alto: number, colorTexto: string | null,
+    /**
+     * Leyenda en barra: un tramo de color por clase y, debajo, los cortes entre clases
+     * (en cuantiles e intervalos, también el mínimo y el máximo). Si los cortes no caben,
+     * se escribe uno sí y uno no.
+     */
+    private dibujarLeyendaBarra(
+        clasif: Clasificacion, colores: string[], compacto: (v: number) => string, tituloBase: string,
+        sinDato: string, borde: string, ancho: number, alto: number, colorTexto: string | null,
     ): void {
+        const { tam, fila, cuadro, px, py } = this.medidasLeyenda();
+        const divergente = clasif.metodo === "divergente";
+        const clases = divergente ? clasif.clases : clasif.clases.filter((k) => k.n > 0);
+        const n = clases.length;
+        const cortes: Array<{ i: number; texto: string }> = divergente
+            ? clases.slice(1).map((c, i) => ({ i: i + 1, texto: compacto(c.desde ?? 0) }))
+            : [{ i: 0, texto: compacto(clases[0].min) }, ...clases.slice(1).map((c, i) => ({ i: i + 1, texto: compacto(c.min) })), { i: n, texto: compacto(clases[n - 1].max) }];
+        const anchoCorte = Math.max(...cortes.map((c) => c.texto.length)) * tam * 0.56 + 8;
+        const recortar = this.recortador(ancho, tam);
+        const titulo = recortar(tituloBase);
+        const textoSinDato = this.textos.t("Texto_SinDato");
+        const anchoSinDato = this.haySinDato ? cuadro + 7 + textoSinDato.length * tam * 0.56 : 0;
+        const maximo = ancho - 2 * MARGEN - 2 * px;
+        const anchoBarra = Math.max(Math.min(maximo, Math.max(n * Math.max(tam * 2.6, anchoCorte), titulo.length * 0.62 * tam)), 40);
+        const tramo = anchoBarra / n;
+        const paso = Math.max(1, Math.ceil(anchoCorte / tramo));
+        const altoBarra = Math.round(tam * 0.9);
+        // "Sin dato" va junto al título si cabe; si no, en su propia fila.
+        const sinDatoAlLado = this.haySinDato && titulo.length * 0.62 * tam + 16 + anchoSinDato <= anchoBarra;
+        const anchoCaja = Math.min(ancho - 2 * MARGEN, Math.ceil(anchoBarra + 2 * px));
+        const altoCaja = Math.round(2 * py + (titulo || sinDatoAlLado ? fila : 0) + altoBarra + 5 + tam * 1.3 + (this.haySinDato && !sinDatoAlLado ? fila : 0));
+
+        const capaLeyenda = this.posicionarLeyenda(anchoCaja, altoCaja, ancho, alto);
+        let y = py;
+        const sinDatoEn = (x: number, yy: number): void => {
+            capaLeyenda.append("rect").classed("muestra", true)
+                .attr("x", x).attr("y", yy + (fila - cuadro) / 2).attr("width", cuadro).attr("height", cuadro).attr("rx", 3)
+                .attr("fill", sinDato).attr("stroke", borde);
+            capaLeyenda.append("text").classed("etiqueta", true)
+                .attr("x", x + cuadro + 7).attr("y", yy + fila / 2).attr("dominant-baseline", "central")
+                .style("font-size", `${tam}px`).style("fill", () => colorTexto).text(textoSinDato);
+        };
+        if (titulo || sinDatoAlLado) {
+            if (titulo) {
+                capaLeyenda.append("text").classed("titulo", true)
+                    .attr("x", px).attr("y", y + fila / 2).attr("dominant-baseline", "central")
+                    .style("font-size", `${tam}px`).style("fill", () => colorTexto).text(titulo);
+            }
+            if (sinDatoAlLado) {
+                sinDatoEn(px + anchoBarra - anchoSinDato, y);
+            }
+            y += fila;
+        }
+        clases.forEach((c, i) => {
+            capaLeyenda.append("rect").classed("tramo", true)
+                .attr("x", px + i * tramo).attr("y", y).attr("width", tramo + (i < n - 1 ? 0.5 : 0)).attr("height", altoBarra)
+                .attr("fill", colores[c.indice]);
+        });
+        capaLeyenda.append("rect").classed("marco", true)
+            .attr("x", px).attr("y", y).attr("width", anchoBarra).attr("height", altoBarra).attr("rx", 2)
+            .attr("fill", "none").attr("stroke", borde);
+        const yCorte = y + altoBarra + 5 + (tam * 1.3) / 2;
+        cortes.filter((_, k) => k % paso === 0 || (!divergente && k === cortes.length - 1)).forEach((c) => {
+            const x = px + c.i * tramo;
+            capaLeyenda.append("line").classed("corte", true)
+                .attr("x1", x).attr("x2", x).attr("y1", y + altoBarra).attr("y2", y + altoBarra + 4).attr("stroke", borde);
+            capaLeyenda.append("text").classed("etiqueta", true)
+                .attr("x", x).attr("y", yCorte).attr("dominant-baseline", "central")
+                .attr("text-anchor", c.i === 0 ? "start" : c.i === n ? "end" : "middle")
+                .style("font-size", `${tam * 0.92}px`).style("fill", () => colorTexto).text(c.texto);
+        });
+        if (this.haySinDato && !sinDatoAlLado) {
+            sinDatoEn(px, yCorte + tam * 0.65);
+        }
+    }
+
+    /** Leyenda 3×3: Valor crece hacia la derecha y Valor 2 hacia arriba. */
+    private dibujarLeyendaBivariada(sinDato: string, borde: string, ancho: number, alto: number, colorTexto: string | null): void {
         const ajustes = this.ajustes.leyenda;
         const datos = this.datos;
         this.capaLeyenda.selectAll("*").remove();
+        this.cajaLeyenda = null;
         if (!ajustes.mostrar.value || !datos) {
             return;
         }
-        const tam = acotar(ajustes.tamano.value, 8, 24);
-        const celda = Math.round(tam * 1.6);
-        const fila = Math.round(tam * 1.7);
+        const { tam, fila, cuadro, px, py } = this.medidasLeyenda();
+        const celda = Math.round(tam * 1.7);
         const recortar = this.recortador(ancho, tam);
         const textoY = `↑ ${recortar(datos.nombreValor2 ?? "")}`;
         const textoX = `${recortar(datos.nombreValor ?? "")} →`;
-        const conAmbas = [...datos.filas.values()].filter((f) => f.valor !== null && f.valor2 !== null).length;
-        const conSinDato = conAmbas < visibles;
         const anchoTexto = Math.max(textoX.length, textoY.length) * tam * 0.56;
-        const anchoCaja = Math.min(ancho - 2 * MARGEN, Math.ceil(Math.max(3 * celda, anchoTexto) + 14));
-        const altoCaja = fila + 3 * celda + fila + (conSinDato ? fila : 0) + 6;
+        const anchoCaja = Math.min(ancho - 2 * MARGEN, Math.ceil(Math.max(3 * celda, anchoTexto) + 2 * px));
+        const altoCaja = fila + 3 * celda + fila + (this.haySinDato ? fila : 0) + 2 * py;
         const paleta = String(this.ajustes.bivariado.paleta.value?.value ?? "turquesa-rosa");
 
         const capaLeyenda = this.posicionarLeyenda(anchoCaja, altoCaja, ancho, alto);
-        const x0 = 7;
-        const y0 = fila;
+        const x0 = px;
+        const y0 = py + fila;
         capaLeyenda.append("text").classed("etiqueta", true)
-            .attr("x", x0).attr("y", fila / 2 + 2).attr("dominant-baseline", "central")
+            .attr("x", x0).attr("y", py + fila / 2).attr("dominant-baseline", "central")
             .style("font-size", `${tam}px`).style("fill", () => colorTexto).text(textoY);
         for (let y = 0; y < 3; y++) {
             for (let x = 0; x < 3; x++) {
@@ -1248,16 +1697,21 @@ export class Visual implements IVisual {
         capaLeyenda.append("text").classed("etiqueta", true)
             .attr("x", x0).attr("y", y0 + 3 * celda + fila / 2).attr("dominant-baseline", "central")
             .style("font-size", `${tam}px`).style("fill", () => colorTexto).text(textoX);
-        if (conSinDato) {
+        if (this.haySinDato) {
             const yy = y0 + 3 * celda + fila;
-            const cuadro = Math.round(tam * 1.15);
             capaLeyenda.append("rect").classed("muestra", true)
-                .attr("x", x0).attr("y", yy + (fila - cuadro) / 2).attr("width", cuadro).attr("height", cuadro).attr("rx", 2)
+                .attr("x", x0).attr("y", yy + (fila - cuadro) / 2).attr("width", cuadro).attr("height", cuadro).attr("rx", 3)
                 .attr("fill", sinDato).attr("stroke", borde);
             capaLeyenda.append("text").classed("etiqueta", true)
-                .attr("x", x0 + cuadro + 6).attr("y", yy + fila / 2).attr("dominant-baseline", "central")
+                .attr("x", x0 + cuadro + 7).attr("y", yy + fila / 2).attr("dominant-baseline", "central")
                 .style("font-size", `${tam}px`).style("fill", () => colorTexto).text(this.textos.t("Texto_SinDato"));
         }
+    }
+
+    /** Tamaño del texto, alto de fila, lado de la muestra y márgenes interiores de la leyenda. */
+    private medidasLeyenda(): { tam: number; fila: number; cuadro: number; px: number; py: number } {
+        const tam = acotar(this.ajustes.leyenda.tamano.value, 8, 24);
+        return { tam, fila: Math.round(tam * 1.75), cuadro: Math.round(tam * 1.2), px: Math.round(tam * 0.85), py: Math.round(tam * 0.5) };
     }
 
     private recortador(ancho: number, tam: number): (t: string) => string {
@@ -1265,13 +1719,22 @@ export class Visual implements IVisual {
         return (t: string): string => (t.length > maxCaracteres ? `${t.slice(0, maxCaracteres - 1)}…` : t);
     }
 
-    /** Coloca la caja de la leyenda en la esquina elegida y devuelve su capa. */
+    /**
+     * Coloca la caja de la leyenda en la esquina elegida y devuelve su capa. Si no cabe
+     * en el 42 % del alto o el 40 % del ancho del mapa (un visual chico, muchas
+     * regiones), se reduce entera, sin bajar de 9 px de texto.
+     */
     private posicionarLeyenda(anchoCaja: number, altoCaja: number, ancho: number, alto: number): Sel<SVGGElement> {
         const posicion = String(this.ajustes.leyenda.posicion.value?.value ?? "abajo-izquierda");
-        const x = posicion.endsWith("derecha") ? ancho - MARGEN - anchoCaja : MARGEN;
-        const y = posicion.startsWith("arriba") ? MARGEN : alto - MARGEN - altoCaja;
-        const capaLeyenda = this.capaLeyenda.attr("transform", `translate(${x},${y})`);
-        capaLeyenda.append("rect").classed("fondo", true).attr("width", anchoCaja).attr("height", altoCaja).attr("rx", 4);
+        const { tam } = this.medidasLeyenda();
+        // En un visual chico el texto baja hacia 9 px; en uno normal se queda como se eligió.
+        const porTamano = Math.max(9, Math.min(ancho, alto) / 30) / tam;
+        const escala = Math.max(Math.min(1, 9 / tam), Math.min(1, (alto * 0.42) / altoCaja, (ancho * 0.4) / anchoCaja, porTamano));
+        const x = posicion.endsWith("derecha") ? ancho - MARGEN - anchoCaja * escala : MARGEN;
+        const y = posicion.startsWith("arriba") ? MARGEN : alto - MARGEN - altoCaja * escala;
+        this.cajaLeyenda = { x, y, ancho: anchoCaja * escala, alto: altoCaja * escala };
+        const capaLeyenda = this.capaLeyenda.attr("transform", `translate(${x},${y})${escala < 1 ? ` scale(${escala})` : ""}`);
+        capaLeyenda.append("rect").classed("fondo", true).attr("width", anchoCaja).attr("height", altoCaja).attr("rx", 6);
         return capaLeyenda;
     }
 
@@ -1327,10 +1790,23 @@ export class Visual implements IVisual {
     // ---------------------------------------------------------- panel de detalle
 
     private debeAbrirPanel(foco: Fila[]): boolean {
-        return this.ajustes.panel.mostrar.value && this.interactivo() && foco.length > 0;
+        return this.ajustes.panel.mostrar.value && foco.length > 0;
     }
 
-    /** Las áreas del panel: las seleccionadas o, si se pidió, todas las que tienen datos. */
+    /** Cuándo se abre el panel. La opción de antes, "Mostrar sin selección", equivale a Siempre. */
+    private modoPanel(): "seleccion" | "filtro" | "siempre" {
+        const guardado = this.objetosPanel;
+        if (guardado?.abrir === undefined && guardado?.sinSeleccion === true) {
+            return "siempre";
+        }
+        const modo = String(this.ajustes.panel.abrir.value?.value ?? "filtro");
+        return modo === "seleccion" || modo === "siempre" ? modo : "filtro";
+    }
+
+    /**
+     * Las áreas del panel: las seleccionadas; sin selección, las que tienen datos cuando un
+     * filtro o un resaltado de otro visual dejan una parte del mapa (o siempre, si se pidió).
+     */
     private foco(): Fila[] {
         const datos = this.datos;
         if (!datos) {
@@ -1341,7 +1817,36 @@ export class Visual implements IVisual {
         if (ids.length > 0) {
             return filas.filter((f) => ids.some((id) => id.equals(f.id)));
         }
-        return this.ajustes.panel.sinSeleccion.value ? filas : [];
+        const modo = this.modoPanel();
+        const abre = modo === "siempre" || (modo === "filtro" && (datos.hayResaltado || this.parcial));
+        return abre && this.panelOculto !== this.firmaPanel() ? filas.filter((f) => f.resaltado) : [];
+    }
+
+    /** Lo que resume el panel sin selección; si cambia (otro filtro), el panel oculto vuelve. */
+    private firmaPanel(): string {
+        const enFoco = [...(this.datos?.filas.values() ?? [])].filter((f) => f.resaltado);
+        const total = enFoco.reduce((s, f) => s + (f.valor ?? f.bases[0] ?? f.tarjetas[0] ?? 0), 0);
+        return `${enFoco.map((f) => f.clave).join(",")}|${total}`;
+    }
+
+    /** El botón × del panel: quita la selección o, sin selección, oculta el panel. */
+    private cerrarPanel(): void {
+        if (this.seleccion.getSelectionIds().length > 0) {
+            this.limpiarSeleccion();
+        } else {
+            this.panelOculto = this.firmaPanel();
+            this.aplicarSeleccion(false);
+        }
+    }
+
+    /** Marca un área en el mapa (al pasar por su fila en la tabla del panel). */
+    private senalar(clave: string | null): void {
+        const nodo = clave === null ? null : this.capaAreas.selectAll<SVGPathElement, Area>("path.area").filter((a) => a.clave === clave).node();
+        if (nodo) {
+            this.resaltado.attr("d", nodo.getAttribute("d")).style("display", null);
+        } else {
+            this.resaltado.style("display", "none");
+        }
     }
 
     private dibujarPanel(): void {
@@ -1367,12 +1872,15 @@ export class Visual implements IVisual {
                 negativo: ac ? paleta.foreground.value : paleta.negative?.value ?? NEGATIVO,
             },
             proyeccion: () => this.crearProyeccion(),
+            interactivo: this.interactivo(),
         }, {
             region: t.t("Panel_Region"),
             comparacion: t.t("Panel_Comparacion"),
             tarjetas: t.t("Panel_Tarjetas"),
             detalle: t.t("Panel_Detalle", t.t(this.datos.nivel === "municipio" ? "Texto_Municipio" : "Texto_Estado").toLocaleLowerCase(this.host.locale)),
             cerrar: t.t("Panel_Cerrar"),
+            ocultar: t.t("Panel_Ocultar"),
+            elegir: (nombre) => t.t("Panel_SeleccionarArea", nombre),
         }, caja);
     }
 
@@ -1384,26 +1892,54 @@ export class Visual implements IVisual {
         const plural = t.t(municipal ? "Texto_Municipios" : "Texto_Estados");
         const nombre = (f: Fila): string => geo.porClave.get(f.clave)?.nombre ?? f.clave;
         const haySeleccion = this.seleccion.getSelectionIds().length > 0;
+        const motivo: MotivoPanel = haySeleccion ? "seleccion" : datos.hayResaltado ? "resaltado" : this.parcial ? "filtro" : "todo";
         const n = foco.length;
         const cuenta = `${n} ${plural}`;
+        const paleta = this.host.colorPalette;
+        const sinDato = paleta.isHighContrast ? paleta.background.value : this.ajustes.colores.sinDato.value.value;
+        const colorDe = (f: Fila): string => {
+            const a = geo.porClave.get(f.clave);
+            return a && this.coloreado ? this.coloreado.color(a) : sinDato;
+        };
+        const colorGrupo = (g: string | null): string | null => this.grupos.find((x) => x.nombre === g)?.color ?? null;
 
+        // Regiones completas: todas sus áreas con datos están en el panel (un filtro de
+        // región, un clic en su nombre o en su fila de otro visual).
+        const regiones = [...new Set(foco.map((f) => f.grupo))];
+        const completas = n > 1 && regiones.length <= 3 && regiones.every((g) => g !== null
+            && [...datos.filas.values()].every((f) => f.grupo !== g || foco.includes(f)));
+        // Todo lo que se ve, sin filtro que deje una parte (siempre abierto, o un resaltado en todo el país)
+        const todo = motivo !== "seleccion" && !this.parcial && n === [...datos.filas.values()].filter((f) => f.resaltado).length;
         let titulo: string;
         let subtitulo: string;
+        let acento: string | null = null;
         if (n === 1) {
             const f = foco[0];
             const area = geo.porClave.get(f.clave);
             titulo = nombre(f);
             subtitulo = [municipal && area ? this.nombreEstado(area) : null, f.grupo].filter(Boolean).join(" · ");
-        } else if (!haySeleccion) {
+            acento = colorGrupo(f.grupo) ?? colorDe(f);
+        } else if (todo) {
             titulo = t.t("Panel_Todos", plural);
             subtitulo = t.t("Panel_ConDatos", cuenta);
+        } else if (completas) {
+            titulo = regiones.join(" · ");
+            subtitulo = cuenta;
+            acento = regiones.length === 1 ? colorGrupo(regiones[0]) : null;
+        } else if (municipal && motivo !== "seleccion" && new Set(foco.map((f) => f.clave.slice(0, 2))).size === 1) {
+            // Un drill-down o un filtro a un estado: su nombre y sus municipios.
+            titulo = capa("estado").porClave.get(foco[0].clave.slice(0, 2))?.nombre ?? cuenta;
+            subtitulo = cuenta;
         } else {
-            const grupos = new Set(foco.map((f) => f.grupo));
-            const grupo = grupos.size === 1 ? [...grupos][0] : null;
-            const todoElGrupo = grupo !== null && [...datos.filas.values()].filter((f) => f.grupo === grupo).length === n;
-            titulo = todoElGrupo ? grupo : cuenta;
-            subtitulo = todoElGrupo ? cuenta : `${foco.slice(0, 4).map(nombre).join(", ")}${n > 4 ? ", …" : ""}`;
+            titulo = cuenta;
+            subtitulo = `${foco.slice(0, 4).map(nombre).join(", ")}${n > 4 ? ", …" : ""}`;
         }
+        const motivos: Record<MotivoPanel, string> = {
+            seleccion: t.t("Panel_MotivoSeleccion"),
+            filtro: t.t("Panel_MotivoFiltro"),
+            resaltado: t.t("Panel_MotivoResaltado"),
+            todo: "",
+        };
 
         const { bases, tarjetas } = this.medidasPanel();
         const cifra = (m: Medida, color: string): Cifra => {
@@ -1460,6 +1996,7 @@ export class Visual implements IVisual {
                 const vb = primera(b);
                 return va === null ? (vb === null ? 0 : 1) : vb === null ? -1 : vb - va;
             });
+            const mayor = Math.max(0, ...foco.map((f) => Math.abs(primera(f) ?? 0)));
             detalle = {
                 columnas: [
                     t.t(municipal ? "Texto_Municipio" : "Texto_Estado"),
@@ -1475,13 +2012,13 @@ export class Visual implements IVisual {
                         const r = comparar(f.bases[0], f.bases[1])?.relativa ?? null;
                         celdas.push(r === null ? "–" : relativa(r));
                     }
-                    return { nombre: nombre(f), celdas };
+                    const v = primera(f);
+                    return { clave: f.clave, nombre: nombre(f), color: colorDe(f), celdas, barra: v === null || mayor === 0 ? null : Math.abs(v) / mayor };
                 }),
                 resto: n > MAX_FILAS_DETALLE ? t.t("Panel_Resto", n - MAX_FILAS_DETALLE) : "",
             };
         }
 
-        const sinDato = this.host.colorPalette.isHighContrast ? this.host.colorPalette.background.value : this.ajustes.colores.sinDato.value.value;
         const silueta = p.silueta.value && n <= MAX_SILUETA
             ? foco.map((f) => geo.porClave.get(f.clave)).filter((a): a is Area => a !== undefined)
                 .map((area) => ({ forma: principal(area), color: this.coloreado?.color(area) ?? sinDato }))
@@ -1490,7 +2027,9 @@ export class Visual implements IVisual {
         return {
             titulo,
             subtitulo,
-            cerrar: haySeleccion,
+            motivo: motivos[motivo],
+            acento,
+            quitaSeleccion: haySeleccion,
             silueta,
             bases: cifrasBases,
             diferencias,
@@ -1581,10 +2120,9 @@ export class Visual implements IVisual {
         this.botonesZoom
             .style("left", `${posicion.endsWith("derecha") ? caja.ancho - MARGEN - LADO_BOTON : MARGEN}px`)
             .style("top", `${posicion.startsWith("arriba") ? MARGEN + bajoAviso : caja.alto - MARGEN - altoBotones}px`);
-        const enInicio = t.k <= 1 + 1e-6;
         this.botonesZoom.select(".zoom-acercar").property("disabled", t.k >= this.zoom.escalaMaxima - 1e-6);
-        this.botonesZoom.select(".zoom-alejar").property("disabled", enInicio);
-        this.botonesZoom.select(".zoom-inicio").property("disabled", enInicio);
+        this.botonesZoom.select(".zoom-alejar").property("disabled", t.k <= 1 + 1e-6);
+        this.botonesZoom.select(".zoom-inicio").property("disabled", iguales(t, this.zoom.vistaInicial));
         this.botonesZoom.select(".zoom-seleccion").style("display", () => (haySeleccion ? null : "none"));
     }
 
@@ -1597,17 +2135,12 @@ export class Visual implements IVisual {
         }
         const ids = this.seleccion.getSelectionIds() as ISelectionId[];
         const geo = capa(datos.nivel);
-        let caja: Caja | null = null;
-        for (const f of datos.filas.values()) {
-            const area = geo.porClave.get(f.clave);
-            if (!area || !ids.some((id) => id.equals(f.id))) {
-                continue;
-            }
-            const [[x0, y0], [x1, y1]] = camino.bounds(principal(area));
-            caja = caja ? [[Math.min(caja[0][0], x0), Math.min(caja[0][1], y0)], [Math.max(caja[1][0], x1), Math.max(caja[1][1], y1)]] : [[x0, y0], [x1, y1]];
-        }
-        if (caja) {
-            this.zoom.enfocar(caja);
+        const areas = [...datos.filas.values()]
+            .filter((f) => ids.some((id) => id.equals(f.id)))
+            .map((f) => geo.porClave.get(f.clave))
+            .filter((a): a is Area => a !== undefined);
+        if (areas.length > 0) {
+            this.zoom.enfocar(cajaDe(areas, camino));
         } else {
             this.zoom.restablecer();
         }
@@ -1694,24 +2227,19 @@ export class Visual implements IVisual {
     }
 
     /**
-     * Atenúa lo no seleccionado y lo que otro visual no resalta; también responde a
-     * marcadores y a selecciones hechas en otros visuales.
+     * Atenúa lo no seleccionado (también ante marcadores). Lo que otro visual no
+     * resalta ya está de fondo, en color neutro, y no se atenúa más.
      */
     private atenuar(): void {
         const ids = this.seleccion.getSelectionIds() as ISelectionId[];
         const filas = this.datos?.filas;
-        const hayResaltado = this.datos?.hayResaltado ?? false;
         const seleccionada = (a: Area): boolean => {
             const fila = filas?.get(a.clave);
             return Boolean(fila && ids.some((id) => id.equals(fila.id)));
         };
         this.capaAreas.selectAll<SVGPathElement, Area>("path.area")
             .attr("aria-selected", (a) => String(seleccionada(a)))
-            .style("opacity", (a) => {
-                const porSeleccion = ids.length === 0 || seleccionada(a);
-                const porResaltado = !hayResaltado || Boolean(filas?.get(a.clave)?.resaltado);
-                return porSeleccion && porResaltado ? 1 : OPACIDAD_NO_SELECCIONADO;
-            });
+            .style("opacity", (a) => (ids.length === 0 || seleccionada(a) || this.esFondo(a) ? 1 : OPACIDAD_NO_SELECCIONADO));
     }
 
     private mostrarTooltip(evento: PointerEvent, area: Area, mover: boolean): void {

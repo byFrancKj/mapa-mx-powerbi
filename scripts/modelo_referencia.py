@@ -94,20 +94,20 @@ assert sin.empty, f"Ubicaciones sin resolver: {sin.head()}"
 cad = cad.merge(u[["CADENA", "UBICACION", "CVE_ENT", "CVEGEO"]], on=["CADENA", "UBICACION"])
 cad["FECHA"] = pd.to_datetime(cad["FECHA"])
 
-nie = pd.read_csv(EJEMPLO / "nielsen/nielsen_regiones.csv", dtype={"UPC": str})
-nie["FECHA"] = pd.to_datetime(nie["PERIODO"])
+mer = pd.read_csv(EJEMPLO / "mercado/mercado_regiones.csv", dtype={"UPC": str})
+mer["FECHA"] = pd.to_datetime(mer["PERIODO"])
 
 en = lambda df, p: df[(df["FECHA"] >= p[0]) & (df["FECHA"] <= p[1])]
 
 # --------------------------------------------------------------- medidas
 pob = geo.set_index("CVE_ENT")["POBLACION_2020"]
-reg = geo.set_index("CVE_ENT")["REGION_NIELSEN"]
-pob_reg = geo.groupby("REGION_NIELSEN")["POBLACION_2020"].sum()
+reg = geo.set_index("CVE_ENT")["REGION"]
+pob_reg = geo.groupby("REGION")["POBLACION_2020"].sum()
 
 
 def por_estado(periodo):
     v = en(cad, periodo).groupby("CVE_ENT")[["VENTAS", "UNIDADES"]].sum().reindex(geo["CVE_ENT"])
-    n_reg = en(nie, periodo).groupby("REGION_NIELSEN")[["VENTAS", "UNIDADES"]].sum()
+    n_reg = en(mer, periodo).groupby("REGION")[["VENTAS", "UNIDADES"]].sum()
     n_est = pd.DataFrame(
         {k: n_reg.loc[reg, k].to_numpy() * (pob / pob_reg.loc[reg].to_numpy()).to_numpy() for k in ["VENTAS", "UNIDADES"]},
         index=geo["CVE_ENT"],
@@ -118,22 +118,22 @@ def por_estado(periodo):
 v, n_est = por_estado(ACTUAL)
 v0, n_est0 = por_estado(ANTERIOR)
 
-df = geo[["CVE_ENT", "NOMBRE_CORTO", "REGION_NIELSEN"]].rename(columns={"NOMBRE_CORTO": "ESTADO"}).set_index("CVE_ENT")
+df = geo[["CVE_ENT", "NOMBRE_CORTO", "REGION"]].rename(columns={"NOMBRE_CORTO": "ESTADO"}).set_index("CVE_ENT")
 df["Ventas Cadenas"] = v["VENTAS"]
 df["Unidades Cadenas"] = v["UNIDADES"]
-df["Ventas Nielsen Estimada"] = n_est["VENTAS"]
+df["Ventas Mercado Estimada"] = n_est["VENTAS"]
 df["% Mix Cadenas"] = v["VENTAS"] / v["VENTAS"].sum()
-df["% Mix Nielsen"] = n_est["VENTAS"] / n_est["VENTAS"].sum()
-df["Brecha Mix (pp)"] = (df["% Mix Cadenas"] - df["% Mix Nielsen"]) * 100
-df["Índice Cadenas vs Nielsen"] = df["% Mix Cadenas"] / df["% Mix Nielsen"] * 100
+df["% Mix Mercado"] = n_est["VENTAS"] / n_est["VENTAS"].sum()
+df["Brecha Mix (pp)"] = (df["% Mix Cadenas"] - df["% Mix Mercado"]) * 100
+df["Índice Cadenas vs Mercado"] = df["% Mix Cadenas"] / df["% Mix Mercado"] * 100
 df["Ventas Cadenas por 1,000 hab"] = v["VENTAS"] / pob * 1000
 df["Índice per cápita Cadenas"] = df["Ventas Cadenas por 1,000 hab"] / (v["VENTAS"].sum() / pob.sum() * 1000) * 100
 df["Crec % Cadenas"] = v["VENTAS"] / v0["VENTAS"] - 1
-df["Crec % Nielsen"] = n_est["VENTAS"] / n_est0["VENTAS"] - 1
-df["Brecha Crec (pp)"] = (df["Crec % Cadenas"] - df["Crec % Nielsen"]) * 100
+df["Crec % Mercado"] = n_est["VENTAS"] / n_est0["VENTAS"] - 1
+df["Brecha Crec (pp)"] = (df["Crec % Cadenas"] - df["Crec % Mercado"]) * 100
 df["Precio Promedio Cadenas"] = v["VENTAS"] / v["UNIDADES"]
-df["Precio Promedio Nielsen"] = n_est["VENTAS"] / n_est["UNIDADES"]
-df["Índice Precio vs Nielsen"] = df["Precio Promedio Cadenas"] / df["Precio Promedio Nielsen"] * 100
+df["Precio Promedio Mercado"] = n_est["VENTAS"] / n_est["UNIDADES"]
+df["Índice Precio vs Mercado"] = df["Precio Promedio Cadenas"] / df["Precio Promedio Mercado"] * 100
 df = df.reset_index()
 
 # ---------------------------------------------- datos para las vistas previas
@@ -146,10 +146,10 @@ mun = mun[~mun["CVEGEO"].str.endswith("000")].groupby("CVEGEO", as_index=False)[
 
 # ------------------------------------------------------ valores esperados
 esperado = df[[
-    "CVE_ENT", "ESTADO", "REGION_NIELSEN", "Ventas Cadenas", "Ventas Nielsen Estimada", "% Mix Cadenas",
-    "% Mix Nielsen", "Índice Cadenas vs Nielsen", "Índice per cápita Cadenas", "Crec % Cadenas", "Crec % Nielsen",
+    "CVE_ENT", "ESTADO", "REGION", "Ventas Cadenas", "Ventas Mercado Estimada", "% Mix Cadenas",
+    "% Mix Mercado", "Índice Cadenas vs Mercado", "Índice per cápita Cadenas", "Crec % Cadenas", "Crec % Mercado",
 ]].round(6)
 esperado.to_csv(EJEMPLO / "valores_esperados.csv", index=False, encoding="utf-8", lineterminator="\n")
 print("Vista previa: .cache/vista_previa/estados.json y municipios.json")
 print("Valores esperados: ejemplo/valores_esperados.csv")
-print(df[["ESTADO", "Ventas Cadenas", "Índice Cadenas vs Nielsen", "Crec % Cadenas"]].head(5).to_string(index=False))
+print(df[["ESTADO", "Ventas Cadenas", "Índice Cadenas vs Mercado", "Crec % Cadenas"]].head(5).to_string(index=False))

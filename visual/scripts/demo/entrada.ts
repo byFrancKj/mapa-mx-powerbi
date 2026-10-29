@@ -9,6 +9,7 @@ import { Visual } from "../../src/visual";
 import { crearDataView, crearHostCon, MedidaFalsa, OpcionesDataView } from "../../test/host-falso";
 import textos from "../../stringResources/es-MX/resources.resjson";
 import estados from "../../../.cache/vista_previa/estados.json";
+import municipios from "../../../.cache/vista_previa/municipios.json";
 
 type Registro = Record<string, string | number | null>;
 const filas = estados as Registro[];
@@ -16,21 +17,21 @@ const col = (medida: string) => filas.map((e) => e[medida] as number | null);
 
 const BASES_VENTAS: MedidaFalsa[] = [
     { nombre: "Ventas Cadenas", valores: col("Ventas Cadenas"), formato: "\\$#,0" },
-    { nombre: "Ventas Nielsen Estimada", valores: col("Ventas Nielsen Estimada"), formato: "\\$#,0" },
+    { nombre: "Ventas Mercado Estimada", valores: col("Ventas Mercado Estimada"), formato: "\\$#,0" },
 ];
 const BASES_MIX: MedidaFalsa[] = [
     { nombre: "% Mix Cadenas", valores: col("% Mix Cadenas"), formato: "0.0%" },
-    { nombre: "% Mix Nielsen", valores: col("% Mix Nielsen"), formato: "0.0%" },
+    { nombre: "% Mix Mercado", valores: col("% Mix Mercado"), formato: "0.0%" },
 ];
 const TARJETAS: MedidaFalsa[] = [
-    { nombre: "Índice Cadenas vs Nielsen", valores: col("Índice Cadenas vs Nielsen"), formato: "#,0", objetos: { agregacion: { tipo: "promedio" } } },
+    { nombre: "Índice Cadenas vs Mercado", valores: col("Índice Cadenas vs Mercado"), formato: "#,0", objetos: { agregacion: { tipo: "promedio" } } },
     { nombre: "Crec % Cadenas", valores: col("Crec % Cadenas"), formato: "+0.0%;-0.0%;0.0%" },
     { nombre: "Precio Promedio Cadenas", valores: col("Precio Promedio Cadenas"), formato: "\\$#,0.00" },
     { nombre: "Unidades Cadenas", valores: col("Unidades Cadenas"), formato: "#,0", objetos: { agregacion: { tipo: "suma" } } },
 ];
 const BASE: OpcionesDataView = {
     claves: filas.map((e) => e.CVE_ENT),
-    grupo: { nombre: "Región Nielsen", valores: filas.map((e) => e.REGION_NIELSEN) },
+    grupo: { nombre: "Región", valores: filas.map((e) => e.REGION) },
     valores: col("Ventas Cadenas"),
     nombre: "Ventas Cadenas",
     formato: "\\$#,0",
@@ -38,8 +39,55 @@ const BASE: OpcionesDataView = {
     tarjetas: TARJETAS,
 };
 
+/** Solo las filas que deja un filtro (como lo manda Power BI al filtrar una región). */
+function filtrar(o: OpcionesDataView, queda: (i: number) => boolean): OpcionesDataView {
+    const de = <T>(v: T[] | undefined): T[] | undefined => v?.filter((_, i) => queda(i));
+    const medida = (m: MedidaFalsa): MedidaFalsa => ({ ...m, valores: de(m.valores) ?? [] });
+    return {
+        ...o,
+        claves: de(o.claves) ?? [],
+        grupo: o.grupo ? { ...o.grupo, valores: de(o.grupo.valores) ?? [] } : undefined,
+        valores: de(o.valores),
+        bases: o.bases?.map(medida),
+        tarjetas: o.tarjetas?.map(medida),
+    };
+}
+
+/** Lo que resalta otro visual: `parte(i)` es la fracción resaltada de cada fila (null, nada). */
+function resaltar(o: OpcionesDataView, parte: (i: number) => number | null): OpcionesDataView {
+    const de = (v: Array<number | null>): Array<number | null> => v.map((x, i) => {
+        const p = parte(i);
+        return x === null || p === null ? null : x * p;
+    });
+    const medida = (m: MedidaFalsa): MedidaFalsa => ({ ...m, resaltes: de(m.valores) });
+    return { ...o, resaltes: o.valores ? de(o.valores) : undefined, bases: o.bases?.map(medida), tarjetas: o.tarjetas?.map(medida) };
+}
+
 const ESCENAS: Record<string, { titulo: string; datos: OpcionesDataView }> = {
     ventas: { titulo: "Ventas con semáforo", datos: { ...BASE, objetos: { colores: { paleta: "semaforo" } } } },
+    region: {
+        titulo: "Filtro de región (Occidente)",
+        datos: { ...filtrar(BASE, (i) => filas[i].REGION === "Occidente"), objetos: { colores: { paleta: "semaforo" } } },
+    },
+    estado: { titulo: "Filtro de un estado", datos: filtrar(BASE, (i) => filas[i].CVE_ENT === "14") },
+    tabla: {
+        titulo: "Clic en otra tabla (región Bajío)",
+        datos: resaltar(BASE, (i) => (filas[i].REGION === "Bajío" ? 1 : null)),
+    },
+    producto: {
+        titulo: "Clic en otra tabla (un producto)",
+        datos: resaltar(BASE, (i) => (i % 7 === 3 ? null : 0.18 + ((i * 37) % 11) / 40)),
+    },
+    barra: { titulo: "Leyenda en barra", datos: { ...BASE, objetos: { leyenda: { estilo: "barra", posicion: "abajo-izquierda" } } } },
+    municipios: {
+        titulo: "Municipios de Jalisco (drill-down)",
+        datos: {
+            claves: (municipios as Registro[]).map((m) => m.CVEGEO),
+            valores: (municipios as Registro[]).map((m) => m.VENTAS as number | null),
+            nombre: "Ventas Cadenas",
+            formato: "\\$#,0",
+        },
+    },
     franjas: { titulo: "Regiones con franja de color", datos: { ...BASE, objetos: { grupos: { estilo: "color" } } } },
     mix: {
         titulo: "Diferencia % de mix",

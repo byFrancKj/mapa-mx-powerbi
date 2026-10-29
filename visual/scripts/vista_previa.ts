@@ -20,13 +20,20 @@ const municipios = leer("municipios.json");
 
 // Equivalente de style/visual.less (en Power BI lo aplica pbiviz; aquí va dentro del SVG).
 const CSS = `
-  .leyenda .fondo { fill: #ffffff; fill-opacity: 0.85; }
+  .capa-mapa path { vector-effect: non-scaling-stroke; }
+  .leyenda .fondo { fill: #ffffff; fill-opacity: 0.94; stroke: #e1dfdd; }
   .leyenda .titulo { fill: #252423; font-weight: 600; }
-  .leyenda .etiqueta { fill: #605e5c; }
+  .leyenda .etiqueta { fill: #484644; }
   .aviso { fill: #a4262c; font-size: 11px; }
-  .limites-estatales, .halo-grupos, .contorno-grupos, .franjas-grupo path { fill: none; stroke-linejoin: round; }
+  .limites-estatales, .halo-grupos, .contorno-grupos, .franjas-grupo path, .costa, .lineas-agua path { fill: none; stroke-linejoin: round; }
+  .reticula { stroke-width: 0.6px; }
+  .tierra { stroke-width: 1.6px; stroke-linejoin: round; }
+  .fronteras { stroke-width: 0.8px; stroke-dasharray: 4 3; }
+  .costa { stroke-width: 0.9px; }
   .etiqueta-grupo { font-weight: 600; }
   text { font-family: Helvetica, Arial, sans-serif; }
+  .referencia-mar { font-family: Georgia, "Times New Roman", serif; font-style: italic; letter-spacing: 0.06em; }
+  .referencia-pais { font-weight: 600; letter-spacing: 0.18em; }
 `;
 
 const porEstado = (medida: string, formato: string): OpcionesDataView => ({
@@ -42,7 +49,7 @@ const VISTAS: Array<{ archivo: string; datos: OpcionesDataView; ancho?: number; 
     { archivo: "mapa_ventas.png", datos: porEstado("Ventas Cadenas", "\\$#,0") },
     {
         archivo: "mapa_indice.png",
-        datos: { ...porEstado("Índice Cadenas vs Nielsen", "#,0"), objetos: { colores: { metodo: "divergente", centro: 100, umbral1: 10, umbral2: 30 } } },
+        datos: { ...porEstado("Índice Cadenas vs Mercado", "#,0"), objetos: { colores: { metodo: "divergente", centro: 100, umbral1: 10, umbral2: 30 } } },
     },
     {
         archivo: "mapa_crecimiento.png",
@@ -55,8 +62,8 @@ const VISTAS: Array<{ archivo: string; datos: OpcionesDataView; ancho?: number; 
         // Regiones como dato del modelo: el contorno se calcula con el campo Grupo.
         archivo: "mapa_regiones.png",
         datos: {
-            ...porEstado("Índice Cadenas vs Nielsen", "#,0"),
-            grupo: { nombre: "Región", valores: estados.map((e) => e.REGION_NIELSEN) },
+            ...porEstado("Índice Cadenas vs Mercado", "#,0"),
+            grupo: { nombre: "Región", valores: estados.map((e) => e.REGION) },
             objetos: { colores: { metodo: "divergente", centro: 100, umbral1: 10, umbral2: 30 } },
         },
     },
@@ -69,7 +76,7 @@ const VISTAS: Array<{ archivo: string; datos: OpcionesDataView; ancho?: number; 
         archivo: "mapa_regiones_color.png",
         datos: {
             ...porEstado("Ventas Cadenas", "\\$#,0"),
-            grupo: { nombre: "Región", valores: estados.map((e) => e.REGION_NIELSEN) },
+            grupo: { nombre: "Región", valores: estados.map((e) => e.REGION) },
             objetos: { grupos: { estilo: "color" } },
         },
     },
@@ -103,6 +110,16 @@ for (const v of VISTAS) {
     visual.update(opcionesUpdate(crearDataView(v.datos), ancho, alto));
     const svg = elemento.querySelector("svg") as SVGSVGElement;
     svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    // resvg no conoce vector-effect: con el mapa acercado (encuadre de los datos), cada
+    // línea se adelgaza a mano para que conserve su grosor en pantalla, como en Power BI.
+    const k = Number(/scale\(([-\d.e]+)\)/.exec(svg.querySelector(".capa-mapa")?.getAttribute("transform") ?? "")?.[1] ?? 1);
+    if (k !== 1) {
+        const porClase: Record<string, number> = { reticula: 0.6, tierra: 1.6, fronteras: 0.8, costa: 0.9 };
+        for (const p of svg.querySelectorAll<SVGPathElement>(".capa-mapa path")) {
+            const clase = [...p.classList].find((c) => c in porClase);
+            p.style.strokeWidth = String(Number(p.getAttribute("stroke-width") ?? (clase ? porClase[clase] : 1)) / k);
+        }
+    }
     const estilo = document.createElementNS("http://www.w3.org/2000/svg", "style");
     estilo.textContent = CSS;
     svg.insertBefore(estilo, svg.firstChild);

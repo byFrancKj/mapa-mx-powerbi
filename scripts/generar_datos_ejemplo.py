@@ -9,7 +9,7 @@ Simula:
       - Cadena A: venta por tienda (ID de tienda -> se mapea en ejemplo/config/mapeo_ubicaciones.csv)
       - Cadena B: venta por nombre de estado escrito "como venga" (se resuelve con alias)
       - Cadena C: venta por clave municipal INEGI
-  * Nielsen: venta mensual por región Nielsen (fuente independiente de las cadenas).
+  * Mercado: venta mensual por región de una fuente de mercado independiente de las cadenas.
 
 Los UPC usan el prefijo 200 (rango de circulación restringida de GS1) para no
 coincidir con productos reales. Semilla fija: el resultado es reproducible.
@@ -72,7 +72,7 @@ semanas = pd.date_range("2024-10-07", "2026-09-28", freq="W-MON")
 meses = pd.date_range("2024-10-01", "2026-09-01", freq="MS")
 
 # --------------------------------------------- demanda de mercado (estado x mes x upc)
-regiones = sorted(geo["REGION_NIELSEN"].unique())
+regiones = sorted(geo["REGION"].unique())
 categorias = sorted(dim_producto["CATEGORIA"].unique())
 afinidad = {(r, c): rng.lognormal(0, 0.18) for r in regiones for c in categorias}
 crec_region = {r: rng.uniform(0.01, 0.10) for r in regiones}  # crecimiento anual del mercado
@@ -87,12 +87,12 @@ filas = []
 for _, e in geo.iterrows():
     ruido_estado = rng.lognormal(0, 0.12)
     for _, p in dim_producto.iterrows():
-        base = e["POBLACION_2020"] * pc_base[p["UPC"]] * afinidad[(e["REGION_NIELSEN"], p["CATEGORIA"])] * ruido_estado
+        base = e["POBLACION_2020"] * pc_base[p["UPC"]] * afinidad[(e["REGION"], p["CATEGORIA"])] * ruido_estado
         for k, mes in enumerate(meses):
             t = k / 12
-            valor = base * estacionalidad[p["CATEGORIA"]](mes.month) * (1 + crec_region[e["REGION_NIELSEN"]]) ** t
-            filas.append((e["CVE_ENT"], e["REGION_NIELSEN"], p["UPC"], mes, valor * rng.lognormal(0, 0.04)))
-mercado = pd.DataFrame(filas, columns=["CVE_ENT", "REGION_NIELSEN", "UPC", "MES", "VENTAS"])
+            valor = base * estacionalidad[p["CATEGORIA"]](mes.month) * (1 + crec_region[e["REGION"]]) ** t
+            filas.append((e["CVE_ENT"], e["REGION"], p["UPC"], mes, valor * rng.lognormal(0, 0.04)))
+mercado = pd.DataFrame(filas, columns=["CVE_ENT", "REGION", "UPC", "MES", "VENTAS"])
 
 precio = dict(zip(dim_producto["UPC"], dim_producto["PRECIO_REF"]))
 
@@ -104,12 +104,12 @@ def con_unidades(df: pd.DataFrame, col_ventas: str, col_upc: str, factor_precio:
     return df[df["UNIDADES"] > 0]
 
 
-# ------------------------------------------------------------------- Nielsen
-# Nielsen mide su propio universo (aquí ~55 % del mercado), agregado por región y mes.
-nielsen = mercado.groupby(["MES", "REGION_NIELSEN", "UPC"], as_index=False)["VENTAS"].sum()
-nielsen["VENTAS"] = nielsen["VENTAS"] * 0.55 * rng.lognormal(0, 0.03, len(nielsen))
-nielsen = con_unidades(nielsen, "VENTAS", "UPC", rng.normal(1.0, 0.015, len(nielsen)))
-nielsen = nielsen.rename(columns={"MES": "PERIODO"})[["PERIODO", "REGION_NIELSEN", "UPC", "UNIDADES", "VENTAS"]]
+# ---------------------------------------------------------- fuente de mercado
+# La fuente de mercado mide su propio universo (aquí ~55 % del total), agregado por región y mes.
+fuente = mercado.groupby(["MES", "REGION", "UPC"], as_index=False)["VENTAS"].sum()
+fuente["VENTAS"] = fuente["VENTAS"] * 0.55 * rng.lognormal(0, 0.03, len(fuente))
+fuente = con_unidades(fuente, "VENTAS", "UPC", rng.normal(1.0, 0.015, len(fuente)))
+fuente = fuente.rename(columns={"MES": "PERIODO"})[["PERIODO", "REGION", "UPC", "UNIDADES", "VENTAS"]]
 
 
 # -------------------------------------------------------------- cadenas
@@ -122,8 +122,8 @@ def venta_cadena(estados: list[str], fuerza_region: dict[str, float], crec_extra
         m["VENTAS"]
         * escala
         * m["CVE_ENT"].map(cuota_estado)
-        * m["REGION_NIELSEN"].map(fuerza_region).fillna(1.0)
-        * (1 + m["REGION_NIELSEN"].map(crec_extra).fillna(0.0)) ** (t / 12)
+        * m["REGION"].map(fuerza_region).fillna(1.0)
+        * (1 + m["REGION"].map(crec_extra).fillna(0.0)) ** (t / 12)
     )
     return m
 
@@ -181,7 +181,7 @@ cadena_b = (
 )
 
 # Cadena C: regional (Bajío, Occidente y parte del Norte), por municipio INEGI.
-estados_c = geo.loc[geo["REGION_NIELSEN"].isin(["Bajío", "Occidente"]), "CVE_ENT"].tolist() + ["10", "28"]
+estados_c = geo.loc[geo["REGION"].isin(["Bajío", "Occidente"]), "CVE_ENT"].tolist() + ["10", "28"]
 c_mensual = venta_cadena(estados_c, {"Bajío": 1.4, "Occidente": 1.1}, {"Bajío": 0.09}, escala=0.10)
 mun_c = pd.concat(
     [
@@ -217,7 +217,7 @@ guardar(dim_producto, SALIDA / "dim_producto.csv")
 guardar(cadena_a, SALIDA / "cadenas" / "cadena_a_tiendas.csv")
 guardar(cadena_b, SALIDA / "cadenas" / "cadena_b_estados.csv")
 guardar(cadena_c, SALIDA / "cadenas" / "cadena_c_municipios.csv")
-guardar(nielsen, SALIDA / "nielsen" / "nielsen_regiones.csv")
+guardar(fuente, SALIDA / "mercado" / "mercado_regiones.csv")
 
 # Mapeo de ubicaciones de ejemplo: tiendas de la Cadena A -> claves INEGI.
 mapeo = tiendas.assign(CADENA="Cadena A", UBICACION=tiendas["ID_TIENDA"])[["CADENA", "UBICACION", "CVE_ENT", "CVEGEO"]]

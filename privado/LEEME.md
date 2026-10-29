@@ -5,7 +5,7 @@ Carpeta para **tus archivos reales**. Git ignora todo lo que pongas aquí, excep
 Úsala para lo que nunca debe llegar a GitHub:
 
 - Tu mapeo de tiendas (`mapeo_ubicaciones.csv`) y tus regiones reales.
-- Extracciones de ventas, de Nielsen u otras fuentes.
+- Extracciones de ventas o de proveedores de datos de mercado.
 - Tus reportes internos (`.pbip`, `.pbix`).
 
 En Power BI apunta el parámetro `RutaMapeo` a tu archivo, por ejemplo `C:\mapa-mx-powerbi\privado\mapeo_ubicaciones.csv`. Para revisarlo sin subirlo:

@@ -23,6 +23,10 @@ const CONTENIDOS = opciones("Contenido", ["valor", "nombre", "nombre-valor"]);
 const ESTILOS_GRUPO = opciones("EstiloGrupo", ["linea", "color"]);
 const POSICIONES_PANEL = opciones("PosicionPanel", ["auto", "derecha", "abajo", "encima"]);
 const MODOS_RUEDA = opciones("Rueda", ["siempre", "ctrl", "nunca"]);
+const FONDOS = opciones("Fondo", ["mar", "ninguno"]);
+const ENCUADRES = opciones("Encuadre", ["datos", "pais"]);
+const ESTILOS_LEYENDA = opciones("EstiloLeyenda", ["lista", "barra"]);
+const MODOS_PANEL = opciones("AbrirPanel", ["seleccion", "filtro", "siempre"]);
 export const OPCIONES_AGREGACION = opciones("Agregacion", ["suma", "promedio", "minimo", "maximo", "rango"]);
 
 /** Qué colorea el mapa, ya resuelto según los campos que hay. */
@@ -50,12 +54,15 @@ class ColoresCard extends Card {
     });
     invertir = new formattingSettings.ToggleSwitch({ name: "invertir", displayNameKey: "Colores_Invertir", value: false });
     sinDato = new formattingSettings.ColorPicker({ name: "sinDato", displayNameKey: "Colores_SinDato", value: { value: "#ffffff" } });
+    fueraDeFiltro = new formattingSettings.ColorPicker({
+        name: "fueraDeFiltro", displayNameKey: "Colores_FueraDeFiltro", descriptionKey: "Colores_FueraDeFiltro_Desc", value: { value: "#f3f2ef" },
+    });
 
     name = "colores";
     displayNameKey = "Tarjeta_Colores";
     slices: Slice[] = [
         this.colorearPor, this.metodo, this.clases, this.paleta, this.paletaDivergente,
-        this.centro, this.umbral1, this.umbral2, this.invertir, this.sinDato,
+        this.centro, this.umbral1, this.umbral2, this.invertir, this.sinDato, this.fueraDeFiltro,
     ];
 
     /** Lo que colorea el mapa (lo decide el visual con los campos que hay). */
@@ -102,12 +109,30 @@ class MapaCard extends Card {
     proyeccion = new formattingSettings.ItemDropdown({
         name: "proyeccion", displayNameKey: "Mapa_Proyeccion", items: PROYECCIONES, value: PROYECCIONES[0],
     });
+    encuadre = new formattingSettings.ItemDropdown({
+        name: "encuadre", displayNameKey: "Mapa_Encuadre", descriptionKey: "Mapa_Encuadre_Desc", items: ENCUADRES, value: ENCUADRES[0],
+    });
+    fondo = new formattingSettings.ItemDropdown({
+        name: "fondo", displayNameKey: "Mapa_Fondo", descriptionKey: "Mapa_Fondo_Desc", items: FONDOS, value: FONDOS[0],
+    });
+    colorMar = new formattingSettings.ColorPicker({ name: "colorMar", displayNameKey: "Mapa_ColorMar", value: { value: "#d4e4ee" } });
+    colorTierra = new formattingSettings.ColorPicker({ name: "colorTierra", displayNameKey: "Mapa_ColorTierra", value: { value: "#ebe9e4" } });
+    referencias = new formattingSettings.ToggleSwitch({
+        name: "referencias", displayNameKey: "Mapa_Referencias", descriptionKey: "Mapa_Referencias_Desc", value: true,
+    });
     borde = new formattingSettings.ColorPicker({ name: "borde", displayNameKey: "Mapa_Borde", value: { value: "#d6d6d6" } });
     grosor = new formattingSettings.NumUpDown({ name: "grosor", displayNameKey: "Mapa_Grosor", value: 0.8 });
 
     name = "mapa";
     displayNameKey = "Tarjeta_Mapa";
-    slices: Slice[] = [this.proyeccion, this.borde, this.grosor];
+    slices: Slice[] = [this.proyeccion, this.encuadre, this.fondo, this.colorMar, this.colorTierra, this.referencias, this.borde, this.grosor];
+
+    onPreProcess(): void {
+        const conMar = this.fondo.value?.value !== "ninguno";
+        this.colorMar.visible = conMar;
+        this.colorTierra.visible = conMar;
+        this.referencias.visible = conMar;
+    }
 }
 
 class GruposCard extends Card {
@@ -153,12 +178,15 @@ class LeyendaCard extends Card {
     titulo = new formattingSettings.TextInput({
         name: "titulo", displayNameKey: "Leyenda_Titulo", placeholder: "", placeholderKey: "Leyenda_Titulo_Placeholder", value: "",
     } as ConstructorParameters<typeof formattingSettings.TextInput>[0]);
-    tamano = new formattingSettings.NumUpDown({ name: "tamano", displayNameKey: "Leyenda_Tamano", value: 11 });
+    estilo = new formattingSettings.ItemDropdown({
+        name: "estilo", displayNameKey: "Leyenda_Estilo", descriptionKey: "Leyenda_Estilo_Desc", items: ESTILOS_LEYENDA, value: ESTILOS_LEYENDA[0],
+    });
+    tamano = new formattingSettings.NumUpDown({ name: "tamano", displayNameKey: "Leyenda_Tamano", value: 13 });
 
     name = "leyenda";
     displayNameKey = "Tarjeta_Leyenda";
     topLevelSlice = this.mostrar;
-    slices: Slice[] = [this.posicion, this.titulo, this.tamano];
+    slices: Slice[] = [this.estilo, this.posicion, this.titulo, this.tamano];
 }
 
 class PanelCard extends Card {
@@ -169,8 +197,8 @@ class PanelCard extends Card {
     tamano = new formattingSettings.NumUpDown({
         name: "tamano", displayNameKey: "Panel_Tamano", descriptionKey: "Panel_Tamano_Desc", value: 36,
     });
-    sinSeleccion = new formattingSettings.ToggleSwitch({
-        name: "sinSeleccion", displayNameKey: "Panel_SinSeleccion", descriptionKey: "Panel_SinSeleccion_Desc", value: false,
+    abrir = new formattingSettings.ItemDropdown({
+        name: "abrir", displayNameKey: "Panel_Abrir", descriptionKey: "Panel_Abrir_Desc", items: MODOS_PANEL, value: MODOS_PANEL[1],
     });
     silueta = new formattingSettings.ToggleSwitch({ name: "silueta", displayNameKey: "Panel_Silueta", value: true });
     diferencia = new formattingSettings.ToggleSwitch({ name: "diferencia", displayNameKey: "Panel_Diferencia", value: true });
@@ -183,7 +211,7 @@ class PanelCard extends Card {
     descriptionKey = "Tarjeta_Panel_Desc";
     topLevelSlice = this.mostrar;
     slices: Slice[] = [
-        this.posicion, this.tamano, this.sinSeleccion, this.silueta,
+        this.abrir, this.posicion, this.tamano, this.silueta,
         this.diferencia, this.indice, this.colorSigno, this.tamanoTexto,
     ];
 

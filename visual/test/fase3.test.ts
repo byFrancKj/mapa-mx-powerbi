@@ -48,11 +48,11 @@ test("bivariado: terciles de cada medida, leyenda 3×3 y tarjeta propia", () => 
     const { elemento, visual } = montar();
     visual.update(opcionesUpdate(conValor2(bivariado(), Y.map((y) => y / 100))));
     const celdas = [...elemento.querySelectorAll(".leyenda rect.muestra")];
-    assert.equal(celdas.length, 9 + 1, "9 celdas + Sin dato (23 estados sin datos)");
+    assert.equal(celdas.length, 9, "9 celdas; los 23 estados sin datos quedan de fondo (no son Sin dato)");
     // 01: X bajo, Y alto → celda (0, 2); 09: X alto, Y bajo → celda (2, 0)
     assert.equal(area(elemento, "Aguascalientes")?.getAttribute("fill"), colorBivariado("turquesa-rosa", 0, 2));
     assert.equal(area(elemento, "Ciudad de México")?.getAttribute("fill"), colorBivariado("turquesa-rosa", 2, 0));
-    assert.equal(area(elemento, "Sonora")?.getAttribute("fill"), "#ffffff");
+    assert.equal(area(elemento, "Sonora")?.getAttribute("fill"), "#f3f2ef");
     const tarjetas = tarjetasVisibles(visual);
     assert.ok(tarjetas.includes("Bivariado"));
     // El método de clasificación no aplica en el bivariado
@@ -91,20 +91,23 @@ test("etiquetas: apagadas por defecto; encendidas, valor abreviado donde cabe", 
     const { elemento, visual } = montar();
     const dv = (objetos = {}) => crearDataView({ claves: ["08", "05", "09"], valores: [212498225, 65735656, 444803003], formato: "\\$#,0", objetos });
     visual.update(opcionesUpdate(dv()));
-    assert.equal(elemento.querySelectorAll(".etiquetas text").length, 0);
-    visual.update(opcionesUpdate(dv({ etiquetas: { mostrar: true } })));
-    const textos = [...elemento.querySelectorAll(".etiquetas text")].map((t) => t.textContent);
+    assert.equal(elemento.querySelectorAll(".etiqueta-area").length, 0);
+    // Sin el ajuste a los datos, para ver qué cabe en la vista del país
+    visual.update(opcionesUpdate(dv({ etiquetas: { mostrar: true }, mapa: { encuadre: "pais" } })));
+    const textos = [...elemento.querySelectorAll(".etiqueta-area")].map((t) => t.textContent);
     assert.ok(textos.includes("$212 M"), `Chihuahua cabe: ${textos.join(" | ")}`);
     assert.ok(!textos.includes("$445 M"), "la Ciudad de México es demasiado chica para su etiqueta a este tamaño");
 });
 
 test("etiquetas: nombre y valor en dos líneas; sin dato, solo el nombre", () => {
     const { elemento, visual } = montar();
+    // Los 32 estados llegan (Sonora sin valor), así que Sonora es "Sin dato" y no fondo.
+    const claves = Array.from({ length: 32 }, (_, i) => String(i + 1).padStart(2, "0"));
     visual.update(opcionesUpdate(crearDataView({
-        claves: ["08"], valores: [212498225], formato: "\\$#,0",
+        claves, valores: claves.map((c) => (c === "08" ? 212498225 : null)), formato: "\\$#,0",
         objetos: { etiquetas: { mostrar: true, contenido: "nombre-valor" } },
     })));
-    const lineas = (nombre: string) => [...elemento.querySelectorAll(".etiquetas text")]
+    const lineas = (nombre: string) => [...elemento.querySelectorAll(".etiqueta-area")]
         .map((t) => [...t.querySelectorAll("tspan")].map((x) => x.textContent))
         .find((l) => l[0] === nombre);
     assert.deepEqual(lineas("Chihuahua"), ["Chihuahua", "$212 M"]);
@@ -116,9 +119,9 @@ test("etiquetas en municipios: solo donde caben", () => {
     const claves = ["14039", "14120", "14097", "14098", "14063", "14053"];
     visual.update(opcionesUpdate(crearDataView({
         claves, valores: claves.map((_, i) => (i + 1) * 1e6), formato: "\\$#,0",
-        objetos: { etiquetas: { mostrar: true } },
+        objetos: { etiquetas: { mostrar: true }, mapa: { encuadre: "pais" } },
     }), 500, 400));
-    const n = elemento.querySelectorAll(".etiquetas text").length;
+    const n = elemento.querySelectorAll(".etiqueta-area").length;
     assert.ok(n > 0 && n < claves.length, `se dibujan ${n} de ${claves.length}`);
 });
 
@@ -126,7 +129,8 @@ test("en inglés: mensajes, tooltip, leyenda y unidades", () => {
     const { elemento, visual, llamadas } = montar("en-US");
     visual.update(opcionesUpdate(null));
     assert.match(elemento.querySelector(".mensaje")?.textContent ?? "", /^Drag to Location/);
-    visual.update(opcionesUpdate(crearDataView({ claves: ["14", "XX"], valores: [1.5e9, 1], nombre: "Sales", formato: "\\$#,0" })));
+    const claves = [...Array.from({ length: 32 }, (_, i) => String(i + 1).padStart(2, "0")), "XX"];
+    visual.update(opcionesUpdate(crearDataView({ claves, valores: claves.map((c) => (c === "14" ? 1.5e9 : null)), nombre: "Sales", formato: "\\$#,0" })));
     assert.equal(elemento.querySelector(".aviso")?.firstChild?.textContent, "⚠ 1 unrecognized code");
     const etiquetas = [...elemento.querySelectorAll(".leyenda .etiqueta")].map((t) => t.textContent);
     assert.equal(etiquetas[etiquetas.length - 1], "No data");
@@ -134,6 +138,7 @@ test("en inglés: mensajes, tooltip, leyenda y unidades", () => {
     area(elemento, "Jalisco")?.dispatchEvent(new ventana.MouseEvent("pointerover", { bubbles: true }));
     assert.equal(llamadas.tooltip[0][1].dataItems?.[0].displayName, "State");
     assert.deepEqual(tarjetasVisibles(visual), ["Colors", "Map", "Labels", "Legend", "Detail panel", "Combining several areas", "Zoom"]);
+    assert.ok([...elemento.querySelectorAll(".referencia-mar")].some((t) => t.textContent === "Gulf of Mexico"));
 });
 
 test("formato compacto con unidades en inglés", () => {
@@ -171,7 +176,7 @@ test("traducciones: toda clave usada existe en es-ES, es-MX y en-US, y es-MX es 
     // Textos del visual, en todos sus módulos
     for (const archivo of readdirSync(new URL("../src/", import.meta.url)).filter((a) => a.endsWith(".ts"))) {
         const codigo = readFileSync(new URL(`../src/${archivo}`, import.meta.url), "utf8");
-        for (const m of codigo.matchAll(/"((?:Texto|Unidad|Leyenda|Aviso|Mensaje|Panel|Zoom|Tarjeta)_[\w-]+)"/g)) {
+        for (const m of codigo.matchAll(/"((?:Texto|Unidad|Leyenda|Aviso|Mensaje|Panel|Zoom|Tarjeta|Ref)_[\w-]+)"/g)) {
             usadas.add(m[1]);
         }
     }
@@ -188,12 +193,14 @@ test("traducciones: toda clave usada existe en es-ES, es-MX y en-US, y es-MX es 
     assert.deepEqual(sobran, [], `claves sin uso: ${sobran.join(", ")}`);
 });
 
-test("resaltado: si otro visual resalta una parte, se atenúa lo que no corresponde", () => {
+test("resaltado: lo que otro visual no resalta queda de fondo y el resto usa el valor resaltado", () => {
     const { elemento, visual } = montar();
     visual.update(opcionesUpdate(crearDataView({ claves: ["14", "15", "09"], valores: [10, 20, 30], resaltes: [4, null, 12] })));
-    assert.equal(area(elemento, "Jalisco")?.style.opacity, "1");
-    assert.equal(area(elemento, "Estado de México")?.style.opacity, "0.35");
-    assert.equal(area(elemento, "Ciudad de México")?.style.opacity, "1");
+    assert.ok(!area(elemento, "Jalisco")?.classList.contains("de-fondo"));
+    assert.ok(area(elemento, "Estado de México")?.classList.contains("de-fondo"));
+    assert.equal(area(elemento, "Estado de México")?.getAttribute("fill"), "#f3f2ef");
+    assert.equal(area(elemento, "Jalisco")?.getAttribute("aria-label"), "Jalisco: 4");
+    assert.equal(area(elemento, "Ciudad de México")?.getAttribute("aria-label"), "Ciudad de México: 12");
 });
 
 test("ícono de advertencia del encabezado con las claves no reconocidas", () => {

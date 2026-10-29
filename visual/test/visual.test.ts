@@ -26,15 +26,17 @@ test("dibuja los 32 estados y colorea solo los que tienen valor", () => {
     assert.equal(areas(elemento).length, 32);
     assert.equal(areas(elemento).filter((p) => p.classList.contains("con-dato")).length, 4);
     assert.equal(area(elemento, "Jalisco")?.getAttribute("aria-label"), "Jalisco: 100");
-    assert.equal(area(elemento, "Sonora")?.getAttribute("fill"), "#ffffff");
+    // Con 4 de 32 estados, los demás quedan de fondo (color "Fuera del filtro")
+    assert.equal(area(elemento, "Sonora")?.getAttribute("fill"), "#f3f2ef");
     assert.notEqual(area(elemento, "Estado de México")?.getAttribute("fill"), "#ffffff");
     assert.equal(elemento.querySelector<HTMLElement>(".mensaje")?.style.display, "none");
 });
 
 test("la leyenda usa el nombre y el formato de la medida, y marca los estados sin dato", () => {
     const { elemento, visual } = montar();
+    // Llegan los 32 estados; los últimos 22 sin valor
     visual.update(opcionesUpdate(crearDataView({
-        claves: CLAVES.slice(0, 10), valores: [1e6, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, 8e6, 9e6, 1.2e9],
+        claves: CLAVES, valores: [1e6, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, 8e6, 9e6, 1.2e9, ...Array<null>(22).fill(null)],
         nombre: "Ventas Cadenas", formato: "\\$#,0",
     })));
     assert.equal(elemento.querySelector(".leyenda .titulo")?.textContent, "Ventas Cadenas");
@@ -132,7 +134,7 @@ test("el modelo de formato expone las tarjetas Colores, Mapa, Etiquetas, Leyenda
     const { visual } = montar();
     visual.update(opcionesUpdate(crearDataView({ claves: ["14"], valores: [1] })));
     const modelo = visual.getFormattingModel();
-    // "Bivariado" y "Grupos" solo aparecen cuando se usan Valor 2 y Grupo.
+    // "Bivariado" y "Regiones" solo aparecen cuando se usan Valor 2 y Región.
     assert.deepEqual(modelo.cards.filter((c) => c.visible !== false).map((c) => c.displayName), [
         "Colores", "Mapa", "Etiquetas", "Leyenda", "Panel de detalle", "Al seleccionar varias áreas", "Zoom",
     ]);

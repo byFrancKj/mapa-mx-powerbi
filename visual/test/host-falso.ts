@@ -134,6 +134,8 @@ export interface OpcionesDataView {
 export interface MedidaFalsa {
     nombre: string;
     valores: Array<number | null>;
+    /** Lo que resalta otro visual (null = no resaltado). */
+    resaltes?: Array<number | null>;
     formato?: string;
     /** queryName (por omisión, "_Medidas.<nombre>"). */
     consulta?: string;
@@ -146,6 +148,7 @@ const columnaMedida = (rol: string, m: MedidaFalsa) => ({
         queryName: m.consulta ?? `_Medidas.${m.nombre}`, isMeasure: true, objects: m.objetos,
     },
     values: m.valores,
+    ...(m.resaltes ? { highlights: m.resaltes } : {}),
 });
 
 export function crearDataView(o: OpcionesDataView): powerbi.DataView {

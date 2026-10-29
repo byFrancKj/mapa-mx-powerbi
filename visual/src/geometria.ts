@@ -11,6 +11,8 @@ import type { Nivel } from "./claves";
 // (los genera scripts/construir_geo.mjs). El visual nunca descarga mapas.
 import estadosTopo from "./geo/estados.json";
 import municipiosTopo from "./geo/municipios.json";
+// Tierra de los países vecinos y sus fronteras, de Natural Earth (scripts/construir_contexto.mjs).
+import contextoTopo from "./geo/contexto.json";
 
 type Propiedades = Record<string, string | number>;
 
@@ -109,4 +111,29 @@ export function principal(a: Area): Feature<Geometry, Propiedades> {
         principales.set(a, p);
     }
     return p;
+}
+
+/** El fondo del mapa: la tierra de los demás países, sus fronteras y la costa de México. */
+export interface Fondo {
+    tierra: MultiPolygon;
+    fronteras: MultiLineString;
+    /** Contorno exterior de México (costa y fronteras): de ahí salen las líneas de agua. */
+    costa: MultiLineString;
+    /** México como una sola figura (para que los nombres del fondo no caigan en su tierra). */
+    mexico: MultiPolygon;
+}
+
+let fondo: Fondo | null = null;
+
+export function fondoDelMapa(): Fondo {
+    if (!fondo) {
+        const t = contextoTopo as unknown as Topology;
+        fondo = {
+            tierra: merge(t, (t.objects.tierra as GeometryCollection).geometries as Array<TopoPolygon | TopoMultiPolygon>),
+            fronteras: mesh(t, t.objects.fronteras as GeometryCollection),
+            costa: bordes(capa("estado"), (_, b) => b === null),
+            mexico: unir(capa("estado"), () => true),
+        };
+    }
+    return fondo;
 }

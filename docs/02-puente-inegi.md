@@ -91,9 +91,9 @@ Detecta claves inexistentes, municipios que no pertenecen al estado indicado y u
 
 ## Regiones propias
 
-Tus regiones (las de tu contrato con Nielsen, tus zonas comerciales…) son un dato de tu modelo: agrégalas como columna a `Dim_Geo` combinando una tabla `CVE_ENT → REGION`. Así funcionan en segmentaciones, y el visual dibuja su contorno si pones esa columna en el campo *Grupo*. El ejemplo lo hace en `ejemplo/powerquery/04_Dimensiones.pq`.
+Tus regiones (zonas comerciales, territorios de venta, las de tu proveedor de datos…) son un dato de tu modelo: agrégalas como columna a `Dim_Geo` combinando una tabla `CVE_ENT → REGION`. Así funcionan en segmentaciones, y el visual dibuja su contorno si pones esa columna en el campo *Región*. El ejemplo lo hace en `ejemplo/powerquery/04_Dimensiones.pq`.
 
-Si una región parte un estado (una zona metropolitana que incluye municipios de dos estados), pon la región en `Dim_Municipio` con una tabla `CVEGEO → REGION` y úsala en *Grupo* con el mapa municipal: el contorno sigue los límites de los municipios. No hay que regenerar geometría en ningún caso.
+Si una región parte un estado (una zona metropolitana que incluye municipios de dos estados), pon la región en `Dim_Municipio` con una tabla `CVEGEO → REGION` y úsala en *Región* con el mapa municipal: el contorno sigue los límites de los municipios. No hay que regenerar geometría en ningún caso.
 
 ## Productos y fuentes de mercado
 
