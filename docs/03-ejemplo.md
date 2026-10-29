@@ -62,6 +62,10 @@ Octubre 2024 a septiembre 2026. Se regeneran igual con `python scripts/generar_d
 
 Para cambiar de métrica con una segmentación, crea un parámetro de campo con estas medidas ([guía 01](01-usar-el-visual.md#cambiar-de-métrica)).
 
+- **Bases a comparar**: `Ventas Cadenas` y `Ventas Nielsen Estimada` (las dos se suman al seleccionar varios estados), o `% Mix Cadenas` y `% Mix Nielsen` para comparar la distribución (la diferencia sale en puntos porcentuales). No uses `Ventas Nielsen` como base: repite el total de la región en cada estado y al sumar varios estados lo contaría de más.
+- **Tarjetas**: por ejemplo `Índice Cadenas vs Nielsen`, `Crec % Cadenas`, `Precio Promedio Cadenas` y `Unidades Cadenas`. En *Formato › Al seleccionar varias áreas* elige *Suma* para `Unidades Cadenas` y *Promedio* o *Rango* para las demás.
+- Con dos bases, *Colores › Colorear por › Diferencia % entre bases* con la paleta semáforo muestra dónde se separan más las dos fuentes.
+
 En el nivel municipal solo tienen dato las medidas que usan venta de las cadenas (ventas, unidades, mix, crecimiento y precio): las que dependen de población o de Nielsen devuelven vacío, porque esas fuentes no existen por municipio. Las cadenas que reportan por estado van al municipio `XX000` y el visual las cuenta como "sin municipio".
 
 ## Cómo se comparan las fuentes

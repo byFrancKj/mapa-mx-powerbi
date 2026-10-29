@@ -1,11 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 
 import { crearDataView, crearHost, nuevoElemento, opcionesUpdate, recursos, ventana } from "./entorno";
 
 const { Visual } = await import("../src/visual");
-const { Ajustes } = await import("../src/ajustes");
+const { Ajustes, OPCIONES_AGREGACION } = await import("../src/ajustes");
 const { BIVARIADAS, colorBivariado } = await import("../src/paletas");
 const { formatoCompacto } = await import("../src/formato");
 
@@ -133,7 +133,7 @@ test("en inglés: mensajes, tooltip, leyenda y unidades", () => {
     assert.equal(etiquetas[0], "$1.5 B");
     area(elemento, "Jalisco")?.dispatchEvent(new ventana.MouseEvent("pointerover", { bubbles: true }));
     assert.equal(llamadas.tooltip[0][1].dataItems?.[0].displayName, "State");
-    assert.deepEqual(tarjetasVisibles(visual), ["Colors", "Map", "Labels", "Legend"]);
+    assert.deepEqual(tarjetasVisibles(visual), ["Colors", "Map", "Labels", "Legend", "Detail panel", "Combining several areas", "Zoom"]);
 });
 
 test("formato compacto con unidades en inglés", () => {
@@ -164,10 +164,16 @@ test("traducciones: toda clave usada existe en es-ES, es-MX y en-US, y es-MX es 
         usadas.add(rol.displayNameKey);
         usadas.add(rol.descriptionKey);
     }
-    // Textos del visual
-    const codigo = readFileSync(new URL("../src/visual.ts", import.meta.url), "utf8");
-    for (const m of codigo.matchAll(/"((?:Texto|Unidad|Leyenda|Aviso|Mensaje)_[\w-]+)"/g)) {
-        usadas.add(m[1]);
+    // Las opciones por medida de "Al seleccionar varias áreas" (se arman con los datos)
+    for (const item of OPCIONES_AGREGACION) {
+        usadas.add(item.displayNameKey);
+    }
+    // Textos del visual, en todos sus módulos
+    for (const archivo of readdirSync(new URL("../src/", import.meta.url)).filter((a) => a.endsWith(".ts"))) {
+        const codigo = readFileSync(new URL(`../src/${archivo}`, import.meta.url), "utf8");
+        for (const m of codigo.matchAll(/"((?:Texto|Unidad|Leyenda|Aviso|Mensaje|Panel|Zoom|Tarjeta)_[\w-]+)"/g)) {
+            usadas.add(m[1]);
+        }
     }
     const es = recursos("es-ES");
     const mx = recursos("es-MX");

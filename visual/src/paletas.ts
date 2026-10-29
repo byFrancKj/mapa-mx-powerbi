@@ -18,6 +18,22 @@ export const SECUENCIALES: Record<string, Esquema> = {
     grises: schemeGreys,
 };
 
+// Semáforo: tonos de RdYlGn (ColorBrewer) de rojo (bajo) a verde (alto), k = 1 a 9.
+// Sin el amarillo casi blanco del centro (#ffffbf), para que ninguna clase se
+// confunda con "Sin dato". Rojo contra verde no es apto para daltonismo.
+export const SEMAFORO: Esquema = [
+    [],
+    ["#fee08b"],
+    ["#d73027", "#1a9850"],
+    ["#d73027", "#fee08b", "#1a9850"],
+    ["#d73027", "#fdae61", "#a6d96a", "#1a9850"],
+    ["#d73027", "#fdae61", "#fee08b", "#a6d96a", "#1a9850"],
+    ["#d73027", "#f46d43", "#fdae61", "#a6d96a", "#66bd63", "#1a9850"],
+    ["#d73027", "#f46d43", "#fdae61", "#fee08b", "#a6d96a", "#66bd63", "#1a9850"],
+    ["#a50026", "#d73027", "#f46d43", "#fdae61", "#a6d96a", "#66bd63", "#1a9850", "#006837"],
+    ["#a50026", "#d73027", "#f46d43", "#fdae61", "#fee08b", "#a6d96a", "#66bd63", "#1a9850", "#006837"],
+];
+
 // Nombrados de valor bajo a valor alto, en el orden en que d3 entrega los colores
 // (el de su nombre en inglés: PuOr va de morado a naranja).
 export const DIVERGENTES: Record<string, Esquema> = {
@@ -25,17 +41,23 @@ export const DIVERGENTES: Record<string, Esquema> = {
     "morado-naranja": schemePuOr,
     "cafe-verde": schemeBrBG,
     "rosa-verde": schemePiYG,
+    semaforo: SEMAFORO,
 };
 
 /**
  * k colores de claro a oscuro (1 a 9). Se descartan los tonos casi blancos del
  * esquema (uno, o dos a partir de 7 clases) para que ninguna clase se confunda
- * con "Sin dato".
+ * con "Sin dato". El semáforo va de rojo a verde pasando por amarillo.
  */
 export function coloresSecuenciales(nombre: string, k: number, invertir = false): string[] {
-    const esquema = SECUENCIALES[nombre] ?? SECUENCIALES.azules;
-    const lista = esquema[Math.min(9, Math.max(3, k + (k >= 7 ? 2 : 1)))];
-    const colores = lista.slice(lista.length - k);
+    let colores: string[];
+    if (nombre === "semaforo") {
+        colores = [...SEMAFORO[Math.min(9, Math.max(1, k))]];
+    } else {
+        const esquema = SECUENCIALES[nombre] ?? SECUENCIALES.azules;
+        const lista = esquema[Math.min(9, Math.max(3, k + (k >= 7 ? 2 : 1)))];
+        colores = lista.slice(lista.length - k);
+    }
     return invertir ? colores.reverse() : colores;
 }
 
