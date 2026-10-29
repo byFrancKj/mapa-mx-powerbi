@@ -1,17 +1,17 @@
 // =====================================================================
 // Dim_Calendario  (Modelado > Nueva tabla, pega desde "Dim_Calendario =")
 // Después: márcala como tabla de fechas (columna Fecha) y relaciónala con
-// Fact_Cadenas[FECHA] y Fact_Nielsen[FECHA].
+// Fact_Cadenas[FECHA] y Fact_Mercado[FECHA].
 //
 // Va del 1 de enero del primer año con datos al último día del último mes con
 // datos. Terminar en el último mes (y no el 31 de diciembre) hace que "Año = 2026"
 // compare ene-sep 2026 contra ene-sep 2025 y no contra todo 2025.
-// Nielsen llega por periodo (FECHA = primer día del periodo): para comparar
+// El mercado llega por periodo (FECHA = primer día del periodo): para comparar
 // fuentes filtra por Año, Mes, Bimestre o Año-Mes, no por días sueltos.
 // =====================================================================
 Dim_Calendario =
-VAR _ini = MIN ( MIN ( Fact_Cadenas[FECHA] ), MIN ( Fact_Nielsen[FECHA] ) )
-VAR _fin = MAX ( MAX ( Fact_Cadenas[FECHA] ), MAX ( Fact_Nielsen[FECHA] ) )
+VAR _ini = MIN ( MIN ( Fact_Cadenas[FECHA] ), MIN ( Fact_Mercado[FECHA] ) )
+VAR _fin = MAX ( MAX ( Fact_Cadenas[FECHA] ), MAX ( Fact_Mercado[FECHA] ) )
 VAR _fechas =
     SELECTCOLUMNS (
         CALENDAR ( DATE ( YEAR ( _ini ), 1, 1 ), EOMONTH ( _fin, 0 ) ),

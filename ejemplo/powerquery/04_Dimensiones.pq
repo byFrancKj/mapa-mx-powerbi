@@ -14,13 +14,13 @@ let
     Regiones = Funciones[LeerCsv]("ejemplo\config\regiones_estado.csv"),
     ConRegion = Table.ExpandTableColumn(
         Table.NestedJoin(Origen, {"CVE_ENT"}, Regiones, {"CVE_ENT"}, "R", JoinKind.LeftOuter),
-        "R", {"REGION_NIELSEN"}
+        "R", {"REGION"}
     ),
     Renombrada = Table.RenameColumns(ConRegion, {{"NOMBRE_CORTO", "ESTADO"}}),
     Tipos = Table.TransformColumnTypes(
         Renombrada,
         {{"CVE_ENT", type text}, {"NOM_ENT", type text}, {"ESTADO", type text}, {"ABREV", type text},
-         {"ISO_3166_2", type text}, {"REGION_NIELSEN", type text}, {"POBLACION_2020", Int64.Type},
+         {"ISO_3166_2", type text}, {"REGION", type text}, {"POBLACION_2020", Int64.Type},
          {"LON", type number}, {"LAT", type number}},
         "en-US"
     )
@@ -44,11 +44,11 @@ in
 
 
 // ---------------------------------------------------------------------
-// Consulta: Dim_Region   (regiones del ejemplo; ordena REGION_NIELSEN por ORDEN)
+// Consulta: Dim_Region   (regiones del ejemplo; ordena REGION por ORDEN)
 // ---------------------------------------------------------------------
 let
     Origen = Funciones[LeerCsv]("ejemplo\config\regiones_orden.csv"),
-    Tipos = Table.TransformColumnTypes(Origen, {{"REGION_NIELSEN", type text}, {"ORDEN", Int64.Type}})
+    Tipos = Table.TransformColumnTypes(Origen, {{"REGION", type text}, {"ORDEN", Int64.Type}})
 in
     Tipos
 

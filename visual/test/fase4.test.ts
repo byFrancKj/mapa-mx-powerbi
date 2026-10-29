@@ -31,6 +31,10 @@ function zoomDe(el: HTMLElement): { k: number; x: number; y: number } {
     return m ? { x: Number(m[1]), y: Number(m[2]), k: Number(m[3]) } : { k: 1, x: 0, y: 0 };
 }
 
+// Sin ajustar el encuadre a los datos ni abrir el panel solo: las pruebas de zoom y de
+// selección parten de la vista del país, como antes de la versión 0.5.
+const NACIONAL = { mapa: { encuadre: "pais" }, panel: { abrir: "seleccion" } };
+
 // Jalisco, Estado de México y Ciudad de México con dos fuentes y una tarjeta
 const COMPARACION: OpcionesDataView = {
     claves: ["14", "15", "09"],
@@ -39,7 +43,7 @@ const COMPARACION: OpcionesDataView = {
     formato: "\\$#,0",
     bases: [
         { nombre: "Ventas Cadenas", valores: [366e6, 200e6, 445e6], formato: "\\$#,0" },
-        { nombre: "Ventas Nielsen", valores: [749e6, 500e6, 600e6], formato: "\\$#,0" },
+        { nombre: "Ventas Mercado", valores: [749e6, 500e6, 600e6], formato: "\\$#,0" },
     ],
     tarjetas: [{ nombre: "Crec %", valores: [0.064, 0.05, -0.02], formato: "0.0%" }],
 };
@@ -115,7 +119,7 @@ test("zoom: encuadrar centra la caja y respeta la escala máxima", () => {
 
 test("panel: oculto sin selección; al hacer clic compara las bases y muestra las tarjetas", async () => {
     const { elemento, visual } = montar();
-    visual.update(opcionesUpdate(crearDataView(COMPARACION)));
+    visual.update(opcionesUpdate(crearDataView({ ...COMPARACION, objetos: NACIONAL })));
     assert.equal(panelVisible(elemento), false);
     assert.equal(elemento.querySelector("svg")?.getAttribute("width"), "760");
 
@@ -126,7 +130,7 @@ test("panel: oculto sin selección; al hacer clic compara las bases y muestra la
     assert.equal(elemento.querySelectorAll(".panel-silueta path").length, 1);
     assert.deepEqual(textos(elemento, ".base-valor"), ["$366 M", "$749 M"]);
     assert.equal(elemento.querySelectorAll(".barra-relleno").length, 2);
-    assert.equal(elemento.querySelector(".diferencias-titulo")?.textContent, "Ventas Cadenas vs Ventas Nielsen");
+    assert.equal(elemento.querySelector(".diferencias-titulo")?.textContent, "Ventas Cadenas vs Ventas Mercado");
     assert.deepEqual(textos(elemento, ".diferencias dt"), ["Diferencia", "Diferencia %", "Índice (base 100)"]);
     assert.deepEqual(textos(elemento, ".diferencias dd"), ["-$383 M", "-51.1%", "49"]);
     assert.ok(elemento.querySelector(".diferencias dd")?.classList.contains("negativo"));
@@ -152,7 +156,7 @@ test("panel: varias áreas suman las bases, dan el rango de las tarjetas y una t
     assert.deepEqual(textos(elemento, ".base .nota"), ["suma de 2 estados", "suma de 2 estados"]);
     assert.deepEqual(textos(elemento, ".tarjeta-valor"), ["5.0% – 6.4%"]);
     assert.deepEqual(textos(elemento, ".tarjeta .nota"), ["rango de 2 estados"]);
-    assert.deepEqual(textos(elemento, ".detalle thead th"), ["Estado", "Ventas Cadenas", "Ventas Nielsen", "Diferencia %"]);
+    assert.deepEqual(textos(elemento, ".detalle thead th"), ["Estado", "Ventas Cadenas", "Ventas Mercado", "Diferencia %"]);
     assert.deepEqual(textos(elemento, ".detalle tbody th"), ["Jalisco", "Estado de México"]);
     assert.deepEqual(textos(elemento, ".detalle tbody tr:first-child td"), ["$366 M", "$749 M", "-51.1%"]);
 });
@@ -177,7 +181,7 @@ test("panel: cada medida se combina como diga el panel de formato (guardado en s
     const listas = tarjeta.groups[0].slices.map((s) => [s.displayName, s.control.properties.descriptor.selector, s.control.properties.value.value]);
     assert.deepEqual(listas, [
         ["Ventas Cadenas", { metadata: "_Medidas.Ventas Cadenas" }, "suma"],
-        ["Ventas Nielsen", { metadata: "_Medidas.Ventas Nielsen" }, "suma"],
+        ["Ventas Mercado", { metadata: "_Medidas.Ventas Mercado" }, "suma"],
         ["Crec %", { metadata: "_Medidas.Crec %" }, "promedio"],
     ]);
 });
@@ -188,7 +192,7 @@ test("panel: entre dos porcentajes la diferencia va en puntos porcentuales", asy
         claves: ["14"], valores: [1],
         bases: [
             { nombre: "% Mix Cadenas", valores: [0.0584], formato: "0.0%" },
-            { nombre: "% Mix Nielsen", valores: [0.0715], formato: "0.0%" },
+            { nombre: "% Mix Mercado", valores: [0.0715], formato: "0.0%" },
         ],
     })));
     clic(area(elemento, "Jalisco"));
@@ -198,7 +202,7 @@ test("panel: entre dos porcentajes la diferencia va en puntos porcentuales", asy
 
 test("panel: sin tarjetas muestra Valor; el botón de cerrar quita la selección y devuelve el espacio", async () => {
     const { elemento, visual } = montar();
-    visual.update(opcionesUpdate(crearDataView({ claves: ["14", "15"], valores: [10, 20], nombre: "Ventas", formato: "#,0" })));
+    visual.update(opcionesUpdate(crearDataView({ claves: ["14", "15"], valores: [10, 20], nombre: "Ventas", formato: "#,0", objetos: NACIONAL })));
     clic(area(elemento, "Jalisco"));
     await esperar();
     assert.deepEqual(textos(elemento, ".tarjeta-nombre"), ["Ventas"]);
@@ -233,13 +237,14 @@ test("panel: abajo en un visual alto, encima en uno chico, y apagado desde el fo
     assert.equal(panelVisible(apagado.elemento), false);
 });
 
-test("panel sin selección: resume todas las áreas con datos (las que dejan los filtros)", () => {
+test("panel sin selección: la opción anterior 'Mostrar sin selección' equivale a Siempre", () => {
     const { elemento, visual } = montar();
+    visual.update(opcionesUpdate(crearDataView({ ...COMPARACION, objetos: { panel: { sinSeleccion: true, abrir: "seleccion" } } })));
+    assert.equal(panelVisible(elemento), false, "si ya se eligió cuándo abrir, manda esa opción");
     visual.update(opcionesUpdate(crearDataView({ ...COMPARACION, objetos: { panel: { sinSeleccion: true } } })));
     assert.ok(panelVisible(elemento));
-    assert.equal(elemento.querySelector(".panel-titulo")?.textContent, "Todos los estados");
-    assert.equal(elemento.querySelector(".panel-subtitulo")?.textContent, "3 estados con datos");
-    assert.equal(elemento.querySelector(".panel-cerrar"), null, "no hay selección que quitar");
+    assert.equal(elemento.querySelector(".panel-titulo")?.textContent, "3 estados");
+    assert.equal(elemento.querySelector(".panel-cerrar")?.getAttribute("aria-label"), "Ocultar el panel", "sin selección, el × oculta el panel");
     assert.deepEqual(textos(elemento, ".detalle tbody th"), ["Ciudad de México", "Jalisco", "Estado de México"]);
 });
 
@@ -327,16 +332,16 @@ test("colorear por grupo: cada región con un color del tema y su leyenda", () =
     visual.update(opcionesUpdate(crearDataView({ ...REGIONES, objetos: { colores: { colorearPor: "grupo" } } })));
     assert.equal(area(elemento, "Aguascalientes")?.getAttribute("fill"), COLORES_TEMA[0]);
     assert.equal(area(elemento, "Jalisco")?.getAttribute("fill"), COLORES_TEMA[1]);
-    assert.equal(area(elemento, "Sonora")?.getAttribute("fill"), "#ffffff");
+    assert.equal(area(elemento, "Sonora")?.getAttribute("fill"), "#f3f2ef", "fuera de las regiones con datos: de fondo");
     assert.equal(elemento.querySelector(".leyenda .titulo")?.textContent, "Región");
-    assert.deepEqual(textos(elemento, ".leyenda .etiqueta"), ["Bajío", "Occidente", "Sin dato"]);
+    assert.deepEqual(textos(elemento, ".leyenda .etiqueta"), ["Bajío", "Occidente"]);
 });
 
 // --------------------------------------------------------------------- zoom
 
 test("zoom con botones: acercar, alejar y volver a la vista completa", () => {
     const { elemento, visual } = montar();
-    visual.update(opcionesUpdate(crearDataView(COMPARACION)));
+    visual.update(opcionesUpdate(crearDataView({ ...COMPARACION, objetos: NACIONAL })));
     const boton = (c: string) => elemento.querySelector<HTMLButtonElement>(`.zoom-${c}`);
     assert.notEqual(elemento.querySelector<HTMLElement>(".zoom-botones")?.style.display, "none");
     assert.ok(boton("alejar")?.disabled, "sin zoom no se puede alejar");
@@ -353,7 +358,7 @@ test("zoom con botones: acercar, alejar y volver a la vista completa", () => {
 
 test("zoom con la rueda: acerca alrededor del cursor; en el límite deja desplazar la página", () => {
     const { elemento, visual } = montar();
-    visual.update(opcionesUpdate(crearDataView(COMPARACION)));
+    visual.update(opcionesUpdate(crearDataView({ ...COMPARACION, objetos: NACIONAL })));
     const svg = elemento.querySelector("svg") as SVGSVGElement;
     const girar = (deltaY: number, extra: WheelEventInit = {}) => {
         const e = new ventana.WheelEvent("wheel", { deltaY, clientX: 200, clientY: 100, bubbles: true, cancelable: true, ...extra });
@@ -366,7 +371,7 @@ test("zoom con la rueda: acerca alrededor del cursor; en el límite deja desplaz
     assert.equal(t.k, 2);
     assert.deepEqual([t.x, t.y], [-200, -100], "el punto bajo el cursor queda fijo");
 
-    visual.update(opcionesUpdate(crearDataView({ ...COMPARACION, objetos: { zoom: { rueda: "ctrl" } } })));
+    visual.update(opcionesUpdate(crearDataView({ ...COMPARACION, objetos: { ...NACIONAL, zoom: { rueda: "ctrl" } } })));
     const k = zoomDe(elemento).k;
     girar(-500);
     assert.equal(zoomDe(elemento).k, k, "sin Ctrl no acerca");
@@ -376,7 +381,7 @@ test("zoom con la rueda: acerca alrededor del cursor; en el límite deja desplaz
 
 test("arrastrar mueve el mapa y no selecciona; el siguiente clic sí", async () => {
     const { elemento, visual } = montar();
-    visual.update(opcionesUpdate(crearDataView(COMPARACION)));
+    visual.update(opcionesUpdate(crearDataView({ ...COMPARACION, objetos: NACIONAL })));
     clic(elemento.querySelector(".zoom-acercar"));
     const svg = elemento.querySelector("svg") as SVGSVGElement;
     const jalisco = area(elemento, "Jalisco") as SVGPathElement;
@@ -398,7 +403,7 @@ test("arrastrar mueve el mapa y no selecciona; el siguiente clic sí", async () 
 
 test("al abrir el panel el zoom conserva la escala; con 'Acercar a la selección' se acerca solo", async () => {
     const { elemento, visual } = montar();
-    visual.update(opcionesUpdate(crearDataView(COMPARACION)));
+    visual.update(opcionesUpdate(crearDataView({ ...COMPARACION, objetos: NACIONAL })));
     clic(elemento.querySelector(".zoom-acercar"));
     clic(area(elemento, "Jalisco"));
     await esperar();
@@ -407,7 +412,7 @@ test("al abrir el panel el zoom conserva la escala; con 'Acercar a la selección
     assert.notEqual(elemento.querySelector<HTMLElement>(".zoom-seleccion")?.style.display, "none");
 
     const auto = montar();
-    auto.visual.update(opcionesUpdate(crearDataView({ ...COMPARACION, objetos: { zoom: { acercarSeleccion: true } } })));
+    auto.visual.update(opcionesUpdate(crearDataView({ ...COMPARACION, objetos: { ...NACIONAL, zoom: { acercarSeleccion: true } } })));
     clic(area(auto.elemento, "Jalisco"));
     await esperar();
     assert.ok(zoomDe(auto.elemento).k > 2, `acercado a Jalisco (k = ${zoomDe(auto.elemento).k})`);
@@ -418,21 +423,21 @@ test("al abrir el panel el zoom conserva la escala; con 'Acercar a la selección
 
 test("con zoom aparecen las etiquetas de las áreas chicas", async () => {
     const { elemento, visual } = montar();
-    visual.update(opcionesUpdate(crearDataView({ ...COMPARACION, objetos: { etiquetas: { mostrar: true }, zoom: { acercarSeleccion: true } } })));
-    assert.ok(!textos(elemento, ".etiquetas text").includes("$445 M"), "la Ciudad de México no cabe sin zoom");
+    visual.update(opcionesUpdate(crearDataView({ ...COMPARACION, objetos: { ...NACIONAL, etiquetas: { mostrar: true }, zoom: { acercarSeleccion: true } } })));
+    assert.ok(!textos(elemento, ".etiqueta-area").includes("$445 M"), "la Ciudad de México no cabe sin zoom");
     clic(area(elemento, "Ciudad de México"));
     await esperar();
-    assert.ok(textos(elemento, ".etiquetas text").includes("$445 M"), textos(elemento, ".etiquetas text").join(" | "));
+    assert.ok(textos(elemento, ".etiqueta-area").includes("$445 M"), textos(elemento, ".etiqueta-area").join(" | "));
 });
 
 test("zoom con el teclado y apagado desde el formato", () => {
     const { elemento, visual } = montar();
-    visual.update(opcionesUpdate(crearDataView(COMPARACION)));
+    visual.update(opcionesUpdate(crearDataView({ ...COMPARACION, objetos: NACIONAL })));
     elemento.dispatchEvent(new ventana.KeyboardEvent("keydown", { key: "+", bubbles: true }));
     assert.equal(zoomDe(elemento).k, 2);
     elemento.dispatchEvent(new ventana.KeyboardEvent("keydown", { key: "0", bubbles: true }));
     assert.equal(zoomDe(elemento).k, 1);
-    visual.update(opcionesUpdate(crearDataView({ ...COMPARACION, objetos: { zoom: { activo: false } } })));
+    visual.update(opcionesUpdate(crearDataView({ ...COMPARACION, objetos: { ...NACIONAL, zoom: { activo: false } } })));
     assert.equal(elemento.querySelector<HTMLElement>(".zoom-botones")?.style.display, "none");
     elemento.dispatchEvent(new ventana.KeyboardEvent("keydown", { key: "+", bubbles: true }));
     assert.equal(zoomDe(elemento).k, 1);

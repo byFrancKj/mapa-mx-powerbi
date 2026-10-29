@@ -80,3 +80,21 @@ export const BIVARIADAS: Record<string, readonly string[]> = {
 export function colorBivariado(nombre: string, x: number, y: number): string {
     return (BIVARIADAS[nombre] ?? BIVARIADAS["turquesa-rosa"])[y * 3 + x];
 }
+
+/**
+ * Mezcla dos colores #rrggbb: t = 0 da `a` y t = 1 da `b`. Sirve para sacar los tonos
+ * del fondo (líneas de agua, costa, fronteras) del color del mar o de la tierra que
+ * elija quien hace el reporte. Un color que no sea #rrggbb se devuelve tal cual.
+ */
+export function mezclar(a: string, b: string, t: number): string {
+    const rgb = (c: string): number[] | null => {
+        const m = /^#?([0-9a-f]{6})$/i.exec(c.trim());
+        return m ? [0, 2, 4].map((i) => parseInt(m[1].slice(i, i + 2), 16)) : null;
+    };
+    const x = rgb(a);
+    const y = rgb(b);
+    if (!x || !y) {
+        return a;
+    }
+    return `#${x.map((v, i) => Math.round(v + (y[i] - v) * t).toString(16).padStart(2, "0")).join("")}`;
+}

@@ -1,4 +1,4 @@
-CVE_ENT,ESTADO,REGION_NIELSEN,Ventas Cadenas,Ventas Nielsen Estimada,% Mix Cadenas,% Mix Nielsen,Índice Cadenas vs Nielsen,Índice per cápita Cadenas,Crec % Cadenas,Crec % Nielsen
+CVE_ENT,ESTADO,REGION,Ventas Cadenas,Ventas Mercado Estimada,% Mix Cadenas,% Mix Mercado,Índice Cadenas vs Mercado,Índice per cápita Cadenas,Crec % Cadenas,Crec % Mercado
 01,Aguascalientes,Bajío,78430079.7,113040415.245025,0.012508,0.010797,115.8492,110.559787,0.163144,0.08725
 02,Baja California,Noroeste,110309078.98,311516604.989857,0.017592,0.029753,59.125413,58.816228,0.047584,0.060566
 03,Baja California Sur,Noroeste,12478261.35,65993149.069078,0.00199,0.006303,31.571801,31.406702,0.048556,0.060566

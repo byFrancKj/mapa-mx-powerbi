@@ -11,8 +11,8 @@
         {
             "name": "grupo",
             "kind": "Grouping",
-            "displayName": "Grupo (región)",
-            "description": "Columna con el grupo de cada área (por ejemplo, tu región). El visual dibuja su contorno.",
+            "displayName": "Región",
+            "description": "Columna con la región de cada estado o municipio. Las regiones las defines tú en tu modelo (zonas de venta, territorios…): el visual dibuja su contorno y permite seleccionarlas.",
             "displayNameKey": "Rol_Grupo",
             "descriptionKey": "Rol_Grupo_Desc"
         },
@@ -36,7 +36,7 @@
             "name": "bases",
             "kind": "Measure",
             "displayName": "Bases a comparar",
-            "description": "Medidas de cada fuente (por ejemplo Ventas Cadenas y Ventas Nielsen). El panel de detalle las compara: diferencia, diferencia % e índice contra la primera.",
+            "description": "Medidas de cada fuente o escenario (por ejemplo, tu venta y la del mercado, o real contra meta). El panel de detalle las compara: diferencia, diferencia % e índice contra la primera.",
             "displayNameKey": "Rol_Bases",
             "descriptionKey": "Rol_Bases_Desc"
         },
@@ -191,6 +191,15 @@
                             }
                         }
                     }
+                },
+                "fueraDeFiltro": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
                 }
             }
         },
@@ -208,6 +217,39 @@
                 "proyeccion": {
                     "type": {
                         "enumeration": []
+                    }
+                },
+                "encuadre": {
+                    "type": {
+                        "enumeration": []
+                    }
+                },
+                "fondo": {
+                    "type": {
+                        "enumeration": []
+                    }
+                },
+                "colorMar": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "colorTierra": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "referencias": {
+                    "type": {
+                        "bool": true
                     }
                 },
                 "borde": {
@@ -304,6 +346,11 @@
                         "bool": true
                     }
                 },
+                "estilo": {
+                    "type": {
+                        "enumeration": []
+                    }
+                },
                 "posicion": {
                     "type": {
                         "enumeration": []
@@ -326,6 +373,11 @@
                 "mostrar": {
                     "type": {
                         "bool": true
+                    }
+                },
+                "abrir": {
+                    "type": {
+                        "enumeration": []
                     }
                 },
                 "posicion": {

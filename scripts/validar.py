@@ -116,6 +116,8 @@ if topo("visual/src/geo/estados.json") != est_topo:
     error("visual/src/geo/estados.json no es igual a geo/estados/mx_estados.topojson: ejecuta npm run geo.")
 if topo("visual/src/geo/municipios.json") != topo("geo/municipios/mx_municipios.topojson"):
     error("visual/src/geo/municipios.json no es igual a geo/municipios/mx_municipios.topojson: ejecuta npm run geo.")
+if set(topo("visual/src/geo/contexto.json").get("objects", {})) != {"tierra", "fronteras"}:
+    error("visual/src/geo/contexto.json no trae la tierra y las fronteras de los países vecinos: ejecuta npm run contexto.")
 
 
 # ------------------------------------------------------------- mapeos
@@ -152,25 +154,25 @@ for extra in args.mapeo:
         error(f"No encontré el mapeo {extra}.")
 
 # ------------------------------------------------------------- ejemplo
-orden = {r["REGION_NIELSEN"] for r in leer("ejemplo/config/regiones_orden.csv")}
+orden = {r["REGION"] for r in leer("ejemplo/config/regiones_orden.csv")}
 reg_est = leer("ejemplo/config/regiones_estado.csv")
 if sorted(r["CVE_ENT"] for r in reg_est) != claves:
     error("ejemplo/config/regiones_estado.csv debe asignar región a las 32 entidades, una vez cada una.")
 for r in reg_est:
-    if not r["REGION_NIELSEN"].strip():
+    if not r["REGION"].strip():
         error(f"Estado {r['CVE_ENT']} sin región en el ejemplo.")
-    elif r["REGION_NIELSEN"] not in orden:
-        error(f"La región '{r['REGION_NIELSEN']}' no está en ejemplo/config/regiones_orden.csv.")
+    elif r["REGION"] not in orden:
+        error(f"La región '{r['REGION']}' no está en ejemplo/config/regiones_orden.csv.")
 
-if (RAIZ / "ejemplo/nielsen/nielsen_regiones.csv").exists():
+if (RAIZ / "ejemplo/mercado/mercado_regiones.csv").exists():
     upcs = {p["UPC"].lstrip("0") for p in leer("ejemplo/dim_producto.csv")}
-    with open(RAIZ / "ejemplo/nielsen/nielsen_regiones.csv", encoding="utf-8") as f:
+    with open(RAIZ / "ejemplo/mercado/mercado_regiones.csv", encoding="utf-8") as f:
         for r in csv.DictReader(f):
-            if r["REGION_NIELSEN"] not in orden:
-                error(f"Nielsen de ejemplo: región desconocida '{r['REGION_NIELSEN']}'.")
+            if r["REGION"] not in orden:
+                error(f"Mercado de ejemplo: región desconocida '{r['REGION']}'.")
                 break
             if r["UPC"].lstrip("0") not in upcs:
-                error(f"Nielsen de ejemplo: UPC sin catálogo {r['UPC']}.")
+                error(f"Mercado de ejemplo: UPC sin catálogo {r['UPC']}.")
                 break
 
 # ---------------------------------------------------------- resultado

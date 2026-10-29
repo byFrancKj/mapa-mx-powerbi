@@ -10,5 +10,5 @@ visual/src/geo/** linguist-generated=true
 visual/package-lock.json linguist-generated=true
 package-lock.json linguist-generated=true
 ejemplo/cadenas/** linguist-generated=true
-ejemplo/nielsen/** linguist-generated=true
+ejemplo/mercado/** linguist-generated=true
 ejemplo/valores_esperados.csv linguist-generated=true

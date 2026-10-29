@@ -3,7 +3,10 @@
 @texto-secundario: #605e5c;
 @borde-suave: #edebe9;
 @fondo-suave: #f3f2f1;
+@acento: #118dff;
 @fuente: "Segoe UI", wf_segoe-ui_normal, helvetica, arial, sans-serif;
+// Los mares se rotulan en cursiva, como en los mapas impresos.
+@fuente-mar: Georgia, "Times New Roman", serif;
 
 // El contenedor del visual: el mapa, los botones de zoom y el panel se colocan dentro.
 .mapa-raiz {
@@ -25,11 +28,48 @@
         vector-effect: non-scaling-stroke;
     }
 
+    // Fondo: mar, retícula, líneas de agua, países vecinos y estados sin datos.
+    .fondo,
+    .contexto,
+    .costa {
+        pointer-events: none;
+    }
+
+    .reticula {
+        stroke-width: 0.6px;
+    }
+
+    .lineas-agua path {
+        fill: none;
+        stroke-linejoin: round;
+        stroke-linecap: round;
+    }
+
+    .tierra {
+        stroke-width: 1.6px;
+        stroke-linejoin: round;
+    }
+
+    .fronteras {
+        stroke-width: 0.8px;
+        stroke-dasharray: 4 3;
+    }
+
+    .costa {
+        fill: none;
+        stroke-width: 0.9px;
+        stroke-linejoin: round;
+    }
+
     .area {
         transition: opacity 120ms ease-out;
 
         &.con-dato {
             cursor: pointer;
+        }
+
+        &.de-fondo {
+            cursor: default;
         }
 
         &:focus-visible {
@@ -50,9 +90,10 @@
         stroke-linejoin: round;
     }
 
+    // El área bajo el cursor (en el mapa o en la tabla del panel).
     .resaltado {
         stroke: @texto;
-        stroke-width: 1.6px;
+        stroke-width: 2.6px;
     }
 
     .leyenda {
@@ -60,7 +101,10 @@
 
         .fondo {
             fill: #ffffff;
-            fill-opacity: 0.85;
+            fill-opacity: 0.94;
+            stroke: #e1dfdd;
+            stroke-width: 1px;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
         }
 
         .titulo {
@@ -69,7 +113,12 @@
         }
 
         .etiqueta {
-            fill: @texto-secundario;
+            fill: #484644;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .marco {
+            stroke-opacity: 0.8;
         }
 
         // Un clic en un grupo de la leyenda selecciona todas sus áreas.
@@ -98,6 +147,17 @@
         &[role="button"] {
             cursor: pointer;
         }
+    }
+
+    .referencia-mar {
+        font-family: @fuente-mar;
+        font-style: italic;
+        letter-spacing: 0.06em;
+    }
+
+    .referencia-pais {
+        font-weight: 600;
+        letter-spacing: 0.18em;
     }
 
     .aviso {
@@ -178,6 +238,17 @@
     font-family: @fuente;
     line-height: 1.35;
 
+    // Franja del color de la región o del área.
+    &::before {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 3px;
+        background: var(--acento, @acento);
+        content: "";
+    }
+
     &.abajo {
         border-left: none;
         border-top: 1px solid var(--panel-texto, @borde-suave);
@@ -185,8 +256,8 @@
 
     &.encima {
         border: 1px solid var(--panel-texto, @borde-suave);
-        border-radius: 6px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+        border-radius: 8px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.16);
     }
 
     h2,
@@ -201,13 +272,14 @@
 .panel-encabezado {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 10px 10px 8px 12px;
+    gap: 12px;
+    padding: 14px 10px 12px 14px;
     border-bottom: 1px solid var(--panel-texto, @borde-suave);
 }
 
 .panel-silueta {
     flex: none;
+    filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.18));
 }
 
 .panel-titulos {
@@ -215,18 +287,32 @@
     min-width: 0;
 }
 
+.panel-motivo {
+    display: inline-block;
+    margin-bottom: 4px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: @fondo-suave;
+    background: color-mix(in srgb, var(--acento, @acento) 14%, transparent);
+    color: var(--panel-texto, @texto-secundario);
+    font-size: 0.7em;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
 .panel-titulo {
     overflow: hidden;
-    font-size: 1.3em;
-    font-weight: 600;
-    line-height: 1.2;
+    font-size: 1.45em;
+    font-weight: 700;
+    line-height: 1.15;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
 
 .panel-subtitulo {
     overflow: hidden;
-    margin-top: 2px;
+    margin-top: 3px;
     color: var(--panel-texto, @texto-secundario);
     font-size: 0.92em;
     white-space: nowrap;
@@ -242,13 +328,14 @@
     border: none;
     border-radius: 4px;
     background: transparent;
-    color: inherit;
+    color: var(--panel-texto, @texto-secundario);
     font-size: 20px;
     line-height: 1;
     cursor: pointer;
 
     &:hover {
         background: @fondo-suave;
+        color: var(--panel-texto, @texto);
     }
 
     &:focus-visible {
@@ -260,9 +347,9 @@
     display: flex;
     flex: 1;
     flex-direction: column;
-    gap: 14px;
+    gap: 16px;
     overflow: auto;
-    padding: 10px 12px 12px;
+    padding: 12px 14px 14px;
 
     .horizontal & {
         flex-direction: row;
@@ -275,27 +362,46 @@
     }
 }
 
+// Título de sección con una línea fina que llega al borde.
 .panel-seccion h3 {
-    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
     color: var(--panel-texto, @texto-secundario);
-    font-size: 0.78em;
-    font-weight: 600;
-    letter-spacing: 0.05em;
+    font-size: 0.74em;
+    font-weight: 700;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
+
+    &::after {
+        flex: 1;
+        height: 1px;
+        background: var(--panel-texto, @borde-suave);
+        content: "";
+    }
 }
 
 .base {
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
 .base-linea {
     display: flex;
     align-items: baseline;
-    justify-content: space-between;
     gap: 8px;
 }
 
+.base-punto {
+    flex: none;
+    align-self: center;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
 .base-nombre {
+    flex: 1;
     overflow: hidden;
     min-width: 0;
     color: var(--panel-texto, @texto-secundario);
@@ -304,103 +410,131 @@
 }
 
 .base-valor {
-    font-size: 1.15em;
-    font-weight: 600;
+    font-size: 1.2em;
+    font-weight: 700;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
 }
 
 .barra {
     overflow: hidden;
-    height: 6px;
-    margin-top: 3px;
-    border-radius: 3px;
+    height: 8px;
+    margin-top: 4px;
+    border-radius: 4px;
     background: @fondo-suave;
 }
 
 .barra-relleno {
     height: 100%;
-    border-radius: 3px;
+    border-radius: 4px;
 }
 
 .diferencias {
-    margin-top: 4px;
-    padding: 6px 8px;
-    border-radius: 6px;
+    margin-top: 6px;
+    padding: 8px;
+    border-radius: 8px;
     background: @fondo-suave;
-
-    dl {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 2px 10px;
-    }
-
-    dt {
-        overflow: hidden;
-        color: var(--panel-texto, @texto-secundario);
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
-
-    dd {
-        font-weight: 600;
-        font-variant-numeric: tabular-nums;
-        text-align: right;
-        white-space: nowrap;
-    }
-
-    .positivo {
-        color: var(--positivo);
-    }
-
-    .negativo {
-        color: var(--negativo);
-    }
 }
 
 .diferencias-titulo {
     overflow: hidden;
-    margin-bottom: 3px;
+    margin-bottom: 6px;
     font-size: 0.85em;
     font-weight: 600;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
 
+// Diferencia, diferencia % e índice: una cifra por cuadro, con el signo a la izquierda.
+.diferencia-cifras {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(86px, 1fr));
+    gap: 6px;
+}
+
+.cifra-dif {
+    min-width: 0;
+    padding: 6px 8px;
+    border-radius: 6px;
+    background: var(--panel-fondo, #ffffff);
+
+    &.positivo {
+        box-shadow: inset 3px 0 0 var(--positivo);
+    }
+
+    &.negativo {
+        box-shadow: inset 3px 0 0 var(--negativo);
+    }
+
+    dt {
+        overflow: hidden;
+        color: var(--panel-texto, @texto-secundario);
+        font-size: 0.74em;
+        letter-spacing: 0.03em;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    dd {
+        margin-top: 2px;
+        font-size: 1.1em;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+
+        &.positivo {
+            color: var(--positivo);
+        }
+
+        &.negativo {
+            color: var(--negativo);
+        }
+    }
+}
+
 .tarjetas {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
-    gap: 6px;
+    grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+    gap: 8px;
 }
 
 .tarjeta {
     min-width: 0;
-    padding: 6px 8px;
+    padding: 8px 10px;
     border: 1px solid var(--panel-texto, @borde-suave);
-    border-radius: 6px;
+    border-top: 2px solid var(--acento, @acento);
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .tarjeta-nombre {
     overflow: hidden;
     color: var(--panel-texto, @texto-secundario);
-    font-size: 0.85em;
+    font-size: 0.8em;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
 
 .tarjeta-valor {
     overflow: hidden;
-    font-size: 1.35em;
-    font-weight: 600;
+    margin-top: 2px;
+    font-size: 1.5em;
+    font-weight: 700;
     font-variant-numeric: tabular-nums;
-    line-height: 1.25;
+    line-height: 1.2;
     white-space: nowrap;
     text-overflow: ellipsis;
+
+    &.largo {
+        font-size: 1.12em;
+        line-height: 1.6;
+    }
 }
 
 .panel .nota {
+    margin-top: 2px;
     color: var(--panel-texto, @texto-secundario);
-    font-size: 0.8em;
+    font-size: 0.78em;
 }
 
 .detalle {
@@ -411,7 +545,7 @@
 
     th,
     td {
-        padding: 3px 4px;
+        padding: 4px 5px;
         border-bottom: 1px solid var(--panel-texto, @borde-suave);
         text-align: right;
         white-space: nowrap;
@@ -440,5 +574,32 @@
 
     tbody th {
         font-weight: 400;
+    }
+
+    // Un clic en una fila la selecciona en el mapa.
+    tr.elegible {
+        cursor: pointer;
+
+        &:hover,
+        &:focus-visible {
+            outline: none;
+            background: @fondo-suave;
+        }
+    }
+
+    .muestra-area {
+        display: inline-block;
+        width: 9px;
+        height: 9px;
+        margin-right: 6px;
+        border: 1px solid rgba(0, 0, 0, 0.18);
+        border-radius: 2px;
+        vertical-align: -1px;
+    }
+
+    // Barra de fondo en la primera cifra, del borde derecho hacia la izquierda.
+    td.con-barra {
+        background: linear-gradient(to left, rgba(17, 141, 255, 0.14) var(--barra), transparent var(--barra));
+        background: linear-gradient(to left, color-mix(in srgb, var(--acento, @acento) 16%, transparent) var(--barra), transparent var(--barra));
     }
 }

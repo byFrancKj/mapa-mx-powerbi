@@ -23,7 +23,7 @@ npm ci
 | `npm run lint` | ESLint con las reglas de seguridad de Microsoft para visuales. |
 | `npm run tipos` | Revisión de tipos en modo estricto. |
 | `npm run vista-previa` | Dibuja el visual con los datos del ejemplo y guarda PNG en `docs/img/` (antes: `python scripts/modelo_referencia.py` en la raíz). |
-| `npm run demo` | Arma `visual/.tmp/demo/index.html`: el visual con los datos del ejemplo en una página que se abre en cualquier navegador, sin Power BI ni red. Sirve para probar el panel, el zoom y los grupos desde Mac. |
+| `npm run demo` | Arma `visual/.tmp/demo/index.html`: el visual con los datos del ejemplo en una página que se abre en cualquier navegador, sin Power BI ni red. Sirve para probar el panel, el zoom, las regiones, el filtro de una región y el clic en otro visual desde Mac. |
 | `npm run package` | Genera `visual/dist/*.pbiviz`. |
 | `npm start` | Servidor local para probar en vivo en el servicio de Power BI. |
 
@@ -36,17 +36,18 @@ npm ci
 
 O empaqueta (`npm run package`) e importa el `.pbiviz` en Power BI Desktop en una PC con Windows.
 
-Para revisar algo rápido sin Power BI, `npm run demo` arma una página con el visual y los datos del ejemplo (escenas de ventas con semáforo, regiones, diferencia de mix y zoom). Usa el mismo código del visual con un host simulado: sirve para ver el dibujo y la interacción, no sustituye la prueba en Power BI.
+Para revisar algo rápido sin Power BI, `npm run demo` arma una página con el visual y los datos del ejemplo (escenas de ventas con semáforo, regiones, diferencia de mix, filtro de una región o de un estado, clic en otra tabla, leyenda en barra y municipios). Usa el mismo código del visual con un host simulado: sirve para ver el dibujo y la interacción, no sustituye la prueba en Power BI.
 
 ## Estructura del visual
 
 ```
 visual/
-├── capabilities.json   Campos (Ubicación con drill-down, Grupo, Valor, Valor 2, Bases, Tarjetas, Tooltips), opciones de formato y privilegios (ninguno)
+├── capabilities.json   Campos (Ubicación con drill-down, Región, Valor, Valor 2, Bases, Tarjetas, Tooltips), opciones de formato y privilegios (ninguno)
 ├── pbiviz.json         Nombre, versión y GUID del visual
 ├── src/
-│   ├── visual.ts       Lee los campos por rol, decide el nivel, distribuye mapa y panel, dibuja, bivariado, grupos, etiquetas, tooltips, selección, leyenda y avisos
-│   ├── panel.ts        Panel de detalle (HTML): silueta, comparación de bases, tarjetas y tabla por área
+│   ├── visual.ts       Lee los campos por rol (y el resaltado de otros visuales), decide el nivel, encuadra los datos, distribuye mapa y panel, dibuja el fondo, bivariado, regiones, etiquetas, tooltips, selección, leyenda y avisos
+│   ├── panel.ts        Panel de detalle (HTML): silueta, motivo, comparación de bases, tarjetas y tabla por área que selecciona
+│   ├── referencias.ts  Nombres de mares y países vecinos, con sus lugares posibles
 │   ├── resumen.ts      Cómo se combinan varias áreas (suma, promedio, rango…) y la comparación entre bases
 │   ├── zoom.ts         Zoom y desplazamiento sin dependencias: rueda, arrastre, pellizco, botones y animaciones
 │   ├── ajustes.ts      Panel de formato
@@ -55,8 +56,8 @@ visual/
 │   ├── paletas.ts      Paletas ColorBrewer
 │   ├── formato.ts      Formato compacto ($78.4 M, $1.5 mil M) para leyenda y etiquetas
 │   ├── textos.ts       Textos en el idioma de Power BI
-│   ├── geometria.ts    Carga la geometría empaquetada, calcula límites (mesh), une regiones (merge) y quita islas lejanas del encuadre
-│   └── geo/            estados.json y municipios.json (los genera npm run geo en la raíz)
+│   ├── geometria.ts    Carga la geometría empaquetada, calcula límites (mesh), une regiones (merge), quita islas lejanas del encuadre y arma el fondo
+│   └── geo/            estados.json y municipios.json (npm run geo) y contexto.json, los países vecinos (npm run contexto)
 ├── stringResources/    Traducciones: es-ES, es-MX (igual a es-ES) y en-US (respaldo)
 ├── test/               Pruebas; host-falso.ts simula Power BI (lo usan también la demo) y entorno.ts le agrega jsdom
 └── scripts/            Vista previa, demo en el navegador y revisión de privilegios
@@ -86,7 +87,9 @@ npm run geo -- --fuente "C:/INEGI/00mun.shp"  # desde la capa original del Marco
 python scripts/validar.py
 ```
 
-`npm run geo` escribe `geo/`, los catálogos de `puente-inegi/catalogos/` y las copias que van dentro del visual (`visual/src/geo/`). La geometría municipal es la mayor parte del paquete (unos 290 KB de sus 373 KB).
+`npm run geo` escribe `geo/`, los catálogos de `puente-inegi/catalogos/` y las copias que van dentro del visual (`visual/src/geo/`). La geometría municipal es la mayor parte del paquete.
+
+`npm run contexto` arma el fondo del mapa (`visual/src/geo/contexto.json`, unos 100 KB): la tierra de los países vecinos y sus fronteras, de Natural Earth 1:10m (paquete `world-atlas`), simplificada y recortada con el México de INEGI. Vuelve a correrlo si regeneras la geometría de los estados, para que el borde con México coincida.
 
 ## Publicar una versión
 

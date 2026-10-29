@@ -38,9 +38,12 @@ test("claves municipales: dibuja solo los municipios de los estados con datos", 
     assert.equal(area(elemento, "Guadalajara")?.getAttribute("aria-label"), "Guadalajara, Jalisco: 400");
     assert.ok(mostrado(elemento, ".limites-estatales"), "límites estatales visibles en el nivel municipal");
     assert.equal(elemento.querySelector<HTMLElement>(".mensaje")?.style.display, "none");
-    // Leyenda: 121 municipios de Jalisco sin dato
+    // Con 4 de 125 municipios el mapa muestra una parte: los otros 121 quedan de fondo, no "Sin dato".
+    assert.equal(areas(elemento).filter((p) => p.classList.contains("de-fondo")).length, 121);
     const etiquetas = [...elemento.querySelectorAll(".leyenda .etiqueta")].map((t) => t.textContent);
-    assert.equal(etiquetas[etiquetas.length - 1], "Sin dato");
+    assert.ok(!etiquetas.includes("Sin dato"), etiquetas.join(" | "));
+    // Los otros 31 estados se dibujan de fondo, para ubicar a Jalisco.
+    assert.equal(elemento.querySelectorAll(".contexto path").length, 31);
 });
 
 test("claves municipales como número (sin el cero inicial) también funcionan", () => {
@@ -94,13 +97,13 @@ test("niveles mezclados: gana la mayoría y el resto se reporta", () => {
     assert.equal(elemento.querySelector(".aviso")?.firstChild?.textContent, "⚠ 1 de otro nivel");
 });
 
-test("nombres en Ubicación: explica que necesita claves y sugiere Grupo", () => {
+test("nombres en Ubicación: explica que necesita claves y sugiere el campo Región", () => {
     const { elemento, visual } = montar();
     visual.update(opcionesUpdate(crearDataView({ claves: ["Bajío", "Norte"], valores: [1, 2] })));
-    assert.match(elemento.querySelector(".mensaje")?.textContent ?? "", /no nombres.*Grupo/);
+    assert.match(elemento.querySelector(".mensaje")?.textContent ?? "", /no nombres.*campo Región/);
 });
 
-test("grupo: contorno donde cambia el grupo y tarjeta de formato visible", () => {
+test("región: contorno donde cambia la región y tarjeta de formato visible", () => {
     const { elemento, visual } = montar();
     const claves = ["01", "11", "22", "14", "16"];
     visual.update(opcionesUpdate(crearDataView({
@@ -109,7 +112,7 @@ test("grupo: contorno donde cambia el grupo y tarjeta de formato visible", () =>
     })));
     assert.ok(mostrado(elemento, ".contorno-grupos"));
     const tarjetas = visual.getFormattingModel().cards.filter((c) => (c as { visible?: boolean }).visible !== false).map((c) => c.displayName);
-    assert.ok(tarjetas.includes("Grupos"));
+    assert.ok(tarjetas.includes("Regiones"));
     // Sin límites internos: el trazo de cada área es de su mismo color
     visual.update(opcionesUpdate(crearDataView({
         claves, valores: [1, 2, 3, 4, 5],

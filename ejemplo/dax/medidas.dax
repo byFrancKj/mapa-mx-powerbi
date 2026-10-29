@@ -14,10 +14,10 @@
 //
 // Convenciones
 //   * "Cadenas" = suma de las cadenas seleccionadas (Fact_Cadenas).
-//   * "Nielsen" = fuente independiente, por región. A nivel estado hay dos lecturas:
-//       [Ventas Nielsen]           -> el total de la región del estado (pintado por región)
-//       [Ventas Nielsen Estimada]  -> la región repartida entre sus estados por población
-//   * Mapas por municipio: las medidas que dependen de población o de Nielsen
+//   * "Mercado" = fuente independiente, por región. A nivel estado hay dos lecturas:
+//       [Ventas Mercado]           -> el total de la región del estado (pintado por región)
+//       [Ventas Mercado Estimada]  -> la región repartida entre sus estados por población
+//   * Mapas por municipio: las medidas que dependen de población o del mercado
 //     devuelven vacío, porque esas fuentes no existen a ese nivel.
 //   * Crecimientos: solo se calculan con un periodo seleccionado (p. ej. Año = 2026).
 // =====================================================================
@@ -34,47 +34,47 @@ DEFINE
     MEASURE '_Medidas'[Población] =
         IF ( NOT [Es Municipio], SUM ( Dim_Geo[POBLACION_2020] ) )
 
-    // ------------------------------------------------------------ Nielsen
-    // Total de la(s) región(es) Nielsen de los estados en contexto.
-    MEASURE '_Medidas'[Ventas Nielsen] =
+    // ------------------------------------------------------------ Mercado
+    // Total de la(s) región(es) de los estados en contexto.
+    MEASURE '_Medidas'[Ventas Mercado] =
         IF (
             NOT [Es Municipio],
             CALCULATE (
-                SUM ( Fact_Nielsen[VENTAS] ),
-                TREATAS ( VALUES ( Dim_Geo[REGION_NIELSEN] ), Fact_Nielsen[REGION_NIELSEN] )
+                SUM ( Fact_Mercado[VENTAS] ),
+                TREATAS ( VALUES ( Dim_Geo[REGION] ), Fact_Mercado[REGION] )
             )
         )
 
-    MEASURE '_Medidas'[Unidades Nielsen] =
+    MEASURE '_Medidas'[Unidades Mercado] =
         IF (
             NOT [Es Municipio],
             CALCULATE (
-                SUM ( Fact_Nielsen[UNIDADES] ),
-                TREATAS ( VALUES ( Dim_Geo[REGION_NIELSEN] ), Fact_Nielsen[REGION_NIELSEN] )
+                SUM ( Fact_Mercado[UNIDADES] ),
+                TREATAS ( VALUES ( Dim_Geo[REGION] ), Fact_Mercado[REGION] )
             )
         )
 
-    MEASURE '_Medidas'[Precio Promedio Nielsen] = DIVIDE ( [Ventas Nielsen], [Unidades Nielsen] )
+    MEASURE '_Medidas'[Precio Promedio Mercado] = DIVIDE ( [Ventas Mercado], [Unidades Mercado] )
 
     // Región repartida entre sus estados en proporción a su población (Censo 2020).
-    // Sumada por región devuelve exactamente el dato de Nielsen.
-    MEASURE '_Medidas'[Ventas Nielsen Estimada] =
+    // Sumada por región devuelve exactamente el dato del mercado.
+    MEASURE '_Medidas'[Ventas Mercado Estimada] =
         IF (
             NOT [Es Municipio],
             SUMX (
                 VALUES ( Dim_Geo[CVE_ENT] ),
-                VAR _region = CALCULATE ( SELECTEDVALUE ( Dim_Geo[REGION_NIELSEN] ) )
+                VAR _region = CALCULATE ( SELECTEDVALUE ( Dim_Geo[REGION] ) )
                 VAR _pobEstado = CALCULATE ( SUM ( Dim_Geo[POBLACION_2020] ) )
                 VAR _pobRegion =
                     CALCULATE (
                         SUM ( Dim_Geo[POBLACION_2020] ),
                         REMOVEFILTERS ( Dim_Geo ),
-                        Dim_Geo[REGION_NIELSEN] = _region
+                        Dim_Geo[REGION] = _region
                     )
-                VAR _nielsenRegion =
-                    CALCULATE ( [Ventas Nielsen], REMOVEFILTERS ( Dim_Geo ), Dim_Geo[REGION_NIELSEN] = _region )
+                VAR _mercadoRegion =
+                    CALCULATE ( [Ventas Mercado], REMOVEFILTERS ( Dim_Geo ), Dim_Geo[REGION] = _region )
                 RETURN
-                    DIVIDE ( _pobEstado, _pobRegion ) * _nielsenRegion
+                    DIVIDE ( _pobEstado, _pobRegion ) * _mercadoRegion
             )
         )
 
@@ -91,28 +91,28 @@ DEFINE
             )
         )
 
-    MEASURE '_Medidas'[% Mix Nielsen] =
+    MEASURE '_Medidas'[% Mix Mercado] =
         DIVIDE (
-            [Ventas Nielsen Estimada],
+            [Ventas Mercado Estimada],
             CALCULATE (
-                [Ventas Nielsen Estimada],
+                [Ventas Mercado Estimada],
                 REMOVEFILTERS ( Dim_Geo ),
                 REMOVEFILTERS ( Dim_Region ),
                 REMOVEFILTERS ( Dim_Municipio )
             )
         )
 
-    MEASURE '_Medidas'[Brecha Mix vs Nielsen (pp)] =
-        VAR _n = [% Mix Nielsen]
+    MEASURE '_Medidas'[Brecha Mix vs Mercado (pp)] =
+        VAR _n = [% Mix Mercado]
         RETURN
             IF ( NOT ISBLANK ( _n ), ( [% Mix Cadenas] - _n ) * 100 )
 
-    // 100 = la cadena vende en ese lugar la misma proporción que el mercado Nielsen.
-    MEASURE '_Medidas'[Índice Cadenas vs Nielsen] = DIVIDE ( [% Mix Cadenas], [% Mix Nielsen] ) * 100
+    // 100 = la cadena vende en ese lugar la misma proporción que el mercado.
+    MEASURE '_Medidas'[Índice Cadenas vs Mercado] = DIVIDE ( [% Mix Cadenas], [% Mix Mercado] ) * 100
 
     // Igual que el anterior, pero el mercado se limita a los estados donde las
     // cadenas seleccionadas tienen venta (útil para cadenas regionales).
-    MEASURE '_Medidas'[% Mix Nielsen (cobertura)] =
+    MEASURE '_Medidas'[% Mix Mercado (cobertura)] =
         VAR _estadosConVenta =
             FILTER (
                 ALL ( Dim_Geo[CVE_ENT] ),
@@ -128,17 +128,17 @@ DEFINE
             )
         VAR _total =
             CALCULATE (
-                [Ventas Nielsen Estimada],
+                [Ventas Mercado Estimada],
                 REMOVEFILTERS ( Dim_Geo ),
                 REMOVEFILTERS ( Dim_Region ),
                 REMOVEFILTERS ( Dim_Municipio ),
                 _estadosConVenta
             )
         RETURN
-            IF ( [Ventas Cadenas] > 0, DIVIDE ( [Ventas Nielsen Estimada], _total ) )
+            IF ( [Ventas Cadenas] > 0, DIVIDE ( [Ventas Mercado Estimada], _total ) )
 
-    MEASURE '_Medidas'[Índice vs Nielsen (cobertura)] =
-        DIVIDE ( [% Mix Cadenas], [% Mix Nielsen (cobertura)] ) * 100
+    MEASURE '_Medidas'[Índice vs Mercado (cobertura)] =
+        DIVIDE ( [% Mix Cadenas], [% Mix Mercado (cobertura)] ) * 100
 
     // ---------------------------------------------------- intensidad per cápita
     MEASURE '_Medidas'[Ventas Cadenas por 1,000 hab] = DIVIDE ( [Ventas Cadenas], [Población] ) * 1000
@@ -154,13 +154,13 @@ DEFINE
             )
         ) * 100
 
-    MEASURE '_Medidas'[Ventas Nielsen por 1,000 hab] = DIVIDE ( [Ventas Nielsen Estimada], [Población] ) * 1000
+    MEASURE '_Medidas'[Ventas Mercado por 1,000 hab] = DIVIDE ( [Ventas Mercado Estimada], [Población] ) * 1000
 
-    MEASURE '_Medidas'[Índice per cápita Nielsen] =
+    MEASURE '_Medidas'[Índice per cápita Mercado] =
         DIVIDE (
-            [Ventas Nielsen por 1,000 hab],
+            [Ventas Mercado por 1,000 hab],
             CALCULATE (
-                [Ventas Nielsen por 1,000 hab],
+                [Ventas Mercado por 1,000 hab],
                 REMOVEFILTERS ( Dim_Geo ),
                 REMOVEFILTERS ( Dim_Region ),
                 REMOVEFILTERS ( Dim_Municipio )
@@ -176,23 +176,23 @@ DEFINE
         RETURN
             IF ( ISFILTERED ( Dim_Calendario ) && _aa > 0, DIVIDE ( [Ventas Cadenas] - _aa, _aa ) )
 
-    MEASURE '_Medidas'[Ventas Nielsen AA] =
-        CALCULATE ( [Ventas Nielsen], SAMEPERIODLASTYEAR ( Dim_Calendario[Fecha] ) )
+    MEASURE '_Medidas'[Ventas Mercado AA] =
+        CALCULATE ( [Ventas Mercado], SAMEPERIODLASTYEAR ( Dim_Calendario[Fecha] ) )
 
-    MEASURE '_Medidas'[Crec % Nielsen] =
-        VAR _aa = [Ventas Nielsen AA]
+    MEASURE '_Medidas'[Crec % Mercado] =
+        VAR _aa = [Ventas Mercado AA]
         RETURN
-            IF ( ISFILTERED ( Dim_Calendario ) && _aa > 0, DIVIDE ( [Ventas Nielsen] - _aa, _aa ) )
+            IF ( ISFILTERED ( Dim_Calendario ) && _aa > 0, DIVIDE ( [Ventas Mercado] - _aa, _aa ) )
 
-    MEASURE '_Medidas'[Brecha Crec vs Nielsen (pp)] =
+    MEASURE '_Medidas'[Brecha Crec vs Mercado (pp)] =
         VAR _c = [Crec % Cadenas]
-        VAR _n = [Crec % Nielsen]
+        VAR _n = [Crec % Mercado]
         RETURN
             IF ( NOT ISBLANK ( _c ) && NOT ISBLANK ( _n ), ( _c - _n ) * 100 )
 
     // ------------------------------------------------------------ precio
-    MEASURE '_Medidas'[Índice Precio vs Nielsen] =
-        DIVIDE ( [Precio Promedio Cadenas], [Precio Promedio Nielsen] ) * 100
+    MEASURE '_Medidas'[Índice Precio vs Mercado] =
+        DIVIDE ( [Precio Promedio Cadenas], [Precio Promedio Mercado] ) * 100
 
 // ---------------------------------------------------------------------
 // Prueba: con los datos de ejemplo debe coincidir con ejemplo/valores_esperados.csv
@@ -202,15 +202,15 @@ EVALUATE
 SUMMARIZECOLUMNS (
     Dim_Geo[CVE_ENT],
     Dim_Geo[ESTADO],
-    Dim_Geo[REGION_NIELSEN],
+    Dim_Geo[REGION],
     TREATAS ( { 2026 }, Dim_Calendario[Año] ),
     "Ventas Cadenas", [Ventas Cadenas],
-    "Ventas Nielsen Estimada", [Ventas Nielsen Estimada],
+    "Ventas Mercado Estimada", [Ventas Mercado Estimada],
     "% Mix Cadenas", [% Mix Cadenas],
-    "% Mix Nielsen", [% Mix Nielsen],
-    "Índice Cadenas vs Nielsen", [Índice Cadenas vs Nielsen],
+    "% Mix Mercado", [% Mix Mercado],
+    "Índice Cadenas vs Mercado", [Índice Cadenas vs Mercado],
     "Índice per cápita Cadenas", [Índice per cápita Cadenas],
     "Crec % Cadenas", [Crec % Cadenas],
-    "Crec % Nielsen", [Crec % Nielsen]
+    "Crec % Mercado", [Crec % Mercado]
 )
 ORDER BY Dim_Geo[CVE_ENT]

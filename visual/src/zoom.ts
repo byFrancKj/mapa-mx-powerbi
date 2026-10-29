@@ -70,8 +70,8 @@ export function interpolar(a: Transformacion, b: Transformacion, s: number, anch
     return { k, x: ancho / 2 - k * cx, y: alto / 2 - k * cy };
 }
 
-const iguales = (a: Transformacion, b: Transformacion): boolean =>
-    Math.abs(a.k - b.k) < 1e-9 && Math.abs(a.x - b.x) < 1e-6 && Math.abs(a.y - b.y) < 1e-6;
+export const iguales = (a: Transformacion, b: Transformacion): boolean =>
+    Math.abs(a.k - b.k) < 1e-6 && Math.abs(a.x - b.x) < 1e-3 && Math.abs(a.y - b.y) < 1e-3;
 const medio = (a: Punto, b: Punto): Punto => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
 const distancia = (a: Punto, b: Punto): number => Math.hypot(a[0] - b[0], a[1] - b[1]);
 
@@ -90,6 +90,8 @@ interface Gesto {
 
 export class Zoom {
     private t: Transformacion = IDENTIDAD;
+    /** La vista a la que vuelve el botón de inicio (el encuadre de los datos). */
+    private inicio: Transformacion = IDENTIDAD;
     private ancho = 1;
     private alto = 1;
     private kMax = 8;
@@ -98,6 +100,8 @@ export class Zoom {
     private gesto: Gesto | null = null;
     private suprimirClic = false;
     private animacion = 0;
+    /** A dónde va la animación en curso (null sin animación). */
+    private rumbo: Transformacion | null = null;
     private esperaFin: ReturnType<typeof setTimeout> | undefined;
 
     /** `alCambiar` recibe cada paso; `fin` indica que el movimiento terminó. */
@@ -125,16 +129,30 @@ export class Zoom {
         return this.kMax;
     }
 
-    configurar(ancho: number, alto: number, kMax: number, opciones: OpcionesZoom): void {
+    get vistaInicial(): Transformacion {
+        return this.inicio;
+    }
+
+    /** Donde quedará la vista: el final de la animación en curso, o la vista actual. */
+    get destino(): Transformacion {
+        return this.rumbo ?? this.t;
+    }
+
+    /**
+     * Tamaño, límites y vista inicial. Sin zoom del usuario, el mapa se queda en la
+     * vista inicial (el encuadre de los datos también aplica sin zoom).
+     */
+    configurar(ancho: number, alto: number, kMax: number, opciones: OpcionesZoom, inicio: Transformacion = IDENTIDAD): void {
         this.ancho = Math.max(1, ancho);
         this.alto = Math.max(1, alto);
         this.kMax = Math.max(1, kMax);
         this.opciones = opciones;
+        this.inicio = acotar(inicio, this.ancho, this.alto, this.kMax);
         // Con zoom, el navegador no debe desplazar la página con los gestos táctiles sobre el mapa.
         this.objetivo.style.touchAction = opciones.activo ? "none" : "";
         if (!opciones.activo) {
             this.detener();
-            this.t = IDENTIDAD;
+            this.t = this.inicio;
         }
         this.t = acotar(this.t, this.ancho, this.alto, this.kMax);
     }
@@ -153,13 +171,19 @@ export class Zoom {
         this.animarHacia(this.escalado(0.5, [this.ancho / 2, this.alto / 2]));
     }
 
+    /** Vuelve a la vista inicial. */
     restablecer(): void {
-        this.animarHacia(IDENTIDAD);
+        this.animarHacia(this.inicio);
     }
 
     /** Acerca hasta que la caja (coordenadas sin zoom) llene la vista. */
     enfocar(caja: Caja): void {
         this.animarHacia(encuadrar(caja, this.ancho, this.alto, this.kMax));
+    }
+
+    /** Lleva la vista a `t` con una animación corta (o de inmediato si se pide reducir el movimiento). */
+    irA(t: Transformacion): void {
+        this.animarHacia(acotar(t, this.ancho, this.alto, this.kMax));
     }
 
     private escalado(factor: number, punto: Punto): Transformacion {
@@ -282,8 +306,10 @@ export class Zoom {
             t0 = t0 < 0 ? ahora : t0;
             const s = Math.min(1, (ahora - t0) / DURACION_MS);
             this.animacion = s < 1 ? requestAnimationFrame(paso) : 0;
+            this.rumbo = s < 1 ? destino : null;
             this.aplicar(s < 1 ? interpolar(inicio, destino, s, this.ancho, this.alto) : destino, s >= 1);
         };
+        this.rumbo = destino;
         this.animacion = requestAnimationFrame(paso);
     }
 
@@ -292,5 +318,6 @@ export class Zoom {
             cancelAnimationFrame(this.animacion);
             this.animacion = 0;
         }
+        this.rumbo = null;
     }
 }
