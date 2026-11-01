@@ -10,7 +10,7 @@
     "contexto": "node scripts/construir_contexto.mjs"
   },
   "devDependencies": {
-    "mapshaper": "^0.7.95",
+    "mapshaper": "^0.7.101",
     "world-atlas": "2.0.2"
   },
   "engines": {
