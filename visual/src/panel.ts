@@ -18,6 +18,10 @@ export interface Cifra {
     /** Valor combinado, para las barras de la comparación. */
     valor: number | null;
     color: string;
+    /** Un texto de DAX y no una cifra: no se abrevia ni se recorta. */
+    esTexto: boolean;
+    /** Los textos cuando difieren entre áreas (entonces `texto` va vacío). */
+    porArea: Array<{ areas: string; texto: string }>;
 }
 
 export interface LineaDiferencia {
@@ -101,6 +105,8 @@ export interface Recuadro {
 
 const ANCHO_SILUETA = 76;
 const ALTO_SILUETA = 58;
+/** Un texto más largo que esto ya no cabe en una tarjeta angosta. */
+const LARGO_TEXTO_CORTO = 16;
 
 export class Panel {
     private readonly raiz: Sel<HTMLElement>;
@@ -165,10 +171,27 @@ export class Panel {
             const seccion = this.seccion(cuerpo, t.tarjetas);
             const rejilla = seccion.append("div").classed("tarjetas", true);
             for (const c of m.tarjetas) {
-                const tarjeta = rejilla.append("div").classed("tarjeta", true).attr("title", c.exacto ? `${c.nombre}: ${c.exacto}` : c.nombre);
+                // Un texto largo o de varias líneas (un Top 3) ocupa todo el ancho del panel.
+                const ancha = c.esTexto && (c.porArea.length > 0 || c.texto.length > LARGO_TEXTO_CORTO || c.texto.includes("\n"));
+                const tarjeta = rejilla.append("div")
+                    .classed("tarjeta", true)
+                    .classed("ancha", ancha)
+                    .attr("title", c.exacto ? `${c.nombre}: ${c.exacto}` : c.nombre);
                 tarjeta.append("div").classed("tarjeta-nombre", true).text(c.nombre);
-                // Un rango ("+6.4% – +15.7%") va más chico para que quepa completo.
-                tarjeta.append("div").classed("tarjeta-valor", true).classed("largo", c.texto.length > 11).text(c.texto);
+                if (c.porArea.length > 0) {
+                    const lista = tarjeta.append("dl").classed("tarjeta-areas", true);
+                    for (const a of c.porArea) {
+                        lista.append("dt").text(a.areas);
+                        lista.append("dd").text(a.texto);
+                    }
+                } else {
+                    // Un rango ("+6.4% – +15.7%") va más chico para que quepa completo.
+                    tarjeta.append("div")
+                        .classed("tarjeta-valor", true)
+                        .classed("largo", c.texto.length > 11)
+                        .classed("texto", c.esTexto)
+                        .text(c.texto);
+                }
                 if (c.nota) {
                     tarjeta.append("div").classed("nota", true).text(c.nota);
                 }

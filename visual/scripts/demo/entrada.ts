@@ -29,6 +29,30 @@ const TARJETAS: MedidaFalsa[] = [
     { nombre: "Precio Promedio Cadenas", valores: col("Precio Promedio Cadenas"), formato: "\\$#,0.00" },
     { nombre: "Unidades Cadenas", valores: col("Unidades Cadenas"), formato: "#,0", objetos: { agregacion: { tipo: "suma" } } },
 ];
+const moneda = (v: number): string => `$${(v / 1e6).toFixed(1)} M`;
+/** Una medida con CONCATENATEX: un renglón por tienda, ya formateado en DAX. */
+const TOP_3: MedidaFalsa = {
+    nombre: "Top 3 tiendas",
+    tipo: { text: true },
+    valores: filas.map((e) => {
+        const ventas = e["Ventas Cadenas"] as number | null;
+        return ventas === null ? null : [0.31, 0.22, 0.14].map((p, i) => `Tienda ${e.CVE_ENT}-0${i + 1} · ${moneda(ventas * p)}`).join("\n");
+    }),
+};
+/** El mismo texto en toda la región: DAX lo calcula una vez y el panel lo muestra una vez. */
+const TOP_3_REGION: MedidaFalsa = {
+    nombre: "Top 3 de la región",
+    tipo: { text: true },
+    valores: filas.map((e) => `Tienda ${e.REGION} Centro\nTienda ${e.REGION} Norte\nTienda ${e.REGION} Sur`),
+};
+const TARJETAS_TIPOS: MedidaFalsa[] = [
+    TOP_3,
+    TOP_3_REGION,
+    { nombre: "Última venta", tipo: { dateTime: true }, formato: "dd/MM/yyyy", valores: filas.map((_, i) => new Date(2026, 8, 30 - (i % 12))) },
+    { nombre: "Cumple meta", tipo: { bool: true }, valores: filas.map((e) => ((e["Crec % Cadenas"] as number | null) ?? 0) > 0.08) },
+    { nombre: "Estatus", tipo: { text: true }, valores: filas.map((e) => (((e["Crec % Cadenas"] as number | null) ?? 0) > 0.08 ? "En meta" : "Por debajo")) },
+    TARJETAS[1],
+];
 const BASE: OpcionesDataView = {
     claves: filas.map((e) => e.CVE_ENT),
     grupo: { nombre: "Región", valores: filas.map((e) => e.REGION) },
@@ -55,10 +79,10 @@ function filtrar(o: OpcionesDataView, queda: (i: number) => boolean): OpcionesDa
 
 /** Lo que resalta otro visual: `parte(i)` es la fracción resaltada de cada fila (null, nada). */
 function resaltar(o: OpcionesDataView, parte: (i: number) => number | null): OpcionesDataView {
-    const de = (v: Array<number | null>): Array<number | null> => v.map((x, i) => {
+    const de = <T>(v: T[]): T[] => v.map((x, i) => {
         const p = parte(i);
-        return x === null || p === null ? null : x * p;
-    });
+        return x === null || p === null ? null : typeof x === "number" ? x * p : x;
+    }) as T[];
     const medida = (m: MedidaFalsa): MedidaFalsa => ({ ...m, resaltes: de(m.valores) });
     return { ...o, resaltes: o.valores ? de(o.valores) : undefined, bases: o.bases?.map(medida), tarjetas: o.tarjetas?.map(medida) };
 }
@@ -78,6 +102,7 @@ const ESCENAS: Record<string, { titulo: string; datos: OpcionesDataView }> = {
         titulo: "Clic en otra tabla (un producto)",
         datos: resaltar(BASE, (i) => (i % 7 === 3 ? null : 0.18 + ((i * 37) % 11) / 40)),
     },
+    tipos: { titulo: "Tarjetas de texto, fecha y sí/no", datos: { ...BASE, tarjetas: TARJETAS_TIPOS } },
     barra: { titulo: "Leyenda en barra", datos: { ...BASE, objetos: { leyenda: { estilo: "barra", posicion: "abajo-izquierda" } } } },
     municipios: {
         titulo: "Municipios de Jalisco (drill-down)",

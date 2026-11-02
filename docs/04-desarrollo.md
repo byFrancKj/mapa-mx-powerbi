@@ -36,7 +36,7 @@ npm ci
 
 O empaqueta (`npm run package`) e importa el `.pbiviz` en Power BI Desktop en una PC con Windows.
 
-Para revisar algo rápido sin Power BI, `npm run demo` arma una página con el visual y los datos del ejemplo (escenas de ventas con semáforo, regiones, diferencia de mix, filtro de una región o de un estado, clic en otra tabla, leyenda en barra y municipios). Usa el mismo código del visual con un host simulado: sirve para ver el dibujo y la interacción, no sustituye la prueba en Power BI.
+Para revisar algo rápido sin Power BI, `npm run demo` arma una página con el visual y los datos del ejemplo (escenas de ventas con semáforo, regiones, diferencia de mix, filtro de una región o de un estado, clic en otra tabla, tarjetas de texto, fecha y sí/no, leyenda en barra y municipios). Usa el mismo código del visual con un host simulado: sirve para ver el dibujo y la interacción, no sustituye la prueba en Power BI.
 
 ## Estructura del visual
 

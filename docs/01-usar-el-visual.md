@@ -16,7 +16,7 @@ Descarga el archivo del *release* de GitHub y comprueba su huella antes de insta
 | **Valor** | La medida que colorea el mapa. Cualquiera de tu modelo. | obligatorio |
 | **Valor 2 (bivariado)** | Una segunda medida: el mapa pasa a ser bivariado. | opcional |
 | **Bases a comparar** | Hasta 4 medidas, una por fuente (por ejemplo `Ventas Cadenas` y `Ventas Mercado Estimada`). El [panel de detalle](#panel-de-detalle) las compara contra la primera. Sin Valor, el mapa se colorea con la primera base. | opcional |
-| **Tarjetas** | Hasta 8 medidas DAX que el panel de detalle muestra como tarjetas. | opcional |
+| **Tarjetas** | Hasta 8 medidas DAX que el panel de detalle muestra como tarjetas. Pueden devolver números, texto (un Top 3, por ejemplo), fechas o sí/no: ver [Tarjetas con texto](#tarjetas-con-texto-fechas-o-síno). | opcional |
 | **Información sobre herramientas** | Medidas extra que aparecen al pasar el cursor. | opcional |
 
 La clave puede ser texto o número: el visual completa los ceros que Excel o Power BI suelen quitar (`9` → `"09"`, `1002` → `"01002"`). Los nombres no sirven en Ubicación; si tus datos solo traen nombres o tiendas, conviértelos a clave con el [puente INEGI](02-puente-inegi.md).
@@ -153,6 +153,51 @@ El visual recibe de Power BI un valor por estado y no sabe si tu medida se puede
 La diferencia, la diferencia % y el índice de la comparación se calculan con los totales de las bases, así que son correctos para cualquier selección si las bases son aditivas. No pongas como base una medida que repite el total de la región en cada estado (en el ejemplo, `[Ventas Mercado]`): usa la versión que reparte la región (`[Ventas Mercado Estimada]`).
 
 Si necesitas el valor exacto de una medida no aditiva para varios estados, calcúlalo en DAX y muéstralo con un objeto visual de tarjeta de Power BI, que sí responde al filtro del mapa.
+
+### Tarjetas con texto, fechas o sí/no
+
+El campo *Tarjetas* acepta cualquier medida. El visual mira lo que devuelve y no hace falta configurar nada; el cálculo se queda en DAX:
+
+| La medida devuelve | Con un área | Con varias áreas |
+|---|---|---|
+| **Número** | La cifra con su formato. | Se combina como elijas en *Al seleccionar varias áreas*. |
+| **Texto** (`CONCATENATEX`, `FORMAT`…) | El texto tal cual, con sus saltos de línea. Si es largo, ocupa todo el ancho del panel. | Nunca se combina: cada texto distinto una vez, con sus áreas (hasta 8 textos). Si todas dan el mismo, sale una sola vez. |
+| **Fecha** | Con el formato de la medida. | Del mínimo al máximo. |
+| **Verdadero/falso** | Sí o No. | Como un texto. |
+| **Número o texto según el caso** | Lo que dio DAX. | Como un texto. |
+
+Los textos y las fechas no aparecen en *Al seleccionar varias áreas*: no hay nada que elegir. Un `""` cuenta como vacío, así que una medida numérica con `IF ( …, [Ventas], "" )` se sigue sumando.
+
+Un Top 3 de tiendas, una por renglón:
+
+```dax
+Top 3 Tiendas =
+IF (
+    [Ventas] > 0,
+    VAR _top =
+        TOPN ( 3, FILTER ( VALUES ( Tiendas[Tienda] ), [Ventas] > 0 ), [Ventas], DESC, Tiendas[Tienda], ASC )
+    RETURN
+        CONCATENATEX (
+            _top,
+            Tiendas[Tienda] & " · " & FORMAT ( [Ventas], "$#,0" ),
+            UNICHAR ( 10 ),
+            [Ventas], DESC,
+            Tiendas[Tienda], ASC
+        )
+)
+```
+
+Devuelve vacío cuando no hay ventas a propósito: una medida que siempre da texto hace que Power BI mande también los estados sin datos.
+
+**El Top 3 de varias áreas juntas también se resuelve en DAX**, pero hay un límite: Power BI le manda al visual un valor por estado, y una selección con clic en el mapa filtra a los demás visuales, no al propio mapa. El visual no puede pedir "el Top 3 de estos tres estados". Lo que sí se puede es elegir en la medida a qué nivel se calcula:
+
+| Quieres ver | Medida | Qué muestra el panel |
+|---|---|---|
+| El Top 3 de cada estado | La de arriba | Un bloque por estado seleccionado. |
+| El Top 3 de la región | `CALCULATE ( [Top 3 Tiendas], REMOVEFILTERS ( Geo ), VALUES ( Geo[REGION] ) )` | Una vez por región, aunque selecciones varios de sus estados. |
+| El Top 3 de lo filtrado | `CALCULATE ( [Top 3 Tiendas], ALLSELECTED ( Geo ) )` | Una vez, con lo que deje un segmentador o un filtro de la página. |
+
+Puedes poner dos tarjetas a la vez (la del estado y la de la región). Las versiones completas están en [`ejemplo/dax/medidas.dax`](../ejemplo/dax/medidas.dax). Si necesitas el Top 3 exacto de una selección libre de estados, usa una medida en un objeto visual de tarjeta o de tabla: esos sí responden al clic en el mapa.
 
 ### Dónde aparece
 
