@@ -505,6 +505,10 @@
     border-top: 2px solid var(--acento, @acento);
     border-radius: 8px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+
+    &.ancha {
+        grid-column: 1 / -1;
+    }
 }
 
 .tarjeta-nombre {
@@ -528,6 +532,40 @@
     &.largo {
         font-size: 1.12em;
         line-height: 1.6;
+    }
+
+    // Un texto de DAX se lee completo y conserva sus saltos de línea (UNICHAR ( 10 )).
+    &.texto {
+        overflow-wrap: anywhere;
+        white-space: pre-line;
+
+        &.largo {
+            font-size: 1em;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+    }
+}
+
+.tarjeta-areas {
+    margin: 6px 0 0;
+
+    dt {
+        color: var(--panel-texto, @texto-secundario);
+        font-size: 0.8em;
+        font-weight: 600;
+    }
+
+    dd {
+        margin: 0 0 6px;
+        font-weight: 600;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+        white-space: pre-line;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
     }
 }
 

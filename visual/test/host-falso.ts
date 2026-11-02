@@ -131,12 +131,17 @@ export interface OpcionesDataView {
     objetos?: Record<string, Record<string, unknown>>;
 }
 
+/** Lo que puede devolver una medida de DAX. */
+export type DatoFalso = number | string | boolean | Date | null;
+
 export interface MedidaFalsa {
     nombre: string;
-    valores: Array<number | null>;
+    valores: DatoFalso[];
     /** Lo que resalta otro visual (null = no resaltado). */
-    resaltes?: Array<number | null>;
+    resaltes?: DatoFalso[];
     formato?: string;
+    /** El tipo de la medida en el modelo (source.type). */
+    tipo?: { text?: boolean; numeric?: boolean; dateTime?: boolean; bool?: boolean };
     /** queryName (por omisión, "_Medidas.<nombre>"). */
     consulta?: string;
     objetos?: Record<string, Record<string, unknown>>;
@@ -144,7 +149,7 @@ export interface MedidaFalsa {
 
 const columnaMedida = (rol: string, m: MedidaFalsa) => ({
     source: {
-        displayName: m.nombre, roles: { [rol]: true }, format: m.formato,
+        displayName: m.nombre, roles: { [rol]: true }, format: m.formato, type: m.tipo,
         queryName: m.consulta ?? `_Medidas.${m.nombre}`, isMeasure: true, objects: m.objetos,
     },
     values: m.valores,

@@ -44,7 +44,7 @@
             "name": "tarjetas",
             "kind": "Measure",
             "displayName": "Tarjetas",
-            "description": "Medidas DAX que se muestran como tarjetas en el panel de detalle del estado o los estados seleccionados.",
+            "description": "Medidas DAX que se muestran como tarjetas en el panel de detalle: números, textos (un Top 3, por ejemplo), fechas o sí/no.",
             "displayNameKey": "Rol_Tarjetas",
             "descriptionKey": "Rol_Tarjetas_Desc"
         },

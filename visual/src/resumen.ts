@@ -41,6 +41,26 @@ export function resumir(valores: ReadonlyArray<number | null>, agregacion: Agreg
     return { valor, min, max, n: v.length };
 }
 
+/** Un texto de DAX y las áreas que lo comparten. */
+export interface GrupoTexto {
+    texto: string;
+    areas: string[];
+}
+
+/**
+ * Un texto no se suma ni se promedia: el visual muestra lo que dio DAX, una vez por
+ * cada texto distinto y en el orden en que aparecen. Las áreas sin texto no cuentan.
+ */
+export function agruparTextos(valores: ReadonlyArray<{ area: string; texto: string | null }>): GrupoTexto[] {
+    const grupos = new Map<string, string[]>();
+    for (const { area, texto } of valores) {
+        if (texto !== null) {
+            grupos.set(texto, [...(grupos.get(texto) ?? []), area]);
+        }
+    }
+    return [...grupos].map(([texto, areas]) => ({ texto, areas }));
+}
+
 export interface Comparacion {
     /** a − b */
     diferencia: number;

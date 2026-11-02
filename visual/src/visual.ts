@@ -16,7 +16,7 @@ import { Area, bordes, capa, fondoDelMapa, principal, unir } from "./geometria";
 import { colorBivariado, coloresDivergentes, coloresSecuenciales, mezclar } from "./paletas";
 import { Cifra, LineaDiferencia, ModeloPanel, MotivoPanel, Panel, Recuadro } from "./panel";
 import { REFERENCIAS } from "./referencias";
-import { Agregacion, AGREGACIONES, comparar, resumir } from "./resumen";
+import { Agregacion, AGREGACIONES, agruparTextos, comparar, resumir } from "./resumen";
 import { Textos } from "./textos";
 import { Caja, encuadrar, IDENTIDAD, iguales, ModoRueda, Transformacion, Zoom } from "./zoom";
 
@@ -48,6 +48,9 @@ const NEGATIVO = "#a4262c";
 const MAX_FILAS_DETALLE = 50;
 /** Áreas como máximo en la silueta del panel. */
 const MAX_SILUETA = 300;
+/** Textos distintos como máximo en una tarjeta, y áreas que se nombran en cada uno. */
+const MAX_TEXTOS_TARJETA = 8;
+const MAX_AREAS_TEXTO = 3;
 /** Franja de color de cada grupo, por dentro de su contorno (px). */
 const ANCHO_FRANJA = 4;
 const LADO_BOTON = 26;
@@ -84,6 +87,9 @@ const NOTAS: Record<Agregacion, string> = {
     rango: "Panel_Rango",
 };
 
+/** Lo que trae una medida. Solo los números se combinan en el panel; un texto se muestra como lo dio DAX. */
+type TipoDato = "numero" | "fecha" | "texto";
+
 /** Una medida de Valor, Valor 2, Bases o Tarjetas, con lo que necesita el panel. */
 interface Medida {
     nombre: string;
@@ -91,6 +97,34 @@ interface Medida {
     /** queryName de Power BI: identifica la medida en el panel de formato. */
     consulta: string;
     agregacion: Agregacion;
+    tipo: TipoDato;
+}
+
+/** Sin valor: un BLANK, o un texto vacío (`IF ( …, [Medida], "" )` da "" en lugar de BLANK). */
+const vacio = (v: PrimitiveValue | null | undefined): boolean => v === null || v === undefined || v === "";
+
+/** La fecha de una celda: un Date, o lo que llegue en una columna con tipo fecha. */
+function fechaDe(v: PrimitiveValue | null | undefined, columna: DataViewValueColumn): Date | null {
+    if (vacio(v) || typeof v === "boolean") {
+        return null;
+    }
+    const fecha = typeof v === "object" ? (v as Date) : columna.source.type?.dateTime ? new Date(v as string | number) : null;
+    return fecha && !Number.isNaN(fecha.getTime()) ? fecha : null;
+}
+
+/**
+ * Se decide por lo que llegó y no por el tipo declarado: una medida que devuelve
+ * número o texto según el caso no tiene un tipo fijo en el modelo.
+ */
+function tipoDeColumna(c: DataViewValueColumn): TipoDato {
+    const valores = [...c.values, ...(c.highlights ?? [])].filter((v) => !vacio(v));
+    if (valores.length === 0) {
+        return c.source.type?.text ? "texto" : c.source.type?.dateTime ? "fecha" : "numero";
+    }
+    if (valores.every((v) => fechaDe(v, c) !== null)) {
+        return "fecha";
+    }
+    return valores.every((v) => typeof v === "number") ? "numero" : "texto";
 }
 
 /** Un área con datos: lo que Power BI mandó para su clave. */
@@ -100,9 +134,11 @@ interface Fila {
     texto: string;
     valor2: number | null;
     texto2: string;
-    /** Un valor por medida de Bases y de Tarjetas, en su orden. */
+    /** Un valor por medida de Bases y de Tarjetas, en su orden (una fecha va en milisegundos). */
     bases: Array<number | null>;
     tarjetas: Array<number | null>;
+    /** Un texto ya formateado por tarjeta; null en las de números o fechas. */
+    textos: Array<string | null>;
     grupo: string | null;
     /** Resaltado por otro visual (si no hay resaltado, todas lo están). Las demás quedan de fondo. */
     resaltado: boolean;
@@ -449,20 +485,28 @@ export class Visual implements IVisual {
         // Otro visual resalta una parte (un clic en una tabla, por ejemplo): Power BI manda,
         // junto a cada medida, su valor con ese resaltado.
         const hayResaltado = columnas.some((c) => Array.isArray(c.highlights));
+        // Un texto fijo (el Top 3 de toda la región) también llega en lo no resaltado: deciden las cifras.
+        const conCifras = columnas.filter((c) => tipoDeColumna(c) === "numero");
+        const testigos = conCifras.length > 0 ? conCifras : columnas;
         const exacto = this.formateador(colValor?.source.format);
         const exacto2 = this.formateador(colValor2?.source.format);
         const formatosExtra = colTooltips.map((c) => this.formateador(c.source.format));
+        const tiposTarjetas = colTarjetas.map(tipoDeColumna);
+        const formatosTarjetas = colTarjetas.map((c) => this.formateador(c.source.format));
         const numero = (v: PrimitiveValue | undefined): number | null => (typeof v === "number" && Number.isFinite(v) ? v : null);
 
         // Las bases se suman por omisión (son volúmenes de cada fuente); lo demás muestra
         // el rango hasta que se elija cómo combinarlo. Una medida en dos campos es una sola.
         const consultaDe = (c: DataViewValueColumn): string => c.source.queryName ?? c.source.displayName;
         const enBases = new Set(colBases.flatMap((c) => [consultaDe(c), c.source.displayName]));
-        const medida = (c: DataViewValueColumn): Medida => ({
+        const medida = (c: DataViewValueColumn, tipo: TipoDato = "numero"): Medida => ({
             nombre: c.source.displayName,
             formato: c.source.format,
             consulta: consultaDe(c),
-            agregacion: agregacionDe(c.source.objects, enBases.has(consultaDe(c)) || enBases.has(c.source.displayName) ? "suma" : "rango"),
+            agregacion: tipo === "numero"
+                ? agregacionDe(c.source.objects, enBases.has(consultaDe(c)) || enBases.has(c.source.displayName) ? "suma" : "rango")
+                : "rango",
+            tipo,
         });
 
         // El nivel lo decide la mayoría de claves válidas: 2 dígitos = estado, 5 = municipio.
@@ -491,8 +535,8 @@ export class Visual implements IVisual {
             medidas: {
                 valor: colValor ? medida(colValor) : null,
                 valor2: colValor2 ? medida(colValor2) : null,
-                bases: colBases.map(medida),
-                tarjetas: colTarjetas.map(medida),
+                bases: colBases.map((c) => medida(c)),
+                tarjetas: colTarjetas.map((c, j) => medida(c, tiposTarjetas[j])),
             },
             hayResaltado,
             desconocidas: [],
@@ -520,7 +564,7 @@ export class Visual implements IVisual {
                 return;
             }
             // Las áreas resaltadas usan los valores resaltados; las demás conservan los suyos (quedan de fondo).
-            const resaltado = !hayResaltado || columnas.some((c) => c.highlights?.[i] !== null && c.highlights?.[i] !== undefined);
+            const resaltado = !hayResaltado || testigos.some((c) => !vacio(c.highlights?.[i]));
             const de = (c: DataViewValueColumn | undefined): PrimitiveValue | undefined =>
                 (c && hayResaltado && resaltado && c.highlights ? c.highlights[i] : c?.values[i]);
             const valor = numero(de(colValor));
@@ -534,7 +578,8 @@ export class Visual implements IVisual {
                 valor2,
                 texto2: valor2 === null ? this.textos.t("Texto_SinDato") : exacto2(valor2),
                 bases: colBases.map((c) => numero(de(c))),
-                tarjetas: colTarjetas.map((c) => numero(de(c))),
+                tarjetas: colTarjetas.map((c, j) => (tiposTarjetas[j] === "fecha" ? fechaDe(de(c), c)?.getTime() ?? null : numero(de(c)))),
+                textos: colTarjetas.map((c, j) => (tiposTarjetas[j] === "texto" ? this.texto(de(c), formatosTarjetas[j]) || null : null)),
                 grupo: grupo === null || grupo === undefined || grupo === "" ? null : String(grupo),
                 resaltado,
                 extras: colTooltips.map((c, j) => ({ displayName: c.source.displayName, value: this.texto(de(c), formatosExtra[j]) })),
@@ -559,9 +604,9 @@ export class Visual implements IVisual {
         a.bivariado.visible = this.modo === "bivariado";
         a.grupos.visible = hayGrupo;
         a.panel.hayComparacion = hayComparacion;
-        // Una lista por medida del panel (sin repetir la que está en dos campos)
+        // Una lista por medida del panel (sin repetir la que está en dos campos); solo los números se combinan
         const { bases, tarjetas } = this.medidasPanel();
-        const unicas = new Map([...bases, ...tarjetas].map((m) => [m.consulta, m]));
+        const unicas = new Map([...bases, ...tarjetas].filter((m) => m.tipo === "numero").map((m) => [m.consulta, m]));
         a.agregacion.definir(a.panel.mostrar.value ? [...unicas.values()] : []);
     }
 
@@ -626,9 +671,9 @@ export class Visual implements IVisual {
     }
 
     /** Formatea con la cadena de formato de la propia medida, como lo haría Power BI. */
-    private formateador(formato: string | undefined): (v: number) => string {
+    private formateador(formato: string | undefined): (v: number | Date) => string {
         const f = valueFormatter.create({ format: formato ?? FORMATO_GENERAL, cultureSelector: this.host.locale });
-        return (v: number) => f.format(v);
+        return (v: number | Date) => (typeof v === "number" || formato ? f.format(v) : v.toLocaleDateString(this.host.locale));
     }
 
     private compacto(formato: string | undefined): (v: number) => string {
@@ -641,11 +686,14 @@ export class Visual implements IVisual {
         return (v: number) => formatoCompacto(v, formato, this.host.locale, exacto, unidades);
     }
 
-    private texto(valor: PrimitiveValue | null | undefined, formatear: (v: number) => string): string {
+    private texto(valor: PrimitiveValue | null | undefined, formatear: (v: number | Date) => string): string {
         if (valor === null || valor === undefined) {
             return "";
         }
-        return typeof valor === "number" ? formatear(valor) : String(valor);
+        if (typeof valor === "boolean") {
+            return this.textos.t(valor ? "Texto_Si" : "Texto_No");
+        }
+        return typeof valor === "string" ? valor : formatear(valor);
     }
 
     /** Diferencia con signo; entre dos porcentajes, en puntos porcentuales. */
@@ -1944,17 +1992,47 @@ export class Visual implements IVisual {
         const { bases, tarjetas } = this.medidasPanel();
         const cifra = (m: Medida, color: string): Cifra => {
             const r = resumir(foco.map((f) => this.valorDe(f, m)), m.agregacion);
-            const compacto = this.compacto(m.formato);
+            const formato = this.formateador(m.formato);
+            const exacta = m.tipo === "fecha" ? (v: number) => formato(new Date(v)) : formato;
+            const compacto = m.tipo === "fecha" ? exacta : this.compacto(m.formato);
             const texto = r.valor !== null ? compacto(r.valor)
                 : r.min !== null && r.max !== null ? (r.min === r.max ? compacto(r.min) : `${compacto(r.min)} – ${compacto(r.max)}`)
                 : t.t("Texto_SinDato");
             return {
                 nombre: m.nombre,
                 texto,
-                exacto: r.valor !== null ? this.formateador(m.formato)(r.valor) : "",
+                exacto: r.valor !== null ? exacta(r.valor) : "",
                 nota: this.nota(m.agregacion, r.n, n, plural),
                 valor: r.valor,
                 color,
+                esTexto: m.tipo === "fecha",
+                porArea: [],
+            };
+        };
+        // Con varias áreas, el texto que comparten una vez; si difieren, cada uno con sus áreas.
+        const cifraTexto = (m: Medida): Cifra => {
+            const j = datos.medidas.tarjetas.indexOf(m);
+            const grupos = agruparTextos(foco.map((f) => ({ area: nombre(f), texto: f.textos[j] })));
+            const conValor = grupos.reduce((s, g) => s + g.areas.length, 0);
+            const unico = grupos.length === 1 ? grupos[0].texto : null;
+            const resto = grupos.length - MAX_TEXTOS_TARJETA;
+            const faltan = conValor === n || conValor === 0 ? ""
+                : conValor === 1 ? t.t("Panel_SoloUna", n, plural)
+                : t.t("Panel_NDeM", conValor, n, plural);
+            return {
+                nombre: m.nombre,
+                texto: unico ?? (grupos.length === 0 ? t.t("Texto_SinDato") : ""),
+                exacto: unico ?? "",
+                nota: [faltan, resto > 0 ? t.t("Panel_TextosResto", resto) : ""].filter(Boolean).join(" · "),
+                valor: null,
+                color: "",
+                esTexto: true,
+                porArea: unico !== null ? [] : grupos.slice(0, MAX_TEXTOS_TARJETA).map((g) => ({
+                    areas: g.areas.length > MAX_AREAS_TEXTO
+                        ? t.t("Panel_AreasMas", g.areas.slice(0, MAX_AREAS_TEXTO).join(", "), g.areas.length - MAX_AREAS_TEXTO)
+                        : g.areas.join(", "),
+                    texto: g.texto,
+                })),
             };
         };
         const cifrasBases = bases.map((m, i) => cifra(m, COLORES_BASES[i % COLORES_BASES.length]));
@@ -2033,7 +2111,7 @@ export class Visual implements IVisual {
             silueta,
             bases: cifrasBases,
             diferencias,
-            tarjetas: tarjetas.map((m) => cifra(m, "")),
+            tarjetas: tarjetas.map((m) => (m.tipo === "texto" ? cifraTexto(m) : cifra(m, ""))),
             detalle,
         };
     }
