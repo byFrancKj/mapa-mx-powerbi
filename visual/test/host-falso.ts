@@ -62,9 +62,9 @@ export function crearHostCon(textos: Record<string, string>, opciones: { altoCon
         createSelectionIdBuilder: () => {
             let clave = "";
             const constructor = {
-                // Como en Power BI, la identidad combina todas las columnas de categoría.
-                withCategory: (categoria: powerbi.DataViewCategoryColumn, i: number) => {
-                    clave = clave ? `${clave}|${String(categoria.values[i])}` : String(categoria.values[i]);
+                // La identidad de una fila combina los nodos de su camino en la matriz: región|clave.
+                withMatrixNode: (nodo: powerbi.DataViewMatrixNode) => {
+                    clave = clave ? `${clave}|${String(nodo.value)}` : String(nodo.value);
                     return constructor;
                 },
                 createSelectionId: (): IdFalso => ({ clave, equals: (o) => o.clave === clave, getKey: () => clave }),
@@ -129,6 +129,24 @@ export interface OpcionesDataView {
     tarjetas?: MedidaFalsa[];
     /** Propiedades del panel de formato, como las guarda Power BI. */
     objetos?: Record<string, Record<string, unknown>>;
+    /**
+     * Lo que DAX calcula en los nodos de la matriz (por nombre de medida): el total de lo
+     * filtrado y el de cada región. Sin esto, la matriz no trae subtotales.
+     */
+    totales?: {
+        general?: Record<string, DatoFalso>;
+        grupos?: Record<string, Record<string, DatoFalso>>;
+        /** El total con el resaltado de otro visual. */
+        resalteGeneral?: Record<string, DatoFalso>;
+    };
+    /** Línea del tiempo: Valor en cada periodo (las demás medidas se repiten). */
+    periodos?: {
+        nombre?: string;
+        etiquetas: unknown[];
+        valores: Array<Array<number | null>>;
+        /** Valor en el total de los periodos (subtotal de columnas); sin él, la matriz no lo trae. */
+        total?: Array<number | null>;
+    };
 }
 
 /** Lo que puede devolver una medida de DAX. */
@@ -156,15 +174,21 @@ const columnaMedida = (rol: string, m: MedidaFalsa) => ({
     ...(m.resaltes ? { highlights: m.resaltes } : {}),
 });
 
+interface ColumnaFalsa {
+    source: Record<string, unknown> & { displayName: string };
+    values: unknown[];
+    highlights?: unknown[];
+}
+
+/**
+ * Arma la matriz que manda Power BI: filas Región → Ubicación (con sus niveles
+ * superiores), columnas Periodo → medida y, si se piden, los subtotales que calcula DAX.
+ */
 export function crearDataView(o: OpcionesDataView): powerbi.DataView {
-    const categorias = [
-        ...(o.nivelesSuperiores ?? []).map((n) => ({ source: { displayName: n.nombre, roles: { ubicacion: true } }, values: n.valores })),
-        { source: { displayName: "Clave", roles: { ubicacion: true } }, values: o.claves },
-        ...(o.grupo ? [{ source: { displayName: o.grupo.nombre, roles: { grupo: true } }, values: o.grupo.valores }] : []),
-    ];
-    const valores = [
+    const valorNombre = o.nombre ?? "Ventas";
+    const medidas: ColumnaFalsa[] = [
         ...(o.valores ? [{
-            source: { displayName: o.nombre ?? "Ventas", roles: { valor: true }, format: o.formato, queryName: `_Medidas.${o.nombre ?? "Ventas"}` },
+            source: { displayName: valorNombre, roles: { valor: true }, format: o.formato, queryName: `_Medidas.${valorNombre}` },
             values: o.valores,
             ...(o.resaltes ? { highlights: o.resaltes } : {}),
         }] : []),
@@ -173,9 +197,104 @@ export function crearDataView(o: OpcionesDataView): powerbi.DataView {
         ...(o.tarjetas ?? []).map((m) => columnaMedida("tarjetas", m)),
         ...(o.tooltips ?? []).map((t) => ({ source: { displayName: t.nombre, roles: { tooltips: true }, format: t.formato }, values: t.valores })),
     ];
+    const conResalte = medidas.some((m) => m.highlights);
+    const fuentes = medidas.map((m) => m.source);
+
+    // Columnas: una hoja por medida en cada periodo (y en el total de los periodos).
+    const p = o.periodos;
+    const fuentePeriodo = p ? { displayName: p.nombre ?? "Periodo", roles: { periodo: true } } : null;
+    const hojas: Array<{ periodo: number | null; medida: number }> = [];
+    const nodoMedida = (m: number, nivel: number) => ({ level: nivel, levelSourceIndex: m, levelValues: [{ value: null, levelSourceIndex: m }] });
+    let raizColumnas: Record<string, unknown>;
+    if (p) {
+        const hijos: unknown[] = p.etiquetas.map((etiqueta, i) => ({
+            level: 0, value: etiqueta, levelValues: [{ value: etiqueta, levelSourceIndex: 0 }],
+            children: medidas.map((_, m) => {
+                hojas.push({ periodo: i, medida: m });
+                return nodoMedida(m, 1);
+            }),
+        }));
+        if (p.total) {
+            hijos.push({ level: 0, isSubtotal: true, children: medidas.map((_, m) => {
+                hojas.push({ periodo: -1, medida: m });
+                return nodoMedida(m, 1);
+            }) });
+        }
+        raizColumnas = { children: hijos };
+    } else {
+        raizColumnas = { children: medidas.map((_, m) => {
+            hojas.push({ periodo: null, medida: m });
+            return nodoMedida(m, 0);
+        }) };
+    }
+    const nivelesColumna = p ? [{ sources: [fuentePeriodo] }, { sources: fuentes }] : [{ sources: fuentes }];
+
+    // Lo que vale la medida m en la fila i en una hoja (Valor cambia por periodo).
+    const enHoja = (i: number, h: { periodo: number | null; medida: number }): { value: unknown; highlight?: unknown } => {
+        const m = medidas[h.medida];
+        const esValor = Boolean(m.source.roles && (m.source.roles as Record<string, boolean>).valor);
+        let value = m.values[i] ?? null;
+        if (p && esValor && h.periodo !== null) {
+            value = h.periodo < 0 ? p.total?.[i] ?? null : p.valores[h.periodo]?.[i] ?? null;
+        }
+        return conResalte ? { value, highlight: m.highlights ? m.highlights[i] ?? null : value } : { value };
+    };
+    const valoresFila = (i: number) => Object.fromEntries(hojas.map((h, j) => [j, { ...enHoja(i, h), valueSourceIndex: h.medida }]));
+    const valoresTotal = (porMedida: Record<string, DatoFalso> | undefined, resalte?: Record<string, DatoFalso>) =>
+        Object.fromEntries(hojas.map((h, j) => {
+            const nombre = medidas[h.medida].source.displayName;
+            const value = porMedida?.[nombre] ?? null;
+            return [j, { value, ...(conResalte ? { highlight: resalte?.[nombre] ?? value } : {}), valueSourceIndex: h.medida }];
+        }));
+
+    // Filas: Región (si hay) → niveles superiores → clave.
+    const nivelesFila: Array<{ sources: unknown[] }> = [
+        ...(o.grupo ? [{ sources: [{ displayName: o.grupo.nombre, roles: { grupo: true } }] }] : []),
+        ...(o.nivelesSuperiores ?? []).map((n) => ({ sources: [{ displayName: n.nombre, roles: { ubicacion: true } }] })),
+        { sources: [{ displayName: "Clave", roles: { ubicacion: true } }] },
+    ];
+    type Nodo = { level?: number; value?: unknown; levelValues?: unknown[]; children?: Nodo[]; values?: unknown; isSubtotal?: boolean };
+    const raizFilas: Nodo = { children: [] };
+    o.claves.forEach((clave, i) => {
+        const camino = [
+            ...(o.grupo ? [o.grupo.valores[i]] : []),
+            ...(o.nivelesSuperiores ?? []).map((n) => n.valores[i]),
+            clave,
+        ];
+        let nodo = raizFilas;
+        camino.forEach((valor, nivel) => {
+            const hoja = nivel === camino.length - 1;
+            let hijo = hoja ? undefined : nodo.children?.find((h) => !h.isSubtotal && h.value === valor);
+            if (!hijo) {
+                hijo = { level: nivel, value: valor, levelValues: [{ value: valor, levelSourceIndex: 0 }], ...(hoja ? { values: valoresFila(i) } : { children: [] }) };
+                (nodo.children ??= []).push(hijo);
+            }
+            nodo = hijo;
+        });
+    });
+    const t = o.totales;
+    if (t?.grupos && o.grupo) {
+        for (const g of raizFilas.children ?? []) {
+            const porMedida = t.grupos[String(g.value)];
+            if (porMedida) {
+                g.children?.push({ isSubtotal: true, values: valoresTotal(porMedida) });
+            }
+        }
+    }
+    if (t?.general) {
+        raizFilas.children?.push({ isSubtotal: true, values: valoresTotal(t.general, t.resalteGeneral) });
+    }
+
     return {
-        metadata: { columns: [...categorias.map((c) => c.source), ...valores.map((v) => v.source)], objects: o.objetos ?? {} },
-        categorical: { categories: categorias, values: valores },
+        metadata: {
+            columns: [...nivelesFila.flatMap((n) => n.sources), ...(fuentePeriodo ? [fuentePeriodo] : []), ...fuentes],
+            objects: o.objetos ?? {},
+        },
+        matrix: {
+            rows: { root: raizFilas, levels: nivelesFila },
+            columns: { root: raizColumnas, levels: nivelesColumna },
+            valueSources: fuentes,
+        },
     } as unknown as powerbi.DataView;
 }
 

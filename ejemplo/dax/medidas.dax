@@ -196,9 +196,11 @@ DEFINE
 
     // ---------------------------------------------------- tarjetas de texto
     // Para el campo Tarjetas: el panel muestra el texto tal cual, con sus saltos de
-    // línea (UNICHAR ( 10 )). El ejemplo agrupa por municipio; con tiendas en tu modelo,
-    // cambia las columnas de Dim_Municipio por las de tu tabla de tiendas.
-    // Ojo: sin ventas devuelven vacío. Una medida que siempre da texto hace que Power BI
+    // línea (UNICHAR ( 10 )). Power BI evalúa la misma medida en cada nivel: al
+    // seleccionar una región o filtrar, el panel muestra el Top 3 de ese conjunto.
+    // El ejemplo agrupa por municipio; con tiendas en tu modelo, cambia las columnas
+    // de Dim_Municipio por las de tu tabla de tiendas.
+    // Ojo: sin ventas devuelve vacío. Una medida que siempre da texto hace que Power BI
     // mande también los estados sin datos.
     MEASURE '_Medidas'[Top 3 Municipios] =
         IF (
@@ -222,19 +224,6 @@ DEFINE
                     Dim_Municipio[CVEGEO], ASC
                 )
         )
-
-    // El Top 3 de toda la región del estado: repite el texto en sus estados y el panel
-    // lo muestra una vez al seleccionar la región completa. Solo en mapas por estado.
-    MEASURE '_Medidas'[Top 3 Municipios Región] =
-        IF (
-            NOT [Es Municipio] && [Ventas Cadenas] > 0,
-            CALCULATE ( [Top 3 Municipios], REMOVEFILTERS ( Dim_Geo ), VALUES ( Dim_Geo[REGION] ) )
-        )
-
-    // El Top 3 de todo lo que deja el filtro de la página (un segmentador de región, de
-    // cadena, de producto…), sin importar qué estado se mire.
-    MEASURE '_Medidas'[Top 3 Municipios Filtrados] =
-        IF ( [Ventas Cadenas] > 0, CALCULATE ( [Top 3 Municipios], ALLSELECTED ( Dim_Geo ) ) )
 
 // ---------------------------------------------------------------------
 // Prueba: con los datos de ejemplo debe coincidir con ejemplo/valores_esperados.csv

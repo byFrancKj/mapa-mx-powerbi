@@ -136,6 +136,6 @@ test("el modelo de formato expone las tarjetas Colores, Mapa, Etiquetas, Leyenda
     const modelo = visual.getFormattingModel();
     // "Bivariado" y "Regiones" solo aparecen cuando se usan Valor 2 y Región.
     assert.deepEqual(modelo.cards.filter((c) => c.visible !== false).map((c) => c.displayName), [
-        "Colores", "Mapa", "Etiquetas", "Leyenda", "Panel de detalle", "Al seleccionar varias áreas", "Zoom",
+        "Colores", "Mapa", "Etiquetas", "Leyenda", "Panel de detalle", "Zoom",
     ]);
 });

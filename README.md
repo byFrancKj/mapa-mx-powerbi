@@ -28,7 +28,8 @@ En el visual arrastras:
 - **Tus propias regiones**: el visual no trae regiones fijas. Pon tu columna de región en el campo *Región* y dibuja su contorno y su nombre, con una franja del color de cada región si quieres, o pinta cada región de un color. Si cambias las regiones en el modelo, el mapa cambia solo.
 - **Mar y países vecinos**: alrededor de México, el mar con líneas de agua y los nombres de los mares (Océano Pacífico, Golfo de México, Golfo de California, Mar Caribe) y de los países vecinos. O sin fondo, si prefieres el del reporte.
 - **Se acerca a lo que filtras**: al filtrar una región o un estado (segmentación, filtro, drill-down o un clic en otro visual), el mapa lo muestra en grande, deja de fondo lo demás y abre el panel con su resumen.
-- **Panel de detalle**: al seleccionar o filtrar se abre junto al mapa con la comparación de tus fuentes (*Bases a comparar*: diferencia, diferencia % e índice), tarjetas con tus medidas DAX (números, textos como un Top 3, fechas o sí/no) y una tabla por área (un clic en una fila la selecciona en el mapa).
+- **Panel de detalle**: al seleccionar o filtrar se abre junto al mapa con la comparación de tus fuentes (*Bases a comparar*: diferencia, diferencia % e índice), tarjetas con tus medidas DAX (números, textos como un Top 3, fechas o sí/no) con el valor que calcula DAX para la región o lo filtrado, sin sumas del visual, y una tabla por área (un clic en una fila la selecciona en el mapa).
+- **Línea del tiempo**: pon una columna de periodo y reproduce el mapa mes a mes, con play, pausa, el total de los periodos y un rango para elegir qué parte se reproduce.
 - **Zoom** con la rueda, arrastrando, con botones o con el teclado, y "acercar a la selección".
 - **Leyenda** legible (más grande, en lista o en barra) que se reduce sola en visuales chicos.
 - **Clasificación** por cuantiles, intervalos iguales o escala divergente alrededor de un centro (100 en índices, 0 en crecimientos), con paletas ColorBrewer y un semáforo rojo · amarillo · verde.
@@ -81,6 +82,7 @@ privado/       Tus archivos reales: git lo ignora
 - [x] **0.4** Panel de detalle con bases a comparar y tarjetas, zoom, nombres y colores de regiones, colorear por la diferencia entre fuentes y paleta semáforo.
 - [x] **0.5** Regiones propias sin nombres fijos, mar y países vecinos con sus nombres, encuadre y panel al filtrar o al hacer clic en otro visual, panel rediseñado y leyenda más grande (también en barra).
 - [x] **0.6** Tarjetas de cualquier tipo: textos de DAX como un Top 3, fechas y sí/no, también en los tooltips.
+- [x] **0.7** Valores de DAX por región y por filtro en el panel (las tarjetas no calculan) y línea del tiempo.
 - [ ] Certificación en AppSource (opcional: es un trámite con Microsoft; el visual ya cumple sus requisitos técnicos principales).
 
 ## Fuentes, licencia y seguridad
