@@ -82,7 +82,7 @@ test("tarjeta de texto: si difieren, un renglón por texto con sus áreas; nunca
     assert.ok(elemento.querySelector(".tarjeta")?.classList.contains("ancha"));
 });
 
-test("tarjeta de texto: avisa cuántas áreas no tienen texto y usa 'Sin dato' si ninguna tiene", async () => {
+test("tarjeta de texto: las áreas sin texto no cuentan y 'Sin dato' si ninguna tiene; sin notas", async () => {
     const { elemento, visual } = montar();
     visual.update(opcionesUpdate(crearDataView(panelCon([
         { nombre: "Top 3", valores: ["A", "A", null] },
@@ -90,7 +90,7 @@ test("tarjeta de texto: avisa cuántas áreas no tienen texto y usa 'Sin dato' s
     ]))));
     await seleccionar(elemento, "Jalisco", "Estado de México", "Ciudad de México");
     assert.deepEqual(textos(elemento, ".tarjeta-valor"), ["A", "Sin dato"]);
-    assert.deepEqual(textos(elemento, ".tarjeta .nota"), ["2 de 3 estados"]);
+    assert.deepEqual(textos(elemento, ".tarjeta .nota"), []);
 });
 
 test("tarjeta de texto: limita los textos distintos y las áreas que nombra", async () => {
@@ -106,7 +106,7 @@ test("tarjeta de texto: limita los textos distintos y las áreas que nombra", as
     assert.equal(elemento.querySelector(".tarjeta .nota")?.textContent, "y 2 más");
 });
 
-test("tarjeta de fecha: usa el formato de la medida y con varias áreas da el rango", async () => {
+test("tarjeta de fecha: usa el formato de la medida; con estados sueltos, la de cada uno", async () => {
     const { elemento, visual } = montar();
     visual.update(opcionesUpdate(crearDataView(panelCon([{
         nombre: "Última venta",
@@ -117,9 +117,8 @@ test("tarjeta de fecha: usa el formato de la medida y con varias áreas da el ra
     await seleccionar(elemento, "Jalisco");
     assert.deepEqual(textos(elemento, ".tarjeta-valor"), ["30/09/2026"]);
     await seleccionar(elemento, "Estado de México", "Jalisco");
-    assert.deepEqual(textos(elemento, ".tarjeta-valor"), ["15/08/2026 – 30/09/2026"]);
-    assert.ok(elemento.querySelector(".tarjeta")?.classList.contains("ancha"), "el rango se lee completo");
-    assert.deepEqual(textos(elemento, ".tarjeta .nota"), ["rango de 2 estados"]);
+    assert.deepEqual(textos(elemento, ".tarjeta-areas dt"), ["Jalisco", "Estado de México"]);
+    assert.deepEqual(textos(elemento, ".tarjeta-areas dd"), ["30/09/2026", "15/08/2026"]);
 });
 
 test("tarjeta de fecha: también llega como texto en una columna de fechas, y sin formato no falla", async () => {
@@ -156,24 +155,33 @@ test("una medida mixta (número o texto según el caso) se muestra como la dio D
     assert.deepEqual(textos(elemento, ".tarjeta-valor"), ["N/A"]);
 });
 
-test("una medida numérica con textos vacíos sigue siendo numérica: se combina y se puede elegir cómo", async () => {
+test("una medida numérica con textos vacíos sigue siendo numérica: el vacío no cuenta y no se suma", async () => {
     const { elemento, visual } = montar();
-    visual.update(opcionesUpdate(crearDataView(panelCon([{ nombre: "Unidades", valores: [10, "", 30], formato: "#,0", objetos: { agregacion: { tipo: "suma" } } }]))));
+    visual.update(opcionesUpdate(crearDataView(panelCon([{ nombre: "Unidades", valores: [1200, "", 30], formato: "#,0" }]))));
     await seleccionar(elemento, "Jalisco", "Estado de México", "Ciudad de México");
-    assert.deepEqual(textos(elemento, ".tarjeta-valor"), ["40"]);
-    assert.deepEqual(textos(elemento, ".tarjeta .nota"), ["suma de 2 de 3 estados"]);
+    assert.deepEqual(textos(elemento, ".tarjeta-areas dt"), ["Jalisco", "Ciudad de México"]);
+    assert.deepEqual(textos(elemento, ".tarjeta-areas dd"), ["1,200", "30"]);
 });
 
-test("formato: solo las medidas numéricas tienen lista de 'Al seleccionar varias áreas'", () => {
+test("formato: 'Al seleccionar varias áreas' solo lista las bases, nunca las tarjetas", () => {
+    const { visual } = montar();
+    visual.update(opcionesUpdate(crearDataView(panelCon([
+        { nombre: "Top 3", valores: ["A", "B", "C"], tipo: { text: true } },
+        { nombre: "Crec %", valores: [0.1, 0.2, 0.3], formato: "0.0%" },
+    ], { bases: [{ nombre: "Ventas", valores: [1, 2, 3] }] }))));
+    const agregacion = visual.getFormattingModel().cards.find((c) => c.uid.startsWith("agregacion"));
+    const nombres = agregacion?.groups.flatMap((g) => g.slices ?? []).map((s) => s.displayName);
+    assert.deepEqual(nombres, ["Ventas"]);
+});
+
+test("formato: sin bases no hay nada que combinar", () => {
     const { visual } = montar();
     visual.update(opcionesUpdate(crearDataView(panelCon([
         { nombre: "Top 3", valores: ["A", "B", "C"], tipo: { text: true } },
         { nombre: "Última venta", valores: [new Date(2026, 0, 1), new Date(2026, 0, 2), null], tipo: { dateTime: true } },
         { nombre: "Crec %", valores: [0.1, 0.2, 0.3], formato: "0.0%" },
     ]))));
-    const agregacion = visual.getFormattingModel().cards.find((c) => c.uid.startsWith("agregacion"));
-    const nombres = agregacion?.groups.flatMap((g) => g.slices ?? []).map((s) => s.displayName);
-    assert.deepEqual(nombres, ["Crec %"]);
+    assert.equal(visual.getFormattingModel().cards.some((c) => c.uid.startsWith("agregacion")), false);
 });
 
 test("solo Tarjetas: el mapa funciona sin Valor y sin Bases, y sin medidas numéricas no ofrece combinar", async () => {

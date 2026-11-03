@@ -27,6 +27,7 @@ const FONDOS = opciones("Fondo", ["mar", "ninguno"]);
 const ENCUADRES = opciones("Encuadre", ["datos", "pais"]);
 const ESTILOS_LEYENDA = opciones("EstiloLeyenda", ["lista", "barra"]);
 const MODOS_PANEL = opciones("AbrirPanel", ["seleccion", "filtro", "siempre"]);
+const ESCALAS_TIEMPO = opciones("EscalaTiempo", ["comun", "periodo"]);
 export const OPCIONES_AGREGACION = opciones("Agregacion", ["suma", "promedio", "minimo", "maximo", "rango"]);
 
 /** Qué colorea el mapa, ya resuelto según los campos que hay. */
@@ -248,6 +249,22 @@ class AgregacionCard extends Card {
     }
 }
 
+/** Solo aparece con un campo en Periodo. */
+class TiempoCard extends Card {
+    velocidad = new formattingSettings.NumUpDown({
+        name: "velocidad", displayNameKey: "Tiempo_Velocidad", descriptionKey: "Tiempo_Velocidad_Desc", value: 1,
+    });
+    repetir = new formattingSettings.ToggleSwitch({ name: "repetir", displayNameKey: "Tiempo_Repetir", value: true });
+    escala = new formattingSettings.ItemDropdown({
+        name: "escala", displayNameKey: "Tiempo_Escala", descriptionKey: "Tiempo_Escala_Desc", items: ESCALAS_TIEMPO, value: ESCALAS_TIEMPO[0],
+    });
+
+    name = "tiempo";
+    displayNameKey = "Tarjeta_Tiempo";
+    slices: Slice[] = [this.velocidad, this.repetir, this.escala];
+    visible = false;
+}
+
 class ZoomCard extends Card {
     activo = new formattingSettings.ToggleSwitch({ name: "activo", displayNameKey: "Zoom_Activo", value: true });
     rueda = new formattingSettings.ItemDropdown({
@@ -278,6 +295,7 @@ export class Ajustes extends Model {
     leyenda = new LeyendaCard();
     panel = new PanelCard();
     agregacion = new AgregacionCard();
+    tiempo = new TiempoCard();
     zoom = new ZoomCard();
-    cards = [this.colores, this.bivariado, this.mapa, this.grupos, this.etiquetas, this.leyenda, this.panel, this.agregacion, this.zoom];
+    cards = [this.colores, this.bivariado, this.mapa, this.grupos, this.etiquetas, this.leyenda, this.panel, this.agregacion, this.tiempo, this.zoom];
 }

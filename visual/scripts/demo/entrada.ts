@@ -6,7 +6,7 @@
  *   index.html#escena=franjas&ancho=1000&alto=560&sel=14,18
  */
 import { Visual } from "../../src/visual";
-import { crearDataView, crearHostCon, MedidaFalsa, OpcionesDataView } from "../../test/host-falso";
+import { crearDataView, crearHostCon, DatoFalso, MedidaFalsa, OpcionesDataView } from "../../test/host-falso";
 import textos from "../../stringResources/es-MX/resources.resjson";
 import estados from "../../../.cache/vista_previa/estados.json";
 import municipios from "../../../.cache/vista_previa/municipios.json";
@@ -63,6 +63,67 @@ const BASE: OpcionesDataView = {
     tarjetas: TARJETAS,
 };
 
+/**
+ * Lo que calcularía DAX en los nodos de la matriz (el total de lo filtrado y el de cada
+ * región). En la demo: las cifras de volumen se suman, los índices y crecimientos se
+ * promedian y el Top 3 de la región es el de sus estados. En Power BI lo calcula tu medida.
+ */
+function conTotales(o: OpcionesDataView): OpcionesDataView {
+    const medidas: MedidaFalsa[] = [
+        ...(o.valores ? [{ nombre: o.nombre ?? "Ventas", valores: o.valores, resaltes: o.resaltes }] : []),
+        ...(o.bases ?? []),
+        ...(o.tarjetas ?? []),
+    ];
+    // Con un resaltado de otro visual, DAX calcula el total de lo resaltado.
+    const total = (filas: number[], resalte = false): Record<string, DatoFalso> => Object.fromEntries(medidas.map((m) => {
+        const v = filas.map((i) => (resalte && m.resaltes ? m.resaltes[i] : m.valores[i]));
+        // Un Top 3 (renglones con su venta) se recalcula con todos; otro texto, el más frecuente.
+        const textosV = v.filter((x): x is string => typeof x === "string");
+        if (textosV.length > 0 && !textosV.some((x) => x.includes("\n"))) {
+            const veces = new Map<string, number>();
+            textosV.forEach((x) => veces.set(x, (veces.get(x) ?? 0) + 1));
+            return [m.nombre, [...veces].sort((a, b) => b[1] - a[1])[0][0]];
+        }
+        if (textosV.length > 0) {
+            return [m.nombre, (v.filter((x) => typeof x === "string") as string[])
+                .flatMap((x) => x.split("\n")).sort((a, b) => Number(/\$([\d.]+)/.exec(b)?.[1]) - Number(/\$([\d.]+)/.exec(a)?.[1]))
+                .slice(0, 3).join("\n")];
+        }
+        const n = v.filter((x): x is number => typeof x === "number");
+        if (n.length === 0 || typeof v.find((x) => x !== null) !== "number") {
+            return [m.nombre, v.find((x) => x !== null) ?? null];
+        }
+        const promedio = /Índice|Crec|Precio/.test(m.nombre);
+        const suma = n.reduce((a, b) => a + b, 0);
+        return [m.nombre, promedio ? suma / n.length : suma];
+    }));
+    const filas = o.claves.map((_, i) => i);
+    const grupos = o.grupo ? [...new Set(o.grupo.valores.map(String))] : [];
+    return {
+        ...o,
+        totales: {
+            general: total(filas),
+            ...(o.resaltes ? { resalteGeneral: total(filas, true) } : {}),
+            grupos: Object.fromEntries(grupos.map((g) => [g, total(filas.filter((i) => String(o.grupo?.valores[i]) === g))])),
+        },
+    };
+}
+
+/** Doce meses de ventas: estacionalidad y un crecimiento distinto por estado. */
+function porMes(o: OpcionesDataView): OpcionesDataView {
+    const meses = Array.from({ length: 12 }, (_, i) => `2026-${String(i + 1).padStart(2, "0")}`);
+    const estacion = [0.8, 0.78, 0.9, 0.92, 1, 0.97, 0.95, 1.02, 0.98, 1.05, 1.15, 1.4];
+    const valores = meses.map((_, m) => (o.valores ?? []).map((v, i) => {
+        if (v === null) {
+            return null;
+        }
+        const crecimiento = 1 + (((i * 37) % 13) - 4) / 100 * (m / 11) * 3;
+        return Math.round((v / 12) * estacion[m] * crecimiento);
+    }));
+    const total = (o.valores ?? []).map((_, i) => valores.reduce((s, mes) => s + (mes[i] ?? 0), 0));
+    return { ...o, periodos: { nombre: "Año-Mes", etiquetas: meses, valores, total } };
+}
+
 /** Solo las filas que deja un filtro (como lo manda Power BI al filtrar una región). */
 function filtrar(o: OpcionesDataView, queda: (i: number) => boolean): OpcionesDataView {
     const de = <T>(v: T[] | undefined): T[] | undefined => v?.filter((_, i) => queda(i));
@@ -103,6 +164,7 @@ const ESCENAS: Record<string, { titulo: string; datos: OpcionesDataView }> = {
         datos: resaltar(BASE, (i) => (i % 7 === 3 ? null : 0.18 + ((i * 37) % 11) / 40)),
     },
     tipos: { titulo: "Tarjetas de texto, fecha y sí/no", datos: { ...BASE, tarjetas: TARJETAS_TIPOS } },
+    tiempo: { titulo: "Línea del tiempo (12 meses)", datos: { ...porMes(BASE), tarjetas: TARJETAS_TIPOS, objetos: { colores: { paleta: "semaforo" } } } },
     barra: { titulo: "Leyenda en barra", datos: { ...BASE, objetos: { leyenda: { estilo: "barra", posicion: "abajo-izquierda" } } } },
     municipios: {
         titulo: "Municipios de Jalisco (drill-down)",
@@ -181,13 +243,13 @@ function montar(seleccion: string[] = []): void {
         tooltipService: { enabled: () => true, show: mostrar, move: mostrar, hide: () => { globo.style.display = "none"; } },
     });
     const visual = new Visual({ element: nuevo, host: entorno.host } as never);
-    visual.update({ dataViews: [crearDataView(escena.datos)], viewport: { width: estado.ancho, height: estado.alto }, type: 2 } as never);
+    visual.update({ dataViews: [crearDataView(conTotales(escena.datos))], viewport: { width: estado.ancho, height: estado.alto }, type: 2 } as never);
     if (seleccion.length > 0) {
-        // La identidad de un área combina todas sus categorías: clave y grupo.
+        // La identidad de un área es su camino en la matriz: región y clave.
         const grupos = escena.datos.grupo?.valores ?? [];
         entorno.seleccionarDesdeFuera(seleccion.map((k) => {
             const i = escena.datos.claves.indexOf(k);
-            return grupos.length > 0 && i >= 0 ? `${k}|${String(grupos[i])}` : k;
+            return grupos.length > 0 && i >= 0 ? `${String(grupos[i])}|${k}` : k;
         }));
     }
     for (const b of barra.querySelectorAll<HTMLButtonElement>("button")) {

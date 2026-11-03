@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { COLORES_TEMA, crearDataView, crearHost, nuevoElemento, opcionesUpdate, OpcionesDataView, ventana } from "./entorno";
+import { COLORES_TEMA, crearDataView, crearHost, MedidaFalsa, nuevoElemento, opcionesUpdate, OpcionesDataView, ventana } from "./entorno";
 
 const { Visual } = await import("../src/visual");
 const { coloresDivergentes, coloresSecuenciales, SEMAFORO } = await import("../src/paletas");
@@ -143,7 +143,7 @@ test("panel: oculto sin selección; al hacer clic compara las bases y muestra la
     assert.equal(panel(elemento)?.style.width, "274px");
 });
 
-test("panel: varias áreas suman las bases, dan el rango de las tarjetas y una tabla ordenada", async () => {
+test("panel: estados sueltos suman las bases, las tarjetas dan el valor de DAX de cada uno y una tabla ordenada", async () => {
     const { elemento, visual } = montar();
     visual.update(opcionesUpdate(crearDataView(COMPARACION)));
     clic(area(elemento, "Estado de México"));
@@ -154,25 +154,30 @@ test("panel: varias áreas suman las bases, dan el rango de las tarjetas y una t
     assert.equal(elemento.querySelector(".panel-subtitulo")?.textContent, "Jalisco, Estado de México");
     assert.deepEqual(textos(elemento, ".base-valor"), ["$566 M", "$1.2 mil M"]);
     assert.deepEqual(textos(elemento, ".base .nota"), ["suma de 2 estados", "suma de 2 estados"]);
-    assert.deepEqual(textos(elemento, ".tarjeta-valor"), ["5.0% – 6.4%"]);
-    assert.deepEqual(textos(elemento, ".tarjeta .nota"), ["rango de 2 estados"]);
+    // Sin un total de DAX para esa combinación, la tarjeta no calcula: un renglón por estado.
+    assert.deepEqual(textos(elemento, ".tarjeta-areas dt"), ["Jalisco", "Estado de México"]);
+    assert.deepEqual(textos(elemento, ".tarjeta-areas dd"), ["6.4%", "5.0%"]);
+    assert.deepEqual(textos(elemento, ".tarjeta .nota"), []);
     assert.deepEqual(textos(elemento, ".detalle thead th"), ["Estado", "Ventas Cadenas", "Ventas Mercado", "Diferencia %"]);
     assert.deepEqual(textos(elemento, ".detalle tbody th"), ["Jalisco", "Estado de México"]);
     assert.deepEqual(textos(elemento, ".detalle tbody tr:first-child td"), ["$366 M", "$749 M", "-51.1%"]);
 });
 
-test("panel: cada medida se combina como diga el panel de formato (guardado en su columna)", async () => {
+test("panel: cada base se combina como diga el panel de formato (guardado en su columna); las tarjetas no", async () => {
     const { elemento, visual } = montar();
     visual.update(opcionesUpdate(crearDataView({
         ...COMPARACION,
-        tarjetas: [{ nombre: "Crec %", valores: [0.064, 0.05, -0.02], formato: "0.0%", objetos: { agregacion: { tipo: "promedio" } } }],
+        bases: [
+            COMPARACION.bases?.[0] as MedidaFalsa,
+            { nombre: "Ventas Mercado", valores: [749e6, 500e6, 600e6], formato: "\\$#,0", objetos: { agregacion: { tipo: "promedio" } } },
+        ],
     })));
     clic(area(elemento, "Jalisco"));
     await esperar();
     clic(area(elemento, "Estado de México"), { ctrlKey: true });
     await esperar();
-    assert.deepEqual(textos(elemento, ".tarjeta-valor"), ["5.7%"]);
-    assert.deepEqual(textos(elemento, ".tarjeta .nota"), ["promedio de 2 estados"]);
+    assert.deepEqual(textos(elemento, ".base-valor"), ["$566 M", "$625 M"]);
+    assert.deepEqual(textos(elemento, ".base .nota"), ["suma de 2 estados", "promedio de 2 estados"]);
 
     // En el panel de formato: una lista por medida, ligada a su queryName
     const tarjeta = visual.getFormattingModel().cards.find((c) => c.displayName === "Al seleccionar varias áreas") as unknown as {
@@ -181,8 +186,7 @@ test("panel: cada medida se combina como diga el panel de formato (guardado en s
     const listas = tarjeta.groups[0].slices.map((s) => [s.displayName, s.control.properties.descriptor.selector, s.control.properties.value.value]);
     assert.deepEqual(listas, [
         ["Ventas Cadenas", { metadata: "_Medidas.Ventas Cadenas" }, "suma"],
-        ["Ventas Mercado", { metadata: "_Medidas.Ventas Mercado" }, "suma"],
-        ["Crec %", { metadata: "_Medidas.Crec %" }, "promedio"],
+        ["Ventas Mercado", { metadata: "_Medidas.Ventas Mercado" }, "promedio"],
     ]);
 });
 
