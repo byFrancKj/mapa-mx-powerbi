@@ -137,7 +137,7 @@ test("en inglés: mensajes, tooltip, leyenda y unidades", () => {
     assert.equal(etiquetas[0], "$1.5 B");
     area(elemento, "Jalisco")?.dispatchEvent(new ventana.MouseEvent("pointerover", { bubbles: true }));
     assert.equal(llamadas.tooltip[0][1].dataItems?.[0].displayName, "State");
-    assert.deepEqual(tarjetasVisibles(visual), ["Colors", "Map", "Labels", "Legend", "Detail panel", "Zoom"]);
+    assert.deepEqual(tarjetasVisibles(visual), ["Colors", "Map", "Labels", "Legend", "Detail panel", "Panel table", "Zoom"]);
     assert.ok([...elemento.querySelectorAll(".referencia-mar")].some((t) => t.textContent === "Gulf of Mexico"));
 });
 
@@ -176,7 +176,7 @@ test("traducciones: toda clave usada existe en es-ES, es-MX y en-US, y es-MX es 
     // Textos del visual, en todos sus módulos
     for (const archivo of readdirSync(new URL("../src/", import.meta.url)).filter((a) => a.endsWith(".ts"))) {
         const codigo = readFileSync(new URL(`../src/${archivo}`, import.meta.url), "utf8");
-        for (const m of codigo.matchAll(/"((?:Texto|Unidad|Leyenda|Aviso|Mensaje|Panel|Zoom|Tarjeta|Ref|Tiempo)_[\w-]+)"/g)) {
+        for (const m of codigo.matchAll(/"((?:Texto|Unidad|Leyenda|Aviso|Mensaje|Panel|Tabla|Zoom|Tarjeta|Ref|Tiempo)_[\w-]+)"/g)) {
             usadas.add(m[1]);
         }
     }

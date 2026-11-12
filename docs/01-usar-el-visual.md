@@ -18,6 +18,7 @@ Descarga el archivo del *release* de GitHub y comprueba su huella antes de insta
 | **Bases a comparar** | Hasta 4 medidas, una por fuente (por ejemplo `Ventas Cadenas` y `Ventas Mercado Estimada`). El [panel de detalle](#panel-de-detalle) las compara contra la primera. Sin Valor, el mapa se colorea con la primera base. | opcional |
 | **Periodo (línea del tiempo)** | Una columna de tiempo (`Año`, `Año-Mes`, `Semana`…). El mapa muestra un periodo a la vez y se reproduce: ver [Línea del tiempo](#línea-del-tiempo). | opcional |
 | **Tarjetas** | Hasta 8 medidas DAX que el panel de detalle muestra como tarjetas. Pueden devolver números, texto (un Top 3, por ejemplo), fechas o sí/no; el visual no las combina, muestra lo que calcula DAX: ver [Varias áreas](#varias-áreas-el-valor-lo-calcula-dax). | opcional |
+| **Columnas de la tabla** | Hasta 8 medidas para la tabla por estado del panel de detalle, en el orden en que las pongas: ver [La tabla por estado](#la-tabla-por-estado). Sin medidas aquí, la tabla muestra las *Bases a comparar* (o Valor). | opcional |
 | **Información sobre herramientas** | Medidas extra que aparecen al pasar el cursor. | opcional |
 
 La clave puede ser texto o número: el visual completa los ceros que Excel o Power BI suelen quitar (`9` → `"09"`, `1002` → `"01002"`). Los nombres no sirven en Ubicación; si tus datos solo traen nombres o tiendas, conviértelos a clave con el [puente INEGI](02-puente-inegi.md).
@@ -133,7 +134,7 @@ Al hacer clic en un estado (o en varios, con Ctrl+clic; en Mac, ⌘+clic), al fi
 - La **silueta** de lo que resume, con sus colores del mapa; su nombre (o "3 estados", o el nombre de la región si está completa) y por qué está abierto. La franja de arriba toma el color de la región.
 - **Comparación** de las *Bases a comparar*: el valor de cada una con una barra proporcional y, de la primera contra cada una de las demás, la **diferencia**, la **diferencia %** y el **índice** (base 100), en verde o rojo según el signo. Entre dos porcentajes (por ejemplo `% Mix Cadenas` y `% Mix Mercado`) la diferencia va en puntos porcentuales.
 - **Indicadores**: una tarjeta por cada medida de *Tarjetas* (sin tarjetas, muestra Valor), con el valor que calcula DAX para lo que está en el panel.
-- Con varias áreas, una **tabla por estado** (o municipio) ordenada de mayor a menor, con una barra en la primera cifra. **Un clic en una fila** selecciona esa área en el mapa; al pasar el cursor por una fila, el área se marca en el mapa.
+- Con varias áreas, una **tabla por estado** (o municipio) con las columnas que tú elijas: ver [La tabla por estado](#la-tabla-por-estado).
 
 Con una selección, el botón ×, un clic en el fondo del mapa o Esc la quitan. Para seleccionar una región completa, haz clic en su nombre sobre el mapa o en la leyenda.
 
@@ -166,6 +167,38 @@ Las **bases** sí se combinan con estados sueltos, porque la comparación necesi
 Solo entonces la base lleva una nota ("suma de 4 estados"). Con una región completa o con un filtro, la base es la de DAX y no lleva nota. La diferencia, la diferencia % y el índice se calculan con esas cifras.
 
 Una selección con clic en el mapa filtra a los demás visuales, no al propio mapa: para una combinación libre de estados no existe un valor de DAX dentro del mapa. Si lo necesitas, ponlo en un objeto visual de tarjeta o de tabla de Power BI, que sí responde al clic.
+
+### La tabla por estado
+
+La tabla lista las áreas del panel, de mayor a menor en la primera columna y con una barra en esa cifra. Sus columnas las decides tú:
+
+1. **Arrastra medidas al campo *Columnas de la tabla***, en el orden en que las quieras ver: la venta actual, el número de tiendas, un precio, un estatus… Acepta números, textos y fechas, cada uno con el formato de su medida. Si dejas el campo vacío, la tabla muestra las *Bases a comparar* (o Valor), como en versiones anteriores.
+2. **Agrega las columnas que calcula el visual**, en *Formato › Tabla del panel*:
+
+| Opción | Qué agrega |
+|---|---|
+| **Columna % del total** | La participación de cada área en la primera columna: su cifra entre el total que calcula DAX. Va junto a la primera columna. |
+| **% del total sobre** | *El total del mapa*: todo lo que deja el filtro de la página; la participación de Jalisco es la misma aunque selecciones otra cosa. *El total de la tabla*: solo lo que muestra el panel; dentro de una región, sus estados suman 100 %. |
+| **Columna Diferencia** y **Columna Diferencia %** | La primera base contra la segunda, por área, en verde o rojo. Van después de la última base que esté en la tabla (o al final). |
+| **Fila de total** | El total que calcula DAX para lo que muestra la tabla. |
+
+Por ejemplo, para ver **venta actual, participación, diferencia contra el año anterior y tiendas** sin la columna del año anterior:
+
+- *Bases a comparar*: `Ventas` y `Ventas año anterior` (la segunda solo sirve para la diferencia).
+- *Columnas de la tabla*: `Ventas` y `Tiendas`.
+- *Formato › Tabla del panel*: enciende *Columna % del total* y *Columna Diferencia*.
+
+![Tabla del panel con columnas propias: venta, % del total, diferencia contra el mercado, tiendas y precio, con el total de DAX de la región](img/panel_tabla.png)
+
+Cómo se usa:
+
+- **Un clic en un encabezado** ordena la tabla por esa columna; otro clic invierte el orden. El orden no se guarda en el reporte: al abrirlo de nuevo, la tabla empieza por la primera columna.
+- **Un clic en una fila** selecciona esa área en el mapa; al pasar el cursor por una fila, el área se marca en el mapa.
+- La **fila de total** es el valor de DAX, no una suma: un `DISTINCTCOUNT` de tiendas da las tiendas distintas del conjunto. Solo aparece cuando DAX tiene ese total (todo lo filtrado, una región completa, un estado con sus municipios); con estados sueltos no aparece, y el % del total sobre la tabla usa la suma de lo que se ve.
+- Con columnas propias, la tabla también aparece al seleccionar **un solo estado**.
+- Si necesitas otro cálculo u otro orden (la participación de mercado, un % sobre otra medida), escríbelo como medida de DAX y arrástralo al campo: la tabla muestra cualquier medida.
+
+Con muchas columnas, el nombre del área se recorta para que quepan. Si aun así no caben, dale más espacio al panel con *Panel de detalle › Tamaño* o ponlo *Abajo*.
 
 ### Tarjetas con texto, fechas o sí/no
 
@@ -277,6 +310,8 @@ Con dos bases o más, *Colores › Colorear por* ofrece **Diferencia entre bases
 
 **Panel de detalle:** mostrar, cuándo abrirlo, posición, tamaño, silueta, diferencia, índice, diferencias en verde y rojo, y tamaño del texto.
 
+**Tabla del panel:** mostrar la tabla, columna % del total (y sobre qué total), columnas de diferencia y fila de total (ver [La tabla por estado](#la-tabla-por-estado)).
+
 **Al seleccionar varias áreas:** cómo se combina cada base con estados sueltos (ver [arriba](#varias-áreas-el-valor-lo-calcula-dax)).
 
 **Línea del tiempo:** velocidad, repetir y escala de colores (ver [Línea del tiempo](#línea-del-tiempo)); solo aparece con un campo en *Periodo*.
@@ -303,7 +338,7 @@ Si unas métricas necesitan escala divergente y otras no, usa un visual por tipo
 
 - **Clic** en un área: filtra el resto de la página y abre el panel de detalle. **Ctrl+clic** (⌘+clic en Mac) agrega áreas. **Clic en el fondo** o Esc: quita la selección.
 - **Clic en el nombre de una región** (sobre el mapa o en la leyenda): selecciona la región entera.
-- **Clic en una fila de la tabla del panel**: selecciona esa área.
+- **Clic en una fila de la tabla del panel**: selecciona esa área. **Clic en un encabezado**: ordena la tabla por esa columna.
 - **Zoom**: rueda, arrastre, pellizco, botones y teclado (ver [Zoom](#zoom)).
 - **Clic en otro visual** (una barra, una fila): el mapa usa los valores resaltados, deja de fondo lo que no corresponde y abre el panel (ver [Un clic en otro visual](#un-clic-en-otro-visual)).
 - **Clic derecho**: menú contextual de Power BI (obtener detalles, incluir, excluir, explorar…).

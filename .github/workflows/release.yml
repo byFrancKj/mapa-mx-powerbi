@@ -1,11 +1,13 @@
 # Publica una versión del visual al subir una etiqueta vX.Y.Z (debe coincidir
 # con "version" en visual/pbiviz.json). El .pbiviz se compila aquí, desde el
 # código de la etiqueta, con su huella SHA-256 y una atestación de origen.
+# Las etiquetas de prueba (vX.Y.Z-rc.N) no pasan por aquí: sus pre-releases se
+# publican a mano con el .pbiviz que compila el CI.
 name: Release
 
 on:
   push:
-    tags: ["v*"]
+    tags: ["v*", "!v*-*"]
 
 permissions:
   contents: write

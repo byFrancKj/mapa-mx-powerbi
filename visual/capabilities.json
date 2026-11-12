@@ -57,6 +57,14 @@
             "descriptionKey": "Rol_Tarjetas_Desc"
         },
         {
+            "name": "tabla",
+            "kind": "Measure",
+            "displayName": "Columnas de la tabla",
+            "description": "Las medidas que quieras ver por estado o municipio en la tabla del panel de detalle, en este orden: venta, número de tiendas, participación… Sin medidas aquí, la tabla muestra las Bases a comparar (o Valor).",
+            "displayNameKey": "Rol_Tabla",
+            "descriptionKey": "Rol_Tabla_Desc"
+        },
+        {
             "name": "tooltips",
             "kind": "Measure",
             "displayName": "Información sobre herramientas",
@@ -82,6 +90,9 @@
                         "max": 4
                     },
                     "tarjetas": {
+                        "max": 8
+                    },
+                    "tabla": {
                         "max": 8
                     },
                     "periodo": {
@@ -139,6 +150,11 @@
                         {
                             "for": {
                                 "in": "tarjetas"
+                            }
+                        },
+                        {
+                            "for": {
+                                "in": "tabla"
                             }
                         },
                         {
@@ -439,6 +455,40 @@
                 "tamanoTexto": {
                     "type": {
                         "numeric": true
+                    }
+                }
+            }
+        },
+        "tabla": {
+            "properties": {
+                "mostrar": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "participacion": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "baseParticipacion": {
+                    "type": {
+                        "enumeration": []
+                    }
+                },
+                "diferencia": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "relativa": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "total": {
+                    "type": {
+                        "bool": true
                     }
                 }
             }

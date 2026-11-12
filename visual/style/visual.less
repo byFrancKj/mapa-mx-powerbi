@@ -350,7 +350,17 @@
     flex-direction: column;
     gap: 16px;
     overflow: auto;
-    padding: 12px 14px 14px;
+    // El espacio de arriba y de abajo va en las secciones y no aquí: así el encabezado y
+    // el total de la tabla, que se quedan fijos al desplazar, llegan hasta el borde.
+    padding: 0 14px;
+
+    > :first-child {
+        margin-top: 12px;
+    }
+
+    > :last-child {
+        margin-bottom: 14px;
+    }
 
     .horizontal & {
         flex-direction: row;
@@ -359,6 +369,13 @@
         > .panel-seccion {
             flex: 1 1 220px;
             min-width: 200px;
+            margin-top: 12px;
+            margin-bottom: 14px;
+        }
+
+        // La tabla necesita más ancho que las otras secciones.
+        > .seccion-tabla {
+            flex: 2 1 340px;
         }
     }
 }
@@ -590,10 +607,13 @@
         white-space: nowrap;
     }
 
+    // El nombre del área ocupa lo que dejan las cifras y se recorta si no cabe.
     th[scope="row"],
     thead th:first-child {
         overflow: hidden;
-        max-width: 11em;
+        width: 100%;
+        min-width: 5.5em;
+        max-width: 0;
         text-align: left;
         text-overflow: ellipsis;
     }
@@ -613,6 +633,65 @@
 
     tbody th {
         font-weight: 400;
+    }
+
+    // Un clic en un encabezado ordena la tabla; la flecha marca la columna y el sentido.
+    .ordenar {
+        padding: 0;
+        border: 0;
+        background: none;
+        color: inherit;
+        font: inherit;
+        text-align: inherit;
+        cursor: pointer;
+
+        &:hover {
+            text-decoration: underline;
+        }
+
+        &:focus-visible {
+            outline: 2px solid currentColor;
+            outline-offset: 1px;
+        }
+    }
+
+    th[aria-sort="descending"] .ordenar::after {
+        content: "\00A0\25BE";
+    }
+
+    th[aria-sort="ascending"] .ordenar::after {
+        content: "\00A0\25B4";
+    }
+
+    // Un texto de DAX (un estatus, el producto más vendido) se recorta; completo, en su título.
+    td.texto {
+        overflow: hidden;
+        max-width: 12em;
+        text-align: left;
+        text-overflow: ellipsis;
+    }
+
+    thead th.texto {
+        text-align: left;
+    }
+
+    td.positivo {
+        color: var(--positivo);
+    }
+
+    td.negativo {
+        color: var(--negativo);
+    }
+
+    // El total de DAX se queda a la vista al desplazar la tabla.
+    tfoot th,
+    tfoot td {
+        position: sticky;
+        bottom: 0;
+        border-bottom: 0;
+        background: var(--panel-fondo, #ffffff);
+        box-shadow: inset 0 1px 0 var(--panel-texto, #c8c6c4);
+        font-weight: 600;
     }
 
     // Un clic en una fila la selecciona en el mapa.

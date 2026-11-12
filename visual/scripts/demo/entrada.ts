@@ -4,6 +4,7 @@
  *
  * En la dirección se puede fijar la escena, el tamaño y una selección inicial:
  *   index.html#escena=franjas&ancho=1000&alto=560&sel=14,18
+ * y la posición del panel de detalle: &panel=abajo (derecha, abajo o encima).
  */
 import { Visual } from "../../src/visual";
 import { crearDataView, crearHostCon, DatoFalso, MedidaFalsa, OpcionesDataView } from "../../test/host-falso";
@@ -53,6 +54,16 @@ const TARJETAS_TIPOS: MedidaFalsa[] = [
     { nombre: "Estatus", tipo: { text: true }, valores: filas.map((e) => (((e["Crec % Cadenas"] as number | null) ?? 0) > 0.08 ? "En meta" : "Por debajo")) },
     TARJETAS[1],
 ];
+/** Tiendas con venta en cada estado (en la demo, proporcional a la venta). */
+const TIENDAS: MedidaFalsa = {
+    nombre: "Tiendas",
+    formato: "#,0",
+    lugar: 1,
+    valores: filas.map((e, i) => {
+        const ventas = e["Ventas Cadenas"] as number | null;
+        return ventas === null ? null : Math.round(ventas / 2.6e6) + (i % 5) * 3;
+    }),
+};
 const BASE: OpcionesDataView = {
     claves: filas.map((e) => e.CVE_ENT),
     grupo: { nombre: "Región", valores: filas.map((e) => e.REGION) },
@@ -73,6 +84,7 @@ function conTotales(o: OpcionesDataView): OpcionesDataView {
         ...(o.valores ? [{ nombre: o.nombre ?? "Ventas", valores: o.valores, resaltes: o.resaltes }] : []),
         ...(o.bases ?? []),
         ...(o.tarjetas ?? []),
+        ...(o.tabla ?? []),
     ];
     // Con un resaltado de otro visual, DAX calcula el total de lo resaltado.
     const total = (filas: number[], resalte = false): Record<string, DatoFalso> => Object.fromEntries(medidas.map((m) => {
@@ -135,6 +147,7 @@ function filtrar(o: OpcionesDataView, queda: (i: number) => boolean): OpcionesDa
         valores: de(o.valores),
         bases: o.bases?.map(medida),
         tarjetas: o.tarjetas?.map(medida),
+        tabla: o.tabla?.map(medida),
     };
 }
 
@@ -145,7 +158,10 @@ function resaltar(o: OpcionesDataView, parte: (i: number) => number | null): Opc
         return x === null || p === null ? null : typeof x === "number" ? x * p : x;
     }) as T[];
     const medida = (m: MedidaFalsa): MedidaFalsa => ({ ...m, resaltes: de(m.valores) });
-    return { ...o, resaltes: o.valores ? de(o.valores) : undefined, bases: o.bases?.map(medida), tarjetas: o.tarjetas?.map(medida) };
+    return {
+        ...o, resaltes: o.valores ? de(o.valores) : undefined,
+        bases: o.bases?.map(medida), tarjetas: o.tarjetas?.map(medida), tabla: o.tabla?.map(medida),
+    };
 }
 
 const ESCENAS: Record<string, { titulo: string; datos: OpcionesDataView }> = {
@@ -162,6 +178,16 @@ const ESCENAS: Record<string, { titulo: string; datos: OpcionesDataView }> = {
     producto: {
         titulo: "Clic en otra tabla (un producto)",
         datos: resaltar(BASE, (i) => (i % 7 === 3 ? null : 0.18 + ((i * 37) % 11) / 40)),
+    },
+    columnas: {
+        titulo: "Tabla con columnas propias",
+        datos: {
+            ...BASE,
+            // Ventas Cadenas está en Bases y es la primera de Columnas de la tabla; el mercado solo sirve para la diferencia.
+            bases: [{ ...BASES_VENTAS[0], tambien: { tabla: 0 } }, BASES_VENTAS[1]],
+            tabla: [TIENDAS, { nombre: "Precio Promedio", valores: col("Precio Promedio Cadenas"), formato: "\\$#,0.00", lugar: 2 }],
+            objetos: { colores: { paleta: "semaforo" }, panel: { abrir: "siempre" }, tabla: { participacion: true, diferencia: true, relativa: false } },
+        },
     },
     tipos: { titulo: "Tarjetas de texto, fecha y sí/no", datos: { ...BASE, tarjetas: TARJETAS_TIPOS } },
     tiempo: { titulo: "Línea del tiempo (12 meses)", datos: { ...porMes(BASE), tarjetas: TARJETAS_TIPOS, objetos: { colores: { paleta: "semaforo" } } } },
@@ -243,7 +269,11 @@ function montar(seleccion: string[] = []): void {
         tooltipService: { enabled: () => true, show: mostrar, move: mostrar, hide: () => { globo.style.display = "none"; } },
     });
     const visual = new Visual({ element: nuevo, host: entorno.host } as never);
-    visual.update({ dataViews: [crearDataView(conTotales(escena.datos))], viewport: { width: estado.ancho, height: estado.alto }, type: 2 } as never);
+    const posicion = parametros.get("panel");
+    const datos: OpcionesDataView = posicion
+        ? { ...escena.datos, objetos: { ...escena.datos.objetos, panel: { ...escena.datos.objetos?.panel, posicion } } }
+        : escena.datos;
+    visual.update({ dataViews: [crearDataView(conTotales(datos))], viewport: { width: estado.ancho, height: estado.alto }, type: 2 } as never);
     if (seleccion.length > 0) {
         // La identidad de un área es su camino en la matriz: región y clave.
         const grupos = escena.datos.grupo?.valores ?? [];

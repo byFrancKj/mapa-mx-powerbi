@@ -34,15 +34,45 @@ export interface LineaDiferencia {
 /** Por qué está abierto el panel. */
 export type MotivoPanel = "seleccion" | "filtro" | "resaltado" | "todo";
 
+/** Una columna de la tabla por área: una medida, o una cifra que calcula el visual. */
+export interface ColumnaDetalle {
+    /** La identifica al ordenar. */
+    clave: string;
+    nombre: string;
+    /** De dónde sale la cifra (título emergente): "Ventas − Ventas AA", por ejemplo. */
+    titulo: string;
+    /** Un texto de DAX: va a la izquierda y se recorta. */
+    esTexto: boolean;
+}
+
+export interface CeldaDetalle {
+    texto: string;
+    /** -1 o 1 en una diferencia (rojo o verde); 0 en las demás. */
+    signo: number;
+}
+
 /** Una fila de la tabla por área: un clic la selecciona en el mapa. */
 export interface FilaDetalle {
     clave: string;
     nombre: string;
     /** Su color en el mapa. */
     color: string;
-    celdas: string[];
+    celdas: CeldaDetalle[];
     /** Primera columna entre su máximo (0 a 1), para la barra; null sin dato. */
     barra: number | null;
+}
+
+/** La tabla por área, ya ordenada. */
+export interface TablaDetalle {
+    /** Encabezado de la columna de áreas (Estado o Municipio). */
+    area: string;
+    columnas: ColumnaDetalle[];
+    filas: FilaDetalle[];
+    /** Lo que calculó DAX para todo lo que muestra la tabla; null si no hay ese total. */
+    total: { nombre: string; celdas: CeldaDetalle[] } | null;
+    /** La columna que ordena la tabla ("" es la de áreas). */
+    orden: { columna: string; descendente: boolean };
+    resto: string;
 }
 
 export interface ModeloPanel {
@@ -60,8 +90,8 @@ export interface ModeloPanel {
     /** Una por cada base contra la primera. */
     diferencias: Array<{ titulo: string; lineas: LineaDiferencia[] }>;
     tarjetas: Cifra[];
-    /** Tabla por área (con varias áreas). */
-    detalle: { columnas: string[]; filas: FilaDetalle[]; resto: string } | null;
+    /** Tabla por área (con varias áreas o con columnas propias). */
+    detalle: TablaDetalle | null;
 }
 
 export interface EstiloPanel {
@@ -94,6 +124,8 @@ export interface AccionesPanel {
     elegir(clave: string, multiple: boolean): void;
     /** El cursor entra a una fila (o sale, con null): se marca el área en el mapa. */
     senalar(clave: string | null): void;
+    /** Clic en un encabezado de la tabla ("" es la columna de áreas). */
+    ordenar(columna: string, descendente: boolean): void;
 }
 
 export interface Recuadro {
@@ -110,17 +142,21 @@ const LARGO_TEXTO_CORTO = 16;
 
 export class Panel {
     private readonly raiz: Sel<HTMLElement>;
+    /** El encabezado con el que se acaba de ordenar: al redibujar conserva el foco y el desplazamiento. */
+    private reordenada: string | null = null;
 
     constructor(contenedor: Sel<HTMLElement>, private readonly acciones: AccionesPanel) {
         this.raiz = contenedor.append("aside").classed("panel", true).attr("role", "region").style("display", "none");
     }
 
     ocultar(): void {
+        this.reordenada = null;
         this.raiz.style("display", "none").selectAll("*").remove();
     }
 
     dibujar(m: ModeloPanel, e: EstiloPanel, t: TextosPanel, caja: Recuadro): void {
         const r = this.raiz;
+        const desplazamiento = this.reordenada === null ? 0 : r.select<HTMLDivElement>(".panel-cuerpo").node()?.scrollTop ?? 0;
         r.selectAll("*").remove();
         r.style("display", null)
             .attr("aria-label", t.region)
@@ -198,8 +234,13 @@ export class Panel {
             }
         }
         if (m.detalle) {
-            this.dibujarDetalle(this.seccion(cuerpo, t.detalle), m.detalle, e, t);
+            this.dibujarDetalle(this.seccion(cuerpo, t.detalle).classed("seccion-tabla", true), m.detalle, e, t);
         }
+        const nodo = cuerpo.node();
+        if (nodo && desplazamiento > 0) {
+            nodo.scrollTop = desplazamiento;
+        }
+        this.reordenada = null;
     }
 
     private seccion(cuerpo: Sel<HTMLDivElement>, titulo: string): Sel<HTMLElement> {
@@ -248,15 +289,51 @@ export class Panel {
     }
 
     /**
-     * Tabla por área, de mayor a menor, con una barra en la primera columna. Un clic (o
-     * Enter) en una fila selecciona esa área en el mapa; pasar el cursor la marca.
+     * Tabla por área con una barra en la primera columna. Un clic en un encabezado la
+     * ordena por esa columna (otro clic invierte el orden). Un clic (o Enter) en una fila
+     * selecciona esa área en el mapa; pasar el cursor la marca.
      */
-    private dibujarDetalle(seccion: Sel<HTMLElement>, detalle: NonNullable<ModeloPanel["detalle"]>, e: EstiloPanel, t: TextosPanel): void {
+    private dibujarDetalle(seccion: Sel<HTMLElement>, detalle: TablaDetalle, e: EstiloPanel, t: TextosPanel): void {
         const tabla = seccion.append("table").classed("detalle", true);
         const encabezados = tabla.append("thead").append("tr");
-        detalle.columnas.forEach((c, i) => {
-            encabezados.append("th").attr("scope", "col").attr("title", c).classed("con-barra", i === 1).text(c);
-        });
+        const encabezado = (clave: string, nombre: string, titulo: string, esTexto: boolean): void => {
+            const ordenada = detalle.orden.columna === clave;
+            const th = encabezados.append("th")
+                .attr("scope", "col")
+                .attr("title", titulo)
+                .classed("texto", esTexto)
+                .attr("aria-sort", ordenada ? (detalle.orden.descendente ? "descending" : "ascending") : null);
+            if (!e.interactivo) {
+                th.text(nombre);
+                return;
+            }
+            const boton = th.append("button")
+                .attr("type", "button")
+                .classed("ordenar", true)
+                .text(nombre)
+                .on("click", (evento: MouseEvent) => {
+                    evento.stopPropagation();
+                    this.reordenada = clave;
+                    // Las cifras empiezan de mayor a menor; los textos, de la A a la Z.
+                    this.acciones.ordenar(clave, ordenada ? !detalle.orden.descendente : !esTexto);
+                });
+            if (this.reordenada === clave) {
+                boton.node()?.focus({ preventScroll: true });
+            }
+        };
+        encabezado("", detalle.area, detalle.area, true);
+        for (const c of detalle.columnas) {
+            encabezado(c.clave, c.nombre, c.titulo, c.esTexto);
+        }
+        const celda = (fila: Sel<HTMLTableRowElement>, c: CeldaDetalle, i: number): Sel<HTMLTableCellElement> => {
+            const esTexto = detalle.columnas[i]?.esTexto ?? false;
+            return fila.append("td")
+                .classed("texto", esTexto)
+                .classed("positivo", e.colorSigno && c.signo > 0)
+                .classed("negativo", e.colorSigno && c.signo < 0)
+                .attr("title", esTexto ? c.texto : null)
+                .text(c.texto);
+        };
         const cuerpoTabla = tabla.append("tbody");
         for (const f of detalle.filas) {
             const fila = cuerpoTabla.append("tr");
@@ -282,13 +359,18 @@ export class Panel {
             const nombre = fila.append("th").attr("scope", "row").attr("title", f.nombre);
             nombre.append("span").classed("muestra-area", true).style("background", e.colores.texto ? "transparent" : f.color);
             nombre.append("span").text(f.nombre);
-            f.celdas.forEach((celda, i) => {
-                const td = fila.append("td").text(celda);
+            f.celdas.forEach((c, i) => {
+                const td = celda(fila, c, i);
                 if (i === 0 && f.barra !== null) {
                     // La barra va de fondo, detrás del número, para no ensanchar la tabla.
                     td.classed("con-barra", true).style("--barra", `${Math.max(0, Math.min(1, f.barra)) * 100}%`);
                 }
             });
+        }
+        if (detalle.total) {
+            const pie = tabla.append("tfoot").append("tr");
+            pie.append("th").attr("scope", "row").text(detalle.total.nombre);
+            detalle.total.celdas.forEach((c, i) => celda(pie, c, i));
         }
         if (detalle.resto) {
             seccion.append("p").classed("nota", true).text(detalle.resto);

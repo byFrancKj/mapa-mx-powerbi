@@ -83,6 +83,7 @@ privado/       Tus archivos reales: git lo ignora
 - [x] **0.5** Regiones propias sin nombres fijos, mar y países vecinos con sus nombres, encuadre y panel al filtrar o al hacer clic en otro visual, panel rediseñado y leyenda más grande (también en barra).
 - [x] **0.6** Tarjetas de cualquier tipo: textos de DAX como un Top 3, fechas y sí/no, también en los tooltips.
 - [x] **0.7** Valores de DAX por región y por filtro en el panel (las tarjetas no calculan) y línea del tiempo.
+- [x] **0.8** Tabla del panel con columnas propias: cualquier medida, % del total, diferencia, fila de total de DAX y orden por columna.
 - [ ] Certificación en AppSource (opcional: es un trámite con Microsoft; el visual ya cumple sus requisitos técnicos principales).
 
 ## Fuentes, licencia y seguridad

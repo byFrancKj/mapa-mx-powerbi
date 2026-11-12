@@ -127,6 +127,8 @@ export interface OpcionesDataView {
     /** Campos Bases a comparar y Tarjetas. `objetos` es lo que Power BI guarda en la columna. */
     bases?: MedidaFalsa[];
     tarjetas?: MedidaFalsa[];
+    /** Campo Columnas de la tabla. */
+    tabla?: MedidaFalsa[];
     /** Propiedades del panel de formato, como las guarda Power BI. */
     objetos?: Record<string, Record<string, unknown>>;
     /**
@@ -163,16 +165,29 @@ export interface MedidaFalsa {
     /** queryName (por omisión, "_Medidas.<nombre>"). */
     consulta?: string;
     objetos?: Record<string, Record<string, unknown>>;
+    /**
+     * La misma medida también está en otro campo, en ese lugar: Power BI la manda una sola
+     * vez, con sus dos roles ({ tabla: 0 } = además es la primera de Columnas de la tabla).
+     */
+    tambien?: Record<string, number>;
+    /** Su lugar en su campo (por omisión, el orden en que se escribe). */
+    lugar?: number;
 }
 
-const columnaMedida = (rol: string, m: MedidaFalsa) => ({
-    source: {
-        displayName: m.nombre, roles: { [rol]: true }, format: m.formato, type: m.tipo,
-        queryName: m.consulta ?? `_Medidas.${m.nombre}`, isMeasure: true, objects: m.objetos,
-    },
-    values: m.valores,
-    ...(m.resaltes ? { highlights: m.resaltes } : {}),
-});
+/** `lugar` es la posición en el campo: Power BI la anota en `rolesIndex`. */
+const columnaMedida = (rol: string, m: MedidaFalsa, lugar?: number) => {
+    const lugares = { ...(lugar === undefined ? {} : { [rol]: lugar }), ...m.tambien };
+    return {
+        source: {
+            displayName: m.nombre, format: m.formato, type: m.tipo,
+            roles: Object.fromEntries([rol, ...Object.keys(m.tambien ?? {})].map((r) => [r, true])),
+            ...(Object.keys(lugares).length > 0 ? { rolesIndex: Object.fromEntries(Object.entries(lugares).map(([r, i]) => [r, [i]])) } : {}),
+            queryName: m.consulta ?? `_Medidas.${m.nombre}`, isMeasure: true, objects: m.objetos,
+        },
+        values: m.valores,
+        ...(m.resaltes ? { highlights: m.resaltes } : {}),
+    };
+};
 
 interface ColumnaFalsa {
     source: Record<string, unknown> & { displayName: string };
@@ -195,6 +210,7 @@ export function crearDataView(o: OpcionesDataView): powerbi.DataView {
         ...(o.valores2 ? [{ source: { displayName: o.nombre2 ?? "Valor 2", roles: { valor2: true }, format: o.formato2 }, values: o.valores2 }] : []),
         ...(o.bases ?? []).map((m) => columnaMedida("bases", m)),
         ...(o.tarjetas ?? []).map((m) => columnaMedida("tarjetas", m)),
+        ...(o.tabla ?? []).map((m, i) => columnaMedida("tabla", m, m.lugar ?? i)),
         ...(o.tooltips ?? []).map((t) => ({ source: { displayName: t.nombre, roles: { tooltips: true }, format: t.formato }, values: t.valores })),
     ];
     const conResalte = medidas.some((m) => m.highlights);

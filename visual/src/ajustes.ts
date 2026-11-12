@@ -28,6 +28,7 @@ const ENCUADRES = opciones("Encuadre", ["datos", "pais"]);
 const ESTILOS_LEYENDA = opciones("EstiloLeyenda", ["lista", "barra"]);
 const MODOS_PANEL = opciones("AbrirPanel", ["seleccion", "filtro", "siempre"]);
 const ESCALAS_TIEMPO = opciones("EscalaTiempo", ["comun", "periodo"]);
+const BASES_PARTICIPACION = opciones("BaseParticipacion", ["mapa", "panel"]);
 export const OPCIONES_AGREGACION = opciones("Agregacion", ["suma", "promedio", "minimo", "maximo", "rango"]);
 
 /** Qué colorea el mapa, ya resuelto según los campos que hay. */
@@ -226,6 +227,43 @@ class PanelCard extends Card {
     }
 }
 
+/**
+ * La tabla por área del panel. Sus columnas son las medidas del campo "Columnas de la
+ * tabla" (sin medidas ahí, las bases o Valor); aquí se agregan las que calcula el visual.
+ */
+class TablaCard extends Card {
+    mostrar = new formattingSettings.ToggleSwitch({ name: "mostrar", displayNameKey: "Tabla_Mostrar", value: true });
+    participacion = new formattingSettings.ToggleSwitch({
+        name: "participacion", displayNameKey: "Tabla_Participacion", descriptionKey: "Tabla_Participacion_Desc", value: false,
+    });
+    baseParticipacion = new formattingSettings.ItemDropdown({
+        name: "baseParticipacion", displayNameKey: "Tabla_BaseParticipacion", descriptionKey: "Tabla_BaseParticipacion_Desc",
+        items: BASES_PARTICIPACION, value: BASES_PARTICIPACION[0],
+    });
+    diferencia = new formattingSettings.ToggleSwitch({
+        name: "diferencia", displayNameKey: "Tabla_Diferencia", descriptionKey: "Tabla_Diferencia_Desc", value: false,
+    });
+    relativa = new formattingSettings.ToggleSwitch({
+        name: "relativa", displayNameKey: "Tabla_Relativa", descriptionKey: "Tabla_Diferencia_Desc", value: true,
+    });
+    total = new formattingSettings.ToggleSwitch({ name: "total", displayNameKey: "Tabla_Total", descriptionKey: "Tabla_Total_Desc", value: true });
+
+    name = "tabla";
+    displayNameKey = "Tarjeta_Tabla";
+    descriptionKey = "Tarjeta_Tabla_Desc";
+    topLevelSlice = this.mostrar;
+    slices: Slice[] = [this.participacion, this.baseParticipacion, this.diferencia, this.relativa, this.total];
+
+    /** Hay dos bases o más: aplican las columnas de diferencia. */
+    hayComparacion = false;
+
+    onPreProcess(): void {
+        this.baseParticipacion.visible = this.participacion.value;
+        this.diferencia.visible = this.hayComparacion;
+        this.relativa.visible = this.hayComparacion;
+    }
+}
+
 /** Una lista por medida del panel; la arma el visual con las columnas que recibe. */
 class AgregacionCard extends Card {
     name = "agregacion";
@@ -294,8 +332,9 @@ export class Ajustes extends Model {
     etiquetas = new EtiquetasCard();
     leyenda = new LeyendaCard();
     panel = new PanelCard();
+    tabla = new TablaCard();
     agregacion = new AgregacionCard();
     tiempo = new TiempoCard();
     zoom = new ZoomCard();
-    cards = [this.colores, this.bivariado, this.mapa, this.grupos, this.etiquetas, this.leyenda, this.panel, this.agregacion, this.tiempo, this.zoom];
+    cards = [this.colores, this.bivariado, this.mapa, this.grupos, this.etiquetas, this.leyenda, this.panel, this.tabla, this.agregacion, this.tiempo, this.zoom];
 }
