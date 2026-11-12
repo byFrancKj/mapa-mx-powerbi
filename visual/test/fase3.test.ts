@@ -26,14 +26,14 @@ const CLAVES = ["01", "02", "03", "04", "05", "06", "07", "08", "09"];
 const X = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 const Y = [9, 8, 7, 6, 5, 4, 3, 2, 1];
 
-function bivariado(extra: Partial<Parameters<typeof crearDataView>[0]> = {}) {
-    return crearDataView({ claves: CLAVES, valores: X, nombre: "Índice", formato: "#,0", ...extra });
+type Opciones = Parameters<typeof crearDataView>[0];
+
+function bivariado(extra: Partial<Opciones> = {}): Opciones {
+    return { claves: CLAVES, valores: X, nombre: "Índice", formato: "#,0", ...extra };
 }
 
-function conValor2(dv: ReturnType<typeof crearDataView>, valores2: Array<number | null>, nombre = "Crecimiento") {
-    const columna = { source: { displayName: nombre, roles: { valor2: true }, format: "0.0%" }, values: valores2 };
-    (dv.categorical?.values as unknown as unknown[]).push(columna);
-    return dv;
+function conValor2(o: Opciones, valores2: Array<number | null>, nombre = "Crecimiento") {
+    return crearDataView({ ...o, valores2, nombre2: nombre, formato2: "0.0%" });
 }
 
 test("paletas bivariadas: 9 colores, gris en la esquina baja-baja", () => {
@@ -137,7 +137,7 @@ test("en inglés: mensajes, tooltip, leyenda y unidades", () => {
     assert.equal(etiquetas[0], "$1.5 B");
     area(elemento, "Jalisco")?.dispatchEvent(new ventana.MouseEvent("pointerover", { bubbles: true }));
     assert.equal(llamadas.tooltip[0][1].dataItems?.[0].displayName, "State");
-    assert.deepEqual(tarjetasVisibles(visual), ["Colors", "Map", "Labels", "Legend", "Detail panel", "Combining several areas", "Zoom"]);
+    assert.deepEqual(tarjetasVisibles(visual), ["Colors", "Map", "Labels", "Legend", "Detail panel", "Panel table", "Zoom"]);
     assert.ok([...elemento.querySelectorAll(".referencia-mar")].some((t) => t.textContent === "Gulf of Mexico"));
 });
 
@@ -176,7 +176,7 @@ test("traducciones: toda clave usada existe en es-ES, es-MX y en-US, y es-MX es 
     // Textos del visual, en todos sus módulos
     for (const archivo of readdirSync(new URL("../src/", import.meta.url)).filter((a) => a.endsWith(".ts"))) {
         const codigo = readFileSync(new URL(`../src/${archivo}`, import.meta.url), "utf8");
-        for (const m of codigo.matchAll(/"((?:Texto|Unidad|Leyenda|Aviso|Mensaje|Panel|Zoom|Tarjeta|Ref)_[\w-]+)"/g)) {
+        for (const m of codigo.matchAll(/"((?:Texto|Unidad|Leyenda|Aviso|Mensaje|Panel|Tabla|Zoom|Tarjeta|Ref|Tiempo)_[\w-]+)"/g)) {
             usadas.add(m[1]);
         }
     }

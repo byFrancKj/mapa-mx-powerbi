@@ -1,7 +1,7 @@
 {
   "name": "mapa-mexico-inegi",
   "description": "Visual de Power BI: mapa de México por clave INEGI. Los datos y las medidas vienen del modelo; el visual solo trae la geometría.",
-  "version": "0.6.0",
+  "version": "0.8.0",
   "private": true,
   "license": "MIT",
   "type": "module",
@@ -41,5 +41,11 @@
     "powerbi-visuals-tools": "7.2.1",
     "tsx": "^4.20.0",
     "typescript": "5.5.4"
+  },
+  "overrides": {
+    "uuid": "^11.1.1",
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "^11.0.1"
+    }
   }
 }

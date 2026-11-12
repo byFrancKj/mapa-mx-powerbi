@@ -17,6 +17,14 @@
             "descriptionKey": "Rol_Grupo_Desc"
         },
         {
+            "name": "periodo",
+            "kind": "Grouping",
+            "displayName": "Periodo (línea del tiempo)",
+            "description": "Columna de tiempo (Año, Año-Mes, Semana…). El mapa muestra un periodo a la vez y se reproduce como una animación; cada valor lo calcula DAX en su periodo.",
+            "displayNameKey": "Rol_Periodo",
+            "descriptionKey": "Rol_Periodo_Desc"
+        },
+        {
             "name": "valor",
             "kind": "Measure",
             "displayName": "Valor",
@@ -44,9 +52,17 @@
             "name": "tarjetas",
             "kind": "Measure",
             "displayName": "Tarjetas",
-            "description": "Medidas DAX que se muestran como tarjetas en el panel de detalle: números, textos (un Top 3, por ejemplo), fechas o sí/no.",
+            "description": "Medidas DAX que se muestran como tarjetas en el panel de detalle: números, textos (un Top 3, por ejemplo), fechas o sí/no. El visual no las combina: al seleccionar una región o filtrar, muestra el valor que calcula DAX para ese conjunto.",
             "displayNameKey": "Rol_Tarjetas",
             "descriptionKey": "Rol_Tarjetas_Desc"
+        },
+        {
+            "name": "tabla",
+            "kind": "Measure",
+            "displayName": "Columnas de la tabla",
+            "description": "Las medidas que quieras ver por estado o municipio en la tabla del panel de detalle, en este orden: venta, número de tiendas, participación… Sin medidas aquí, la tabla muestra las Bases a comparar (o Valor).",
+            "displayNameKey": "Rol_Tabla",
+            "descriptionKey": "Rol_Tabla_Desc"
         },
         {
             "name": "tooltips",
@@ -75,26 +91,42 @@
                     },
                     "tarjetas": {
                         "max": 8
+                    },
+                    "tabla": {
+                        "max": 8
+                    },
+                    "periodo": {
+                        "max": 1
                     }
                 }
             ],
-            "categorical": {
-                "categories": {
+            "matrix": {
+                "rows": {
                     "select": [
-                        {
-                            "for": {
-                                "in": "ubicacion"
-                            }
-                        },
                         {
                             "bind": {
                                 "to": "grupo"
+                            }
+                        },
+                        {
+                            "for": {
+                                "in": "ubicacion"
                             }
                         }
                     ],
                     "dataReductionAlgorithm": {
                         "top": {
                             "count": 30000
+                        }
+                    }
+                },
+                "columns": {
+                    "for": {
+                        "in": "periodo"
+                    },
+                    "dataReductionAlgorithm": {
+                        "top": {
+                            "count": 400
                         }
                     }
                 },
@@ -118,6 +150,11 @@
                         {
                             "for": {
                                 "in": "tarjetas"
+                            }
+                        },
+                        {
+                            "for": {
+                                "in": "tabla"
                             }
                         },
                         {
@@ -422,6 +459,40 @@
                 }
             }
         },
+        "tabla": {
+            "properties": {
+                "mostrar": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "participacion": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "baseParticipacion": {
+                    "type": {
+                        "enumeration": []
+                    }
+                },
+                "diferencia": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "relativa": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "total": {
+                    "type": {
+                        "bool": true
+                    }
+                }
+            }
+        },
         "agregacion": {
             "properties": {
                 "tipo": {
@@ -458,6 +529,93 @@
                         "bool": true
                     }
                 }
+            }
+        },
+        "tiempo": {
+            "properties": {
+                "velocidad": {
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "repetir": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "escala": {
+                    "type": {
+                        "enumeration": []
+                    }
+                }
+            }
+        },
+        "subTotals": {
+            "properties": {
+                "rowSubtotals": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "perRowLevel": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "columnSubtotals": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "perColumnLevel": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "levelSubtotalEnabled": {
+                    "type": {
+                        "bool": true
+                    }
+                }
+            }
+        }
+    },
+    "subtotals": {
+        "matrix": {
+            "rowSubtotals": {
+                "propertyIdentifier": {
+                    "objectName": "subTotals",
+                    "propertyName": "rowSubtotals"
+                },
+                "defaultValue": true
+            },
+            "rowSubtotalsPerLevel": {
+                "propertyIdentifier": {
+                    "objectName": "subTotals",
+                    "propertyName": "perRowLevel"
+                },
+                "defaultValue": false
+            },
+            "columnSubtotals": {
+                "propertyIdentifier": {
+                    "objectName": "subTotals",
+                    "propertyName": "columnSubtotals"
+                },
+                "defaultValue": true
+            },
+            "columnSubtotalsPerLevel": {
+                "propertyIdentifier": {
+                    "objectName": "subTotals",
+                    "propertyName": "perColumnLevel"
+                },
+                "defaultValue": false
+            },
+            "levelSubtotalEnabled": {
+                "propertyIdentifier": {
+                    "objectName": "subTotals",
+                    "propertyName": "levelSubtotalEnabled"
+                },
+                "defaultValue": true
             }
         }
     },

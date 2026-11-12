@@ -14,10 +14,12 @@ import { Nivel, normalizarClave, nivelDeClave } from "./claves";
 import { formatoCompacto, Unidades } from "./formato";
 import { Area, bordes, capa, fondoDelMapa, principal, unir } from "./geometria";
 import { colorBivariado, coloresDivergentes, coloresSecuenciales, mezclar } from "./paletas";
-import { Cifra, LineaDiferencia, ModeloPanel, MotivoPanel, Panel, Recuadro } from "./panel";
+import { Cuadro, LecturaMatriz, leerMatriz } from "./matriz";
+import { CeldaDetalle, Cifra, ColumnaDetalle, LineaDiferencia, ModeloPanel, MotivoPanel, Panel, Recuadro, TablaDetalle } from "./panel";
 import { REFERENCIAS } from "./referencias";
 import { Agregacion, AGREGACIONES, agruparTextos, comparar, resumir } from "./resumen";
 import { Textos } from "./textos";
+import { ALTO_TIEMPO, LineaTiempo } from "./tiempo";
 import { Caja, encuadrar, IDENTIDAD, iguales, ModoRueda, Transformacion, Zoom } from "./zoom";
 
 import DataView = powerbi.DataView;
@@ -35,6 +37,7 @@ import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
 const FORMATO_GENERAL = "#,0.##";
 const FORMATO_RELATIVO = "+0.0%;-0.0%;0.0%";
 const FORMATO_INDICE = "#,0";
+const FORMATO_PARTICIPACION = "0.0%";
 const MARGEN = 8;
 const OPACIDAD_NO_SELECCIONADO = 0.35;
 const COLOR_LIMITE_ESTATAL = "#8a8886";
@@ -90,7 +93,7 @@ const NOTAS: Record<Agregacion, string> = {
 /** Lo que trae una medida. Solo los números se combinan en el panel; un texto se muestra como lo dio DAX. */
 type TipoDato = "numero" | "fecha" | "texto";
 
-/** Una medida de Valor, Valor 2, Bases o Tarjetas, con lo que necesita el panel. */
+/** Una medida de Valor, Valor 2, Bases, Tarjetas o Columnas de la tabla, con lo que necesita el panel. */
 interface Medida {
     nombre: string;
     formato: string | undefined;
@@ -139,6 +142,9 @@ interface Fila {
     tarjetas: Array<number | null>;
     /** Un texto ya formateado por tarjeta; null en las de números o fechas. */
     textos: Array<string | null>;
+    /** Lo mismo para las medidas de Columnas de la tabla: su valor y, si es un texto, su texto. */
+    tabla: Array<number | null>;
+    textosTabla: Array<string | null>;
     grupo: string | null;
     /** Resaltado por otro visual (si no hay resaltado, todas lo están). Las demás quedan de fondo. */
     resaltado: boolean;
@@ -156,7 +162,7 @@ interface Datos {
     nombreValor2: string | null;
     formatoValor2: string | undefined;
     nombreGrupo: string | null;
-    medidas: { valor: Medida | null; valor2: Medida | null; bases: Medida[]; tarjetas: Medida[] };
+    medidas: { valor: Medida | null; valor2: Medida | null; bases: Medida[]; tarjetas: Medida[]; tabla: Medida[] };
     /** Otro visual está resaltando una parte de los datos. */
     hayResaltado: boolean;
     /** Valores de Ubicación que no son una clave INEGI (se reportan en el mapa). */
@@ -166,6 +172,19 @@ interface Datos {
     /** Claves XX000: datos que solo llegan a nivel estatal. */
     sinMunicipio: number;
     repetidas: string[];
+    /** Lo que calculó DAX para un conjunto de áreas: el país (lo filtrado), cada región, cada estado con municipios. */
+    totales: TotalDax[];
+    /** El periodo de este cuadro de la línea del tiempo; null en el total o sin periodo. */
+    periodo: string | null;
+    nombrePeriodo: string | null;
+}
+
+/** Un total de DAX: la medida evaluada en el nodo de la matriz (no una suma del visual). */
+interface TotalDax {
+    nombre: string;
+    general: boolean;
+    claves: string[];
+    fila: Fila;
 }
 
 /** Lo que colorea el mapa: Valor (o la primera base) o la diferencia entre las dos primeras bases. */
@@ -182,6 +201,16 @@ interface Coloreado {
     colores: string[];
     /** Bivariado: tercil (0, 1, 2) de cada medida para un área con datos. */
     terciles(fila: Fila): [number, number] | null;
+}
+
+/** Una columna de la tabla del panel y cómo saca su cifra de un área (o de un total de DAX). */
+interface ColumnaTabla extends ColumnaDetalle {
+    /** Una diferencia: se colorea por su signo. */
+    conSigno: boolean;
+    /** Para ordenar y para la barra; null sin dato o en un texto. */
+    valor(f: Fila): number | null;
+    /** Lo que se lee en la celda; null sin dato. */
+    texto(f: Fila): string | null;
 }
 
 /** Un grupo (región) con datos: su color del tema, su contorno unido y dónde va su nombre. */
@@ -261,6 +290,16 @@ function agregacionDe(objetos: DataViewObjects | undefined, porDefecto: Agregaci
 /** La misma medida puesta en dos campos (por su queryName o, si no coincide, por su nombre). */
 const mismaMedida = (a: Medida, b: Medida): boolean => a.consulta === b.consulta || a.nombre === b.nombre;
 
+/**
+ * El lugar de una medida dentro de su campo. Una medida puesta en dos campos llega una
+ * sola vez, en la posición del primero; Power BI anota su lugar en cada campo en
+ * `rolesIndex` (no está en los tipos de la API).
+ */
+function lugarEnRol(c: DataViewValueColumn, rol: string): number {
+    const lugar = (c.source as { rolesIndex?: Record<string, number[]> }).rolesIndex?.[rol]?.[0];
+    return typeof lugar === "number" ? lugar : Number.MAX_SAFE_INTEGER;
+}
+
 let instancias = 0;
 
 export class Visual implements IVisual {
@@ -294,11 +333,23 @@ export class Visual implements IVisual {
     private readonly botonesZoom: Sel<HTMLDivElement>;
     private readonly mensaje: Sel<HTMLDivElement>;
     private readonly panel: Panel;
+    private readonly lineaTiempo: LineaTiempo;
+    /** Dónde va la línea del tiempo (null sin campo Periodo). */
+    private cajaTiempo: Recuadro | null = null;
     private readonly zoom: Zoom;
     /** Prefijo de los id de los clipPath (único por copia del visual). */
     private readonly prefijo = `mx${++instancias}`;
     private ajustes = new Ajustes();
+    /** El cuadro que se dibuja: un periodo de la línea del tiempo, o el total. */
     private datos: Datos | null = null;
+    /** Un cuadro por periodo (vacío sin campo Periodo) y el total de los periodos (o el único cuadro). */
+    private cuadros: Datos[] = [];
+    private cuadroTotal: Datos | null = null;
+    /** El periodo que se ve (-1: el total) y el rango que se reproduce. */
+    private indicePeriodo = -1;
+    private rangoPeriodos: [number, number] = [0, 0];
+    private firmaPeriodos = "";
+    private temporizador: ReturnType<typeof setInterval> | null = null;
     private modo: ModoColor = "valor";
     private serieColor: Serie | null = null;
     private coloreado: Coloreado | null = null;
@@ -313,6 +364,8 @@ export class Visual implements IVisual {
     private panelAbierto = false;
     /** Las áreas del panel, calculadas una vez por dibujo o por cambio de selección. */
     private focoActual: Fila[] = [];
+    /** La columna con la que el usuario ordenó la tabla del panel; null: la primera, de mayor a menor. */
+    private ordenTabla: TablaDetalle["orden"] | null = null;
     /** Las opciones del panel tal como las guardó Power BI (para la opción anterior "Mostrar sin selección"). */
     private objetosPanel: DataViewObjects[string] | undefined;
     /** El mapa muestra solo una parte del país (un filtro dejó pocas áreas con datos). */
@@ -381,6 +434,20 @@ export class Visual implements IVisual {
                 }
             },
             senalar: (clave) => this.senalar(clave),
+            ordenar: (columna, descendente) => {
+                this.ordenTabla = { columna, descendente };
+                this.dibujarPanel();
+            },
+        });
+        this.lineaTiempo = new LineaTiempo(raiz, {
+            alternar: () => this.alternarReproduccion(),
+            irA: (i) => {
+                if (i < 0) {
+                    this.detener();
+                }
+                this.irAPeriodo(i);
+            },
+            fijarRango: (inicio, fin) => this.fijarRango(inicio, fin),
         });
         this.mensaje = raiz.append("div").classed("mensaje", true);
         this.zoom = new Zoom(this.svg.node() as SVGSVGElement, (t, fin) => this.alHacerZoom(t, fin));
@@ -447,7 +514,7 @@ export class Visual implements IVisual {
             const dataView = options.dataViews?.[0];
             this.ajustes = this.servicioFormato.populateFormattingSettingsModel(Ajustes, dataView);
             this.objetosPanel = dataView?.metadata?.objects?.panel;
-            this.datos = this.leerDatos(dataView);
+            this.cargar(dataView);
             this.prepararAjustes();
             this.viewport = options.viewport;
             this.dibujar(options.viewport.width, options.viewport.height);
@@ -461,30 +528,76 @@ export class Visual implements IVisual {
         return this.servicioFormato.buildFormattingModel(this.ajustes);
     }
 
+    public destroy(): void {
+        this.detener();
+    }
+
     // ------------------------------------------------------------------ datos
 
     /**
-     * Lee los campos por rol (Ubicación, Grupo, Valor, Valor 2, Bases, Tarjetas,
-     * Tooltips), nunca por nombre. Si Ubicación es una jerarquía (drill-down), usa el
-     * nivel más profundo.
+     * Lee la matriz y arma un cuadro por periodo. Si los periodos son los mismos (cambió
+     * otro filtro), conserva el periodo que se veía y el rango; si no, vuelve al total.
      */
-    private leerDatos(dataView: DataView | undefined): Datos | null {
-        const categorias = dataView?.categorical?.categories ?? [];
-        const niveles = categorias.filter((c) => c.source.roles?.ubicacion);
-        if (niveles.length === 0) {
-            return null;
+    private cargar(dataView: DataView | undefined): void {
+        const lectura = leerMatriz(dataView?.matrix, (v, fuente) => this.texto(v, this.formateador(fuente.format)));
+        if (!lectura) {
+            this.cuadros = [];
+            this.cuadroTotal = null;
+            this.datos = null;
+            this.detener();
+            return;
         }
-        const ubicacion = niveles[niveles.length - 1];
-        const colGrupo = categorias.find((c) => c.source.roles?.grupo);
-        const columnas = dataView?.categorical?.values ?? [];
+        // La identidad de un área es su camino en la matriz: región y ubicación.
+        const ids = lectura.filas.map((f) => f.nodos
+            .reduce((b, nodo) => b.withMatrixNode(nodo, lectura.niveles), this.host.createSelectionIdBuilder())
+            .createSelectionId());
+        if (lectura.fuentePeriodo) {
+            this.cuadros = lectura.cuadros.map((c) => this.leerDatos(lectura, c, ids));
+            this.cuadroTotal = lectura.totalPeriodos ? this.leerDatos(lectura, lectura.totalPeriodos, ids) : null;
+        } else {
+            this.cuadros = [];
+            this.cuadroTotal = this.leerDatos(lectura, lectura.cuadros[0], ids);
+        }
+        const firma = this.cuadros.map((d) => d.periodo).join("\u0001");
+        if (firma !== this.firmaPeriodos) {
+            this.firmaPeriodos = firma;
+            this.detener();
+            this.rangoPeriodos = [0, Math.max(0, this.cuadros.length - 1)];
+            this.indicePeriodo = this.cuadroTotal || this.cuadros.length === 0 ? -1 : this.cuadros.length - 1;
+        }
+        this.datos = this.indicePeriodo >= 0 ? this.cuadros[this.indicePeriodo] ?? null : this.cuadroTotal;
+    }
+
+    /**
+     * Lee un cuadro de la matriz (un periodo, o el total) por rol: Ubicación, Región,
+     * Valor, Valor 2, Bases, Tarjetas y Tooltips, nunca por nombre. Si Ubicación es una
+     * jerarquía (drill-down), las áreas son el nivel más profundo. `ids` es la identidad
+     * de cada fila: la misma en todos los cuadros, para que la selección siga al periodo.
+     */
+    private leerDatos(lectura: LecturaMatriz, cuadro: Cuadro, ids: ISelectionId[]): Datos {
+        const n = lectura.filas.length;
+        const columnas = lectura.medidas.map((source, m): DataViewValueColumn => {
+            const celdas = cuadro.celdas[m] ?? [];
+            return {
+                source,
+                // Power BI manda null en una celda vacía, aunque el tipo diga lo contrario.
+                values: celdas.map((c) => c?.valor ?? null) as PrimitiveValue[],
+                ...(lectura.hayResaltado ? { highlights: celdas.map((c) => c?.resalte ?? null) as PrimitiveValue[] } : {}),
+            };
+        });
         const colValor = columnas.find((c) => c.source.roles?.valor);
         const colValor2 = columnas.find((c) => c.source.roles?.valor2);
         const colBases = columnas.filter((c) => c.source.roles?.bases);
         const colTarjetas = columnas.filter((c) => c.source.roles?.tarjetas);
+        // En el orden del campo (el de llegada, si Power BI no lo anota).
+        const colTabla = columnas.filter((c) => c.source.roles?.tabla)
+            .map((c, i) => ({ c, i }))
+            .sort((a, b) => lugarEnRol(a.c, "tabla") - lugarEnRol(b.c, "tabla") || a.i - b.i)
+            .map(({ c }) => c);
         const colTooltips = columnas.filter((c) => c.source.roles?.tooltips);
         // Otro visual resalta una parte (un clic en una tabla, por ejemplo): Power BI manda,
         // junto a cada medida, su valor con ese resaltado.
-        const hayResaltado = columnas.some((c) => Array.isArray(c.highlights));
+        const hayResaltado = lectura.hayResaltado;
         // Un texto fijo (el Top 3 de toda la región) también llega en lo no resaltado: deciden las cifras.
         const conCifras = columnas.filter((c) => tipoDeColumna(c) === "numero");
         const testigos = conCifras.length > 0 ? conCifras : columnas;
@@ -493,10 +606,11 @@ export class Visual implements IVisual {
         const formatosExtra = colTooltips.map((c) => this.formateador(c.source.format));
         const tiposTarjetas = colTarjetas.map(tipoDeColumna);
         const formatosTarjetas = colTarjetas.map((c) => this.formateador(c.source.format));
+        const tiposTabla = colTabla.map(tipoDeColumna);
+        const formatosTabla = colTabla.map((c) => this.formateador(c.source.format));
         const numero = (v: PrimitiveValue | undefined): number | null => (typeof v === "number" && Number.isFinite(v) ? v : null);
 
-        // Las bases se suman por omisión (son volúmenes de cada fuente); lo demás muestra
-        // el rango hasta que se elija cómo combinarlo. Una medida en dos campos es una sola.
+        // Las bases se suman por omisión (son volúmenes de cada fuente). Una medida en dos campos es una sola.
         const consultaDe = (c: DataViewValueColumn): string => c.source.queryName ?? c.source.displayName;
         const enBases = new Set(colBases.flatMap((c) => [consultaDe(c), c.source.displayName]));
         const medida = (c: DataViewValueColumn, tipo: TipoDato = "numero"): Medida => ({
@@ -510,7 +624,7 @@ export class Visual implements IVisual {
         });
 
         // El nivel lo decide la mayoría de claves válidas: 2 dígitos = estado, 5 = municipio.
-        const claves = ubicacion.values.map(normalizarClave);
+        const claves = lectura.filas.map((f) => normalizarClave(f.clave));
         let votosEstado = 0;
         let votosMunicipio = 0;
         for (const c of claves) {
@@ -531,21 +645,53 @@ export class Visual implements IVisual {
             formatoValor: colValor?.source.format,
             nombreValor2: colValor2?.source.displayName ?? null,
             formatoValor2: colValor2?.source.format,
-            nombreGrupo: colGrupo?.source.displayName ?? null,
+            nombreGrupo: lectura.fuenteGrupo?.displayName ?? null,
             medidas: {
                 valor: colValor ? medida(colValor) : null,
                 valor2: colValor2 ? medida(colValor2) : null,
                 bases: colBases.map((c) => medida(c)),
                 tarjetas: colTarjetas.map((c, j) => medida(c, tiposTarjetas[j])),
+                tabla: colTabla.map((c, j) => medida(c, tiposTabla[j])),
             },
             hayResaltado,
             desconocidas: [],
             otroNivel: 0,
             sinMunicipio: 0,
             repetidas: [],
+            totales: [],
+            periodo: cuadro.periodo,
+            nombrePeriodo: lectura.fuentePeriodo?.displayName ?? null,
         };
+        // Una fila con los valores de la posición i (un área, o un total de DAX al final).
+        const filaEn = (i: number, clave: string, grupoBruto: PrimitiveValue | null, resaltado: boolean, id: ISelectionId): Fila => {
+            const de = (c: DataViewValueColumn | undefined): PrimitiveValue | undefined =>
+                (c && hayResaltado && resaltado && c.highlights ? c.highlights[i] : c?.values[i]);
+            const valor = numero(de(colValor));
+            const valor2 = numero(de(colValor2));
+            // Una fecha va en milisegundos; un texto, aparte y ya formateado.
+            const cifra = (c: DataViewValueColumn, tipo: TipoDato): number | null => (tipo === "fecha" ? fechaDe(de(c), c)?.getTime() ?? null : numero(de(c)));
+            const textoDe = (c: DataViewValueColumn, tipo: TipoDato, formato: (v: number | Date) => string): string | null =>
+                (tipo === "texto" ? this.texto(de(c), formato) || null : null);
+            return {
+                clave,
+                valor,
+                texto: valor === null ? this.textos.t("Texto_SinDato") : exacto(valor),
+                valor2,
+                texto2: valor2 === null ? this.textos.t("Texto_SinDato") : exacto2(valor2),
+                bases: colBases.map((c) => numero(de(c))),
+                tarjetas: colTarjetas.map((c, j) => cifra(c, tiposTarjetas[j])),
+                textos: colTarjetas.map((c, j) => textoDe(c, tiposTarjetas[j], formatosTarjetas[j])),
+                tabla: colTabla.map((c, j) => cifra(c, tiposTabla[j])),
+                textosTabla: colTabla.map((c, j) => textoDe(c, tiposTabla[j], formatosTabla[j])),
+                grupo: grupoBruto === null || grupoBruto === undefined || grupoBruto === "" ? null : String(grupoBruto),
+                resaltado,
+                extras: colTooltips.map((c, j) => ({ displayName: c.source.displayName, value: this.texto(de(c), formatosExtra[j]) })),
+                id,
+            };
+        };
+        const aceptadas: Array<string | null> = claves.map(() => null);
         claves.forEach((clave, i) => {
-            const bruto = ubicacion.values[i];
+            const bruto = lectura.filas[i].clave;
             if (clave && nivelDeClave(clave) !== nivel) {
                 datos.otroNivel++;
                 return;
@@ -565,27 +711,19 @@ export class Visual implements IVisual {
             }
             // Las áreas resaltadas usan los valores resaltados; las demás conservan los suyos (quedan de fondo).
             const resaltado = !hayResaltado || testigos.some((c) => !vacio(c.highlights?.[i]));
-            const de = (c: DataViewValueColumn | undefined): PrimitiveValue | undefined =>
-                (c && hayResaltado && resaltado && c.highlights ? c.highlights[i] : c?.values[i]);
-            const valor = numero(de(colValor));
-            const valor2 = numero(de(colValor2));
-            const grupo = colGrupo?.values[i];
-            const constructor = categorias.reduce((b, c) => b.withCategory(c, i), this.host.createSelectionIdBuilder());
-            datos.filas.set(clave, {
-                clave,
-                valor,
-                texto: valor === null ? this.textos.t("Texto_SinDato") : exacto(valor),
-                valor2,
-                texto2: valor2 === null ? this.textos.t("Texto_SinDato") : exacto2(valor2),
-                bases: colBases.map((c) => numero(de(c))),
-                tarjetas: colTarjetas.map((c, j) => (tiposTarjetas[j] === "fecha" ? fechaDe(de(c), c)?.getTime() ?? null : numero(de(c)))),
-                textos: colTarjetas.map((c, j) => (tiposTarjetas[j] === "texto" ? this.texto(de(c), formatosTarjetas[j]) || null : null)),
-                grupo: grupo === null || grupo === undefined || grupo === "" ? null : String(grupo),
-                resaltado,
-                extras: colTooltips.map((c, j) => ({ displayName: c.source.displayName, value: this.texto(de(c), formatosExtra[j]) })),
-                id: constructor.createSelectionId(),
-            });
+            datos.filas.set(clave, filaEn(i, clave, lectura.filas[i].grupo, resaltado, ids[i]));
             datos.estadosCubiertos.add(clave.slice(0, 2));
+            aceptadas[i] = clave;
+        });
+        // Con un resaltado, el total de DAX también es el del resaltado.
+        lectura.totales.forEach((t, k) => {
+            const cubiertas = t.filas.map((i) => aceptadas[i]).filter((c): c is string => c !== null);
+            if (cubiertas.length === 0) {
+                return;
+            }
+            const nombre = t.tipo === "general" ? "" : t.tipo === "grupo" ? String(t.valor ?? "")
+                : capa("estado").porClave.get(normalizarClave(t.valor) ?? "")?.nombre ?? String(t.valor ?? "");
+            datos.totales.push({ nombre, general: t.tipo === "general", claves: cubiertas, fila: filaEn(n + k, "", null, true, ids[0]) });
         });
         return datos;
     }
@@ -604,9 +742,11 @@ export class Visual implements IVisual {
         a.bivariado.visible = this.modo === "bivariado";
         a.grupos.visible = hayGrupo;
         a.panel.hayComparacion = hayComparacion;
-        // Una lista por medida del panel (sin repetir la que está en dos campos); solo los números se combinan
-        const { bases, tarjetas } = this.medidasPanel();
-        const unicas = new Map([...bases, ...tarjetas].filter((m) => m.tipo === "numero").map((m) => [m.consulta, m]));
+        a.tabla.hayComparacion = hayComparacion;
+        a.tabla.visible = a.panel.mostrar.value;
+        a.tiempo.visible = this.cuadros.length > 0;
+        // Solo las bases se combinan (y solo cuando DAX no trae el total); las tarjetas muestran lo que da DAX.
+        const unicas = new Map(this.medidasPanel().bases.map((m) => [m.consulta, m]));
         a.agregacion.definir(a.panel.mostrar.value ? [...unicas.values()] : []);
     }
 
@@ -667,6 +807,10 @@ export class Visual implements IVisual {
         if (j >= 0) {
             return f.tarjetas[j];
         }
+        const k = medidas?.tabla.indexOf(m) ?? -1;
+        if (k >= 0) {
+            return f.tabla[k];
+        }
         return m === medidas?.valor ? f.valor : m === medidas?.valor2 ? f.valor2 : null;
     }
 
@@ -714,10 +858,25 @@ export class Visual implements IVisual {
             : geoConicConformal().parallels([17.5, 29.5]).rotate([102, 0]); // la misma que usa INEGI
     }
 
+    /** El total y los periodos (o el único cuadro). */
+    private todosLosCuadros(): Datos[] {
+        return [...(this.cuadroTotal ? [this.cuadroTotal] : []), ...this.cuadros];
+    }
+
+    /**
+     * Las filas de las que salen las clases: lo que se ve (con un resaltado, lo
+     * resaltado). En un periodo, con escala común, las de todos los periodos: así un
+     * color significa lo mismo en enero y en junio.
+     */
+    private muestraEscala(): Fila[] {
+        const enFoco = (d: Datos | null): Fila[] => (d ? [...d.filas.values()].filter((f) => f.resaltado) : []);
+        const comun = String(this.ajustes.tiempo.escala.value?.value ?? "comun") === "comun";
+        return this.indicePeriodo >= 0 && comun ? this.cuadros.flatMap(enFoco) : enFoco(this.datos);
+    }
+
     private colorear(sinDato: string): Coloreado {
         const datos = this.datos;
-        // Las clases salen de lo que se ve: con un resaltado, de los valores resaltados.
-        const filas = datos ? [...datos.filas.values()].filter((f) => f.resaltado) : [];
+        const filas = this.muestraEscala();
         const c = this.ajustes.colores;
         if (this.modo === "bivariado") {
             const ambas = filas.filter((f) => f.valor !== null && f.valor2 !== null);
@@ -810,11 +969,15 @@ export class Visual implements IVisual {
         const visibles = nivel === "municipio" && datos ? geo.areas.filter((a) => datos.estadosCubiertos.has(a.estado)) : geo.areas;
         this.visibles = visibles;
         // Las áreas en foco: las que tienen datos o, si otro visual resalta, las resaltadas.
-        const foco = [...(datos?.filas.values() ?? [])].filter((f) => f.resaltado).map((f) => f.clave);
+        // Con la línea del tiempo, las de cualquier periodo: el encuadre no salta al reproducir.
+        const foco = [...new Set(this.todosLosCuadros().flatMap((d) => [...d.filas.values()].filter((f) => f.resaltado).map((f) => f.clave)))];
         this.parcial = this.esParcial(foco, visibles, nivel);
         this.focoActual = this.foco();
         this.panelAbierto = this.debeAbrirPanel(this.focoActual);
-        const distribucion = this.distribuir(ancho, alto, this.panelAbierto);
+        // La línea del tiempo va abajo, a todo lo ancho; el mapa y el panel se reparten el resto.
+        const conTiempo = this.cuadros.length > 0 && alto > ALTO_TIEMPO * 3;
+        this.cajaTiempo = conTiempo ? { x: 0, y: alto - ALTO_TIEMPO, ancho, alto: ALTO_TIEMPO } : null;
+        const distribucion = this.distribuir(ancho, conTiempo ? alto - ALTO_TIEMPO : alto, this.panelAbierto);
         this.distribucion = distribucion;
         const { ancho: anchoMapa, alto: altoMapa } = distribucion.mapa;
         this.lienzo
@@ -948,7 +1111,96 @@ export class Visual implements IVisual {
         this.dibujarAviso(anchoMapa, colorTexto);
         this.dibujarMensaje();
         this.dibujarPanel();
+        this.dibujarTiempo();
         this.actualizarBotonesZoom();
+    }
+
+    // ------------------------------------------------------- línea del tiempo
+
+    private dibujarTiempo(): void {
+        const caja = this.cajaTiempo;
+        if (!caja) {
+            this.lineaTiempo.ocultar();
+            return;
+        }
+        const t = this.textos;
+        this.lineaTiempo.dibujar({
+            periodos: this.cuadros.map((d) => d.periodo ?? ""),
+            actual: this.indicePeriodo,
+            rango: this.rangoPeriodos,
+            reproduciendo: this.temporizador !== null,
+            hayTotal: this.cuadroTotal !== null,
+            interactivo: this.interactivo(),
+        }, {
+            region: t.t("Tiempo_Region"),
+            reproducir: t.t("Tiempo_Reproducir"),
+            pausar: t.t("Tiempo_Pausar"),
+            total: t.t("Tiempo_Total"),
+            totalDesc: t.t("Tiempo_TotalDesc", this.cuadros.length),
+            inicio: t.t("Tiempo_Inicio"),
+            fin: t.t("Tiempo_Fin"),
+            periodo: t.t("Tiempo_Periodo"),
+        }, caja, acotar(this.ajustes.panel.tamanoTexto.value, 9, 18));
+    }
+
+    /** Muestra un periodo (-1: el total de los periodos). */
+    private irAPeriodo(i: number): void {
+        const datos = i >= 0 ? this.cuadros[i] : this.cuadroTotal;
+        if (!datos || !this.viewport) {
+            return;
+        }
+        this.indicePeriodo = i;
+        this.datos = datos;
+        this.dibujar(this.viewport.width, this.viewport.height);
+    }
+
+    /** Reproduce el rango desde su inicio (o desde el periodo que se ve) o lo pausa. */
+    private alternarReproduccion(): void {
+        if (this.temporizador !== null) {
+            this.detener();
+            this.dibujarTiempo();
+            return;
+        }
+        const [inicio, fin] = this.rangoPeriodos;
+        const segundos = acotar(this.ajustes.tiempo.velocidad.value, 0.2, 10);
+        this.temporizador = setInterval(() => this.avanzar(), segundos * 1000);
+        if (this.indicePeriodo < inicio || this.indicePeriodo >= fin) {
+            this.irAPeriodo(inicio);
+        } else {
+            this.dibujarTiempo();
+        }
+    }
+
+    private avanzar(): void {
+        const [inicio, fin] = this.rangoPeriodos;
+        let i = this.indicePeriodo + 1;
+        if (i > fin) {
+            if (!this.ajustes.tiempo.repetir.value) {
+                this.detener();
+                this.dibujarTiempo();
+                return;
+            }
+            i = inicio;
+        }
+        this.irAPeriodo(i);
+    }
+
+    private detener(): void {
+        if (this.temporizador !== null) {
+            clearInterval(this.temporizador);
+            this.temporizador = null;
+        }
+    }
+
+    /** Cambia el rango que se reproduce; si el periodo que se ve queda fuera, va al extremo más cercano. */
+    private fijarRango(inicio: number, fin: number): void {
+        this.rangoPeriodos = [inicio, fin];
+        const i = this.indicePeriodo;
+        if (i >= 0 && (i < inicio || i > fin)) {
+            this.irAPeriodo(i < inicio ? inicio : fin);
+        } else {
+            this.dibujarTiempo();
+        }
     }
 
     /**
@@ -1982,6 +2234,9 @@ export class Visual implements IVisual {
             titulo = cuenta;
             subtitulo = `${foco.slice(0, 4).map(nombre).join(", ")}${n > 4 ? ", …" : ""}`;
         }
+        if (datos.periodo) {
+            subtitulo = [datos.periodo, subtitulo].filter(Boolean).join(" · ");
+        }
         const motivos: Record<MotivoPanel, string> = {
             seleccion: t.t("Panel_MotivoSeleccion"),
             filtro: t.t("Panel_MotivoFiltro"),
@@ -1990,43 +2245,56 @@ export class Visual implements IVisual {
         };
 
         const { bases, tarjetas } = this.medidasPanel();
+        const bloques = this.bloquesDax(foco);
+        // Una base con su total de DAX es exacta; si no lo hay (estados sueltos), se combina como se eligió.
         const cifra = (m: Medida, color: string): Cifra => {
-            const r = resumir(foco.map((f) => this.valorDe(f, m)), m.agregacion);
             const formato = this.formateador(m.formato);
-            const exacta = m.tipo === "fecha" ? (v: number) => formato(new Date(v)) : formato;
-            const compacto = m.tipo === "fecha" ? exacta : this.compacto(m.formato);
+            const compacto = this.compacto(m.formato);
+            if (bloques.length === 1) {
+                const v = this.valorDe(bloques[0].fila, m);
+                return {
+                    nombre: m.nombre, texto: v === null ? t.t("Texto_SinDato") : compacto(v), exacto: v === null ? "" : formato(v),
+                    nota: "", valor: v, color, esTexto: false, porArea: [],
+                };
+            }
+            const r = resumir(foco.map((f) => this.valorDe(f, m)), m.agregacion);
             const texto = r.valor !== null ? compacto(r.valor)
                 : r.min !== null && r.max !== null ? (r.min === r.max ? compacto(r.min) : `${compacto(r.min)} – ${compacto(r.max)}`)
                 : t.t("Texto_SinDato");
             return {
                 nombre: m.nombre,
                 texto,
-                exacto: r.valor !== null ? exacta(r.valor) : "",
+                exacto: r.valor !== null ? formato(r.valor) : "",
                 nota: this.nota(m.agregacion, r.n, n, plural),
                 valor: r.valor,
                 color,
-                esTexto: m.tipo === "fecha",
+                esTexto: false,
                 porArea: [],
             };
         };
-        // Con varias áreas, el texto que comparten una vez; si difieren, cada uno con sus áreas.
-        const cifraTexto = (m: Medida): Cifra => {
+        // Una tarjeta no calcula: muestra lo que dio DAX en cada bloque (una vez si todos dan lo mismo).
+        const tarjeta = (m: Medida): Cifra => {
             const j = datos.medidas.tarjetas.indexOf(m);
-            const grupos = agruparTextos(foco.map((f) => ({ area: nombre(f), texto: f.textos[j] })));
-            const conValor = grupos.reduce((s, g) => s + g.areas.length, 0);
+            const formato = this.formateador(m.formato);
+            const compacto = this.compacto(m.formato);
+            const textoDe = (f: Fila, exacto: boolean): string | null => {
+                if (m.tipo === "texto") {
+                    return f.textos[j] ?? null;
+                }
+                const v = this.valorDe(f, m);
+                return v === null ? null : m.tipo === "fecha" ? formato(new Date(v)) : exacto ? formato(v) : compacto(v);
+            };
+            const grupos = agruparTextos(bloques.map((b) => ({ area: b.nombre, texto: textoDe(b.fila, false) })));
             const unico = grupos.length === 1 ? grupos[0].texto : null;
             const resto = grupos.length - MAX_TEXTOS_TARJETA;
-            const faltan = conValor === n || conValor === 0 ? ""
-                : conValor === 1 ? t.t("Panel_SoloUna", n, plural)
-                : t.t("Panel_NDeM", conValor, n, plural);
             return {
                 nombre: m.nombre,
                 texto: unico ?? (grupos.length === 0 ? t.t("Texto_SinDato") : ""),
-                exacto: unico ?? "",
-                nota: [faltan, resto > 0 ? t.t("Panel_TextosResto", resto) : ""].filter(Boolean).join(" · "),
+                exacto: bloques.length === 1 ? textoDe(bloques[0].fila, true) ?? "" : unico ?? "",
+                nota: resto > 0 ? t.t("Panel_TextosResto", resto) : "",
                 valor: null,
                 color: "",
-                esTexto: true,
+                esTexto: m.tipo !== "numero",
                 porArea: unico !== null ? [] : grupos.slice(0, MAX_TEXTOS_TARJETA).map((g) => ({
                     areas: g.areas.length > MAX_AREAS_TEXTO
                         ? t.t("Panel_AreasMas", g.areas.slice(0, MAX_AREAS_TEXTO).join(", "), g.areas.length - MAX_AREAS_TEXTO)
@@ -2061,42 +2329,6 @@ export class Visual implements IVisual {
             }
         }
 
-        let detalle: ModeloPanel["detalle"] = null;
-        const columnas = bases.length > 0 ? bases : [datos.medidas.valor, datos.medidas.valor2].filter((m): m is Medida => m !== null);
-        if (n > 1 && columnas.length > 0) {
-            const conRelativa = bases.length >= 2;
-            const formatos = columnas.map((m) => this.compacto(m.formato));
-            const relativa = this.formateador(FORMATO_RELATIVO);
-            const primera = (f: Fila): number | null => this.valorDe(f, columnas[0]);
-            // De mayor a menor en la primera columna; sin dato al final.
-            const orden = [...foco].sort((a, b) => {
-                const va = primera(a);
-                const vb = primera(b);
-                return va === null ? (vb === null ? 0 : 1) : vb === null ? -1 : vb - va;
-            });
-            const mayor = Math.max(0, ...foco.map((f) => Math.abs(primera(f) ?? 0)));
-            detalle = {
-                columnas: [
-                    t.t(municipal ? "Texto_Municipio" : "Texto_Estado"),
-                    ...columnas.map((m) => m.nombre),
-                    ...(conRelativa ? [t.t("Panel_DiferenciaPct")] : []),
-                ],
-                filas: orden.slice(0, MAX_FILAS_DETALLE).map((f) => {
-                    const celdas = columnas.map((m, i) => {
-                        const v = this.valorDe(f, m);
-                        return v === null ? "–" : formatos[i](v);
-                    });
-                    if (conRelativa) {
-                        const r = comparar(f.bases[0], f.bases[1])?.relativa ?? null;
-                        celdas.push(r === null ? "–" : relativa(r));
-                    }
-                    const v = primera(f);
-                    return { clave: f.clave, nombre: nombre(f), color: colorDe(f), celdas, barra: v === null || mayor === 0 ? null : Math.abs(v) / mayor };
-                }),
-                resto: n > MAX_FILAS_DETALLE ? t.t("Panel_Resto", n - MAX_FILAS_DETALLE) : "",
-            };
-        }
-
         const silueta = p.silueta.value && n <= MAX_SILUETA
             ? foco.map((f) => geo.porClave.get(f.clave)).filter((a): a is Area => a !== undefined)
                 .map((area) => ({ forma: principal(area), color: this.coloreado?.color(area) ?? sinDato }))
@@ -2111,9 +2343,190 @@ export class Visual implements IVisual {
             silueta,
             bases: cifrasBases,
             diferencias,
-            tarjetas: tarjetas.map((m) => (m.tipo === "texto" ? cifraTexto(m) : cifra(m, ""))),
-            detalle,
+            tarjetas: tarjetas.map(tarjeta),
+            detalle: this.modeloTabla(foco, bloques, nombre, colorDe),
         };
+    }
+
+    /**
+     * La tabla por área. Sus columnas son las medidas de "Columnas de la tabla" (sin ellas,
+     * las bases o Valor) y, junto a la medida de la que salen, las que calcula el visual:
+     * la participación de la primera columna en el total y la diferencia entre las dos
+     * primeras bases. La fila de total es lo que calculó DAX, no una suma.
+     */
+    private modeloTabla(foco: Fila[], bloques: Array<{ nombre: string; fila: Fila }>, nombre: (f: Fila) => string, colorDe: (f: Fila) => string): TablaDetalle | null {
+        const datos = this.datos as Datos;
+        const t = this.textos;
+        const a = this.ajustes.tabla;
+        const { bases, tabla: propias } = datos.medidas;
+        const medidas = propias.length > 0 ? propias
+            : bases.length > 0 ? bases
+            : [datos.medidas.valor, datos.medidas.valor2].filter((m): m is Medida => m !== null);
+        const n = foco.length;
+        // Con un área sola, las bases y Valor ya están arriba; las columnas propias no.
+        if (!a.mostrar.value || medidas.length === 0 || (n < 2 && propias.length === 0)) {
+            return null;
+        }
+
+        const deMedida = (m: Medida): ColumnaTabla => {
+            const k = propias.indexOf(m);
+            const exacto = this.formateador(m.formato);
+            const compacto = this.compacto(m.formato);
+            const valor = (f: Fila): number | null => (m.tipo === "texto" ? null : this.valorDe(f, m));
+            return {
+                clave: `m:${m.consulta}`, nombre: m.nombre, titulo: m.nombre, esTexto: m.tipo === "texto", conSigno: false, valor,
+                texto: (f) => {
+                    if (m.tipo === "texto") {
+                        return f.textosTabla[k] ?? null;
+                    }
+                    const v = valor(f);
+                    return v === null ? null : m.tipo === "fecha" ? exacto(new Date(v)) : compacto(v);
+                },
+            };
+        };
+
+        // Participación: la cifra del área entre el total que calculó DAX (si no lo mandó, la suma).
+        const sumar = (filas: Fila[], m: Medida): number | null => resumir(filas.map((f) => this.valorDe(f, m)), "suma").valor;
+        const sobreElMapa = String(a.baseParticipacion.value?.value ?? "mapa") !== "panel";
+        const deParticipacion = (m: Medida): ColumnaTabla => {
+            const general = datos.totales.find((x) => x.general);
+            const total = sobreElMapa
+                ? (general ? this.valorDe(general.fila, m) : null) ?? sumar([...datos.filas.values()].filter((f) => f.resaltado), m)
+                : (bloques.length === 1 ? this.valorDe(bloques[0].fila, m) : null) ?? sumar(foco, m);
+            const formato = this.formateador(FORMATO_PARTICIPACION);
+            const valor = (f: Fila): number | null => {
+                const v = this.valorDe(f, m);
+                return v === null || total === null || total === 0 ? null : v / total;
+            };
+            return {
+                clave: "participacion", nombre: t.t("Tabla_ColParticipacion"),
+                titulo: t.t(sobreElMapa ? "Tabla_ParticipacionMapa" : "Tabla_ParticipacionPanel", m.nombre),
+                esTexto: false, conSigno: false, valor,
+                texto: (f) => {
+                    const v = valor(f);
+                    return v === null ? null : formato(v);
+                },
+            };
+        };
+
+        // Diferencias: la primera base contra la segunda, como en la comparación de arriba.
+        const diferencias: ColumnaTabla[] = [];
+        if (bases.length >= 2) {
+            const relativa = this.formateador(FORMATO_RELATIVO);
+            const de = (f: Fila) => comparar(f.bases[0], f.bases[1]);
+            if (a.diferencia.value) {
+                diferencias.push({
+                    clave: "diferencia", nombre: t.t("Panel_Diferencia"), titulo: `${bases[0].nombre} − ${bases[1].nombre}`,
+                    esTexto: false, conSigno: true,
+                    valor: (f) => de(f)?.diferencia ?? null,
+                    texto: (f) => {
+                        const c = de(f);
+                        return c ? this.textoDiferencia(c.diferencia, bases[0].formato) : null;
+                    },
+                });
+            }
+            if (a.relativa.value) {
+                diferencias.push({
+                    clave: "relativa", nombre: t.t("Panel_DiferenciaPct"), titulo: t.t("Texto_VsPorcentaje", bases[0].nombre, bases[1].nombre),
+                    esTexto: false, conSigno: true,
+                    valor: (f) => de(f)?.relativa ?? null,
+                    texto: (f) => {
+                        const r = de(f)?.relativa ?? null;
+                        return r === null ? null : relativa(r);
+                    },
+                });
+            }
+        }
+
+        // Cada cifra calculada va junto a su medida: la participación después de la primera
+        // columna; las diferencias, después de la última base (o al final, si no hay bases en la tabla).
+        const ultimaBase = medidas.map((m) => bases.some((b) => mismaMedida(b, m))).lastIndexOf(true);
+        const columnas: ColumnaTabla[] = [];
+        medidas.forEach((m, i) => {
+            columnas.push(deMedida(m));
+            if (i === 0 && a.participacion.value && m.tipo === "numero") {
+                columnas.push(deParticipacion(m));
+            }
+            if (i === ultimaBase) {
+                columnas.push(...diferencias);
+            }
+        });
+        if (ultimaBase < 0) {
+            columnas.push(...diferencias);
+        }
+
+        // Por omisión, de mayor a menor en la primera columna; sin dato, al final.
+        const primera = columnas[0];
+        const pedido = this.ordenTabla;
+        const orden = pedido && (pedido.columna === "" || columnas.some((c) => c.clave === pedido.columna))
+            ? pedido
+            : { columna: primera.clave, descendente: !primera.esTexto };
+        const columnaOrden = columnas.find((c) => c.clave === orden.columna);
+        const llave = (f: Fila): number | string | null => (!columnaOrden ? nombre(f) : columnaOrden.esTexto ? columnaOrden.texto(f) : columnaOrden.valor(f));
+        const llaves = new Map(foco.map((f) => [f, llave(f)]));
+        const alfabetico = new Intl.Collator(this.host.locale, { numeric: true, sensitivity: "base" });
+        const sentido = orden.descendente ? -1 : 1;
+        const ordenadas = [...foco].sort((x, y) => {
+            const kx = llaves.get(x) ?? null;
+            const ky = llaves.get(y) ?? null;
+            if (kx === null || ky === null) {
+                return kx === null ? (ky === null ? 0 : 1) : -1;
+            }
+            return sentido * (typeof kx === "string" || typeof ky === "string" ? alfabetico.compare(String(kx), String(ky)) : kx - ky);
+        });
+
+        const celdas = (f: Fila): CeldaDetalle[] => columnas.map((c) => ({
+            texto: c.texto(f) ?? "–",
+            signo: c.conSigno ? Math.sign(c.valor(f) ?? 0) : 0,
+        }));
+        const conBarra = medidas[0].tipo === "numero";
+        const mayor = conBarra ? foco.reduce((m, f) => Math.max(m, Math.abs(primera.valor(f) ?? 0)), 0) : 0;
+        return {
+            area: t.t(datos.nivel === "municipio" ? "Texto_Municipio" : "Texto_Estado"),
+            columnas: columnas.map(({ clave, nombre: nombreColumna, titulo, esTexto }) => ({ clave, nombre: nombreColumna, titulo, esTexto })),
+            filas: ordenadas.slice(0, MAX_FILAS_DETALLE).map((f) => {
+                const v = primera.valor(f);
+                return { clave: f.clave, nombre: nombre(f), color: colorDe(f), celdas: celdas(f), barra: v === null || mayor === 0 ? null : Math.abs(v) / mayor };
+            }),
+            // Solo si DAX mandó el total de todo lo que muestra la tabla (una región completa, lo filtrado…).
+            total: a.total.value && n > 1 && bloques.length === 1 ? { nombre: t.t("Tabla_FilaTotal"), celdas: celdas(bloques[0].fila) } : null,
+            orden,
+            resto: n > MAX_FILAS_DETALLE ? t.t("Panel_Resto", n - MAX_FILAS_DETALLE) : "",
+        };
+    }
+
+    /**
+     * Lo que DAX calculó para las áreas del panel, en los menos bloques posibles: todo lo
+     * que deja el filtro, regiones completas, estados completos (en municipios) y, lo que
+     * no completa ningún bloque, área por área. Con un resaltado, cuenta lo resaltado.
+     */
+    private bloquesDax(foco: Fila[]): Array<{ nombre: string; fila: Fila }> {
+        const datos = this.datos;
+        const geo = capa(datos?.nivel ?? "estado");
+        const porArea = (f: Fila): { nombre: string; fila: Fila } => ({ nombre: geo.porClave.get(f.clave)?.nombre ?? f.clave, fila: f });
+        if (!datos || foco.length <= 1) {
+            return foco.map(porArea);
+        }
+        const libres = new Set(foco.map((f) => f.clave));
+        const orden = new Map(foco.map((f, i) => [f.clave, i]));
+        const bloques: Array<{ nombre: string; fila: Fila; orden: number }> = [];
+        // Los más grandes primero: el total general, luego regiones, luego estados.
+        const candidatos = datos.totales
+            .map((t) => ({ t, claves: t.claves.filter((k) => datos.filas.get(k)?.resaltado) }))
+            .filter((c) => c.claves.length > 1)
+            .sort((a, b) => b.claves.length - a.claves.length);
+        for (const { t, claves } of candidatos) {
+            if (claves.every((k) => libres.has(k))) {
+                bloques.push({ nombre: t.nombre, fila: t.fila, orden: Math.min(...claves.map((k) => orden.get(k) ?? 0)) });
+                claves.forEach((k) => libres.delete(k));
+            }
+        }
+        for (const f of foco) {
+            if (libres.has(f.clave)) {
+                bloques.push({ ...porArea(f), orden: orden.get(f.clave) ?? 0 });
+            }
+        }
+        return bloques.sort((a, b) => a.orden - b.orden);
     }
 
     /** "suma de 3 estados", "rango de 2 de 3 estados"… (vacío con un área). */
@@ -2337,6 +2750,9 @@ export class Visual implements IVisual {
             : [{ displayName: t.t("Texto_Estado"), value: area.nombre }];
         if (datos?.nombreGrupo && fila?.grupo) {
             items.push({ displayName: datos.nombreGrupo, value: fila.grupo });
+        }
+        if (datos?.periodo && datos.nombrePeriodo) {
+            items.push({ displayName: datos.nombrePeriodo, value: datos.periodo });
         }
         if (datos?.nombreValor) {
             items.push({ displayName: datos.nombreValor, value: fila?.texto ?? t.t("Texto_SinDato") });

@@ -36,17 +36,17 @@ npm ci
 
 O empaqueta (`npm run package`) e importa el `.pbiviz` en Power BI Desktop en una PC con Windows.
 
-Para revisar algo rápido sin Power BI, `npm run demo` arma una página con el visual y los datos del ejemplo (escenas de ventas con semáforo, regiones, diferencia de mix, filtro de una región o de un estado, clic en otra tabla, tarjetas de texto, fecha y sí/no, leyenda en barra y municipios). Usa el mismo código del visual con un host simulado: sirve para ver el dibujo y la interacción, no sustituye la prueba en Power BI.
+Para revisar algo rápido sin Power BI, `npm run demo` arma una página con el visual y los datos del ejemplo (escenas de ventas con semáforo, regiones, diferencia de mix, filtro de una región o de un estado, clic en otra tabla, tabla con columnas propias, tarjetas de texto, fecha y sí/no, línea del tiempo, leyenda en barra y municipios; con totales de DAX simulados). Usa el mismo código del visual con un host simulado: sirve para ver el dibujo y la interacción, no sustituye la prueba en Power BI.
 
 ## Estructura del visual
 
 ```
 visual/
-├── capabilities.json   Campos (Ubicación con drill-down, Región, Valor, Valor 2, Bases, Tarjetas, Tooltips), opciones de formato y privilegios (ninguno)
+├── capabilities.json   Campos (Ubicación con drill-down, Región, Valor, Valor 2, Bases, Tarjetas, Columnas de la tabla, Tooltips), opciones de formato y privilegios (ninguno)
 ├── pbiviz.json         Nombre, versión y GUID del visual
 ├── src/
 │   ├── visual.ts       Lee los campos por rol (y el resaltado de otros visuales), decide el nivel, encuadra los datos, distribuye mapa y panel, dibuja el fondo, bivariado, regiones, etiquetas, tooltips, selección, leyenda y avisos
-│   ├── panel.ts        Panel de detalle (HTML): silueta, motivo, comparación de bases, tarjetas y tabla por área que selecciona
+│   ├── panel.ts        Panel de detalle (HTML): silueta, motivo, comparación de bases, tarjetas y tabla por área (ordena y selecciona)
 │   ├── referencias.ts  Nombres de mares y países vecinos, con sus lugares posibles
 │   ├── resumen.ts      Cómo se combinan varias áreas (suma, promedio, rango…) y la comparación entre bases
 │   ├── zoom.ts         Zoom y desplazamiento sin dependencias: rueda, arrastre, pellizco, botones y animaciones

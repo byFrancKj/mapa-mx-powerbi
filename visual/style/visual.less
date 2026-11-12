@@ -61,8 +61,9 @@
         stroke-linejoin: round;
     }
 
+    // El color cambia suave de un periodo al siguiente de la línea del tiempo.
     .area {
-        transition: opacity 120ms ease-out;
+        transition: opacity 120ms ease-out, fill 0.3s ease;
 
         &.con-dato {
             cursor: pointer;
@@ -349,7 +350,17 @@
     flex-direction: column;
     gap: 16px;
     overflow: auto;
-    padding: 12px 14px 14px;
+    // El espacio de arriba y de abajo va en las secciones y no aquí: así el encabezado y
+    // el total de la tabla, que se quedan fijos al desplazar, llegan hasta el borde.
+    padding: 0 14px;
+
+    > :first-child {
+        margin-top: 12px;
+    }
+
+    > :last-child {
+        margin-bottom: 14px;
+    }
 
     .horizontal & {
         flex-direction: row;
@@ -358,6 +369,13 @@
         > .panel-seccion {
             flex: 1 1 220px;
             min-width: 200px;
+            margin-top: 12px;
+            margin-bottom: 14px;
+        }
+
+        // La tabla necesita más ancho que las otras secciones.
+        > .seccion-tabla {
+            flex: 2 1 340px;
         }
     }
 }
@@ -589,10 +607,13 @@
         white-space: nowrap;
     }
 
+    // El nombre del área ocupa lo que dejan las cifras y se recorta si no cabe.
     th[scope="row"],
     thead th:first-child {
         overflow: hidden;
-        max-width: 11em;
+        width: 100%;
+        min-width: 5.5em;
+        max-width: 0;
         text-align: left;
         text-overflow: ellipsis;
     }
@@ -612,6 +633,65 @@
 
     tbody th {
         font-weight: 400;
+    }
+
+    // Un clic en un encabezado ordena la tabla; la flecha marca la columna y el sentido.
+    .ordenar {
+        padding: 0;
+        border: 0;
+        background: none;
+        color: inherit;
+        font: inherit;
+        text-align: inherit;
+        cursor: pointer;
+
+        &:hover {
+            text-decoration: underline;
+        }
+
+        &:focus-visible {
+            outline: 2px solid currentColor;
+            outline-offset: 1px;
+        }
+    }
+
+    th[aria-sort="descending"] .ordenar::after {
+        content: "\00A0\25BE";
+    }
+
+    th[aria-sort="ascending"] .ordenar::after {
+        content: "\00A0\25B4";
+    }
+
+    // Un texto de DAX (un estatus, el producto más vendido) se recorta; completo, en su título.
+    td.texto {
+        overflow: hidden;
+        max-width: 12em;
+        text-align: left;
+        text-overflow: ellipsis;
+    }
+
+    thead th.texto {
+        text-align: left;
+    }
+
+    td.positivo {
+        color: var(--positivo);
+    }
+
+    td.negativo {
+        color: var(--negativo);
+    }
+
+    // El total de DAX se queda a la vista al desplazar la tabla.
+    tfoot th,
+    tfoot td {
+        position: sticky;
+        bottom: 0;
+        border-bottom: 0;
+        background: var(--panel-fondo, #ffffff);
+        box-shadow: inset 0 1px 0 var(--panel-texto, #c8c6c4);
+        font-weight: 600;
     }
 
     // Un clic en una fila la selecciona en el mapa.
@@ -640,4 +720,190 @@
         background: linear-gradient(to left, rgba(17, 141, 255, 0.14) var(--barra), transparent var(--barra));
         background: linear-gradient(to left, color-mix(in srgb, var(--acento, @acento) 16%, transparent) var(--barra), transparent var(--barra));
     }
+}
+
+// Línea del tiempo: abajo, a todo lo ancho. Reproducir, el total y una pista con un
+// punto por periodo; la banda marca el rango que se reproduce.
+.tiempo {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-sizing: border-box;
+    padding: 0 12px;
+    border-top: 1px solid @borde-suave;
+    background: #ffffff;
+    color: @texto;
+    font-family: @fuente;
+
+    button {
+        flex: none;
+        height: 28px;
+        border: 1px solid #c8c6c4;
+        border-radius: 14px;
+        background: #ffffff;
+        color: @texto;
+        font: inherit;
+        cursor: pointer;
+
+        &:hover:not(:disabled) {
+            background: @fondo-suave;
+        }
+
+        &:focus-visible {
+            outline: 2px solid @texto;
+            outline-offset: 1px;
+        }
+
+        &:disabled {
+            opacity: 0.4;
+            cursor: default;
+        }
+    }
+}
+
+.tiempo-play {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    padding: 0;
+
+    svg {
+        width: 12px;
+        height: 12px;
+        fill: currentColor;
+    }
+}
+
+.tiempo-total {
+    padding: 0 12px;
+    font-size: 0.9em;
+
+    &[aria-pressed="true"] {
+        border-color: @texto;
+        background: @texto;
+        color: #ffffff;
+
+        &:hover:not(:disabled) {
+            background: @texto;
+        }
+    }
+}
+
+.tiempo-cuerpo {
+    position: relative;
+    flex: 1;
+    min-width: 60px;
+    // Espacio para los extremos y para que las asas no se salgan.
+    padding: 0 8px;
+}
+
+.tiempo-pista {
+    position: relative;
+    height: 18px;
+    cursor: pointer;
+
+    // La línea de fondo
+    &::before {
+        position: absolute;
+        top: 8px;
+        right: 0;
+        left: 0;
+        height: 2px;
+        border-radius: 1px;
+        background: @borde-suave;
+        content: "";
+    }
+}
+
+.tiempo-banda {
+    position: absolute;
+    top: 7px;
+    height: 4px;
+    border-radius: 2px;
+    background: @acento;
+    opacity: 0.35;
+}
+
+.tiempo-marca {
+    position: absolute;
+    top: 6px;
+    width: 6px;
+    height: 6px;
+    margin-left: -3px;
+    border-radius: 50%;
+    background: @texto-secundario;
+
+    &.fuera {
+        background: #c8c6c4;
+    }
+}
+
+// El periodo que se ve
+.tiempo-actual {
+    position: absolute;
+    top: 2px;
+    width: 14px;
+    height: 14px;
+    margin-left: -7px;
+    box-sizing: border-box;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    background: @acento;
+    box-shadow: 0 0 0 1px @acento;
+    transition: left 0.25s ease;
+
+    &:focus-visible {
+        outline: 2px solid @texto;
+        outline-offset: 2px;
+    }
+}
+
+// Los extremos del rango: se arrastran.
+.tiempo-asa {
+    position: absolute;
+    top: 0;
+    width: 8px;
+    height: 18px;
+    margin-left: -4px;
+    box-sizing: border-box;
+    border: 1px solid @texto-secundario;
+    border-radius: 3px;
+    background: #ffffff;
+    cursor: ew-resize;
+    touch-action: none;
+
+    &:focus-visible {
+        outline: 2px solid @texto;
+        outline-offset: 1px;
+    }
+}
+
+.tiempo-extremos {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1px;
+    color: @texto-secundario;
+    font-size: 0.78em;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.tiempo-etiqueta {
+    flex: none;
+    overflow: hidden;
+    max-width: 30%;
+    min-width: 4.5em;
+    font-size: 1.1em;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    text-align: right;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.tiempo.inactiva .tiempo-pista,
+.tiempo.inactiva .tiempo-asa {
+    cursor: default;
 }

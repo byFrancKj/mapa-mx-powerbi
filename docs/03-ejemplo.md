@@ -63,6 +63,7 @@ Octubre 2024 a septiembre 2026. Se regeneran igual con `python scripts/generar_d
 Para cambiar de métrica con una segmentación, crea un parámetro de campo con estas medidas ([guía 01](01-usar-el-visual.md#cambiar-de-métrica)).
 
 - **Bases a comparar**: `Ventas Cadenas` y `Ventas Mercado Estimada` (las dos se suman al seleccionar varios estados), o `% Mix Cadenas` y `% Mix Mercado` para comparar la distribución (la diferencia sale en puntos porcentuales). No uses `Ventas Mercado` como base: repite el total de la región en cada estado y al sumar varios estados lo contaría de más.
+- **Columnas de la tabla** (opcional): por ejemplo `Ventas Cadenas`, `Unidades Cadenas` y `Precio Promedio Cadenas`; en *Formato › Tabla del panel* enciende *Columna % del total* y *Columna Diferencia* para ver la participación de cada estado y su brecha contra el mercado.
 - **Tarjetas**: por ejemplo `Índice Cadenas vs Mercado`, `Crec % Cadenas`, `Precio Promedio Cadenas` y `Unidades Cadenas`. En *Formato › Al seleccionar varias áreas* elige *Suma* para `Unidades Cadenas` y *Promedio* o *Rango* para las demás.
 - Con dos bases, *Colores › Colorear por › Diferencia % entre bases* con la paleta semáforo muestra dónde se separan más las dos fuentes.
 
